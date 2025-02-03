@@ -2,24 +2,43 @@
 
 ## Requirements
 
-- System Name: Virtual Book Archive
-- Purpose: Provide a platform for reading and sharing e-books.
-- Target Users: Learners, book enthusiasts, researchers, ...
-- Functionality
-  - User management
-    - User registration and login system.
-    - User profile management
-      - View profile details (e.g., name, email, etc.).
-      - Update profile information (e.g., name).
-  - Book management
-    - Registered users can upload book in PDF format.
-    - Categorization and tagging of books by genre, author, language, ...
-  - Searching and Filtering
-    - Fuzzy search for book titles.
-    - Advanced search with filters (e.g., title, author, category, publication year).
-    - Pagination for search results.
-    - Sorting options (e.g., newest, highest-rated, most-viewed).
-  - Book viewing
-    - Online PDF reader for books.
-  - Rating
-    - Registered users can rate books.
+### System Name
+
+**Virtual Book Archive**
+
+### Purpose
+
+The Virtual Book Archive provides a platform for users to read, share, and discuss e-books. It aims to create a community-driven digital library with easy access to a wide range of books.
+
+### Target Users
+
+- **Learners** – Students and self-learners looking for educational materials.
+- **Book Enthusiasts** – Readers who enjoy exploring and discussing books.
+- **Authors & Contributors** – Individuals who wish to share their own works.
+
+### Functionality
+
+#### Guest Users
+
+- Search and filter books by title, author, genre, or keywords.  
+- Read available books.
+- Download books.
+- View user profiles.
+- Create a new user account.
+
+#### Registered Users
+
+Includes all guest functionalities plus:
+
+- Log in and manage their account.
+- Update profile.
+- Upload books in supported formats.
+- Rate books.
+- Comment on books.
+- Report inappropriate books or users.
+
+#### Admin
+
+- View and manage reported books and users.
+- Remove users violating platform policies.  
+- Remove books flagged as inappropriate or violating copyright.
