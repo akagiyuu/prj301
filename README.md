@@ -63,9 +63,9 @@ Includes all guest functionalities plus:
 
 ![create user page](./assets/create-user.png)
 
-- Main page
+- Home page
 
-![main page](./assets/main-page.png)
+![home page](./assets/main-page.png)
 
 - Search page
 
@@ -100,3 +100,5 @@ Includes all guest functionalities plus:
 ![admin user page](./assets/admin-user.png)
 
 ### Site Map
+
+![sitemap](./assets/sitemap.png)
