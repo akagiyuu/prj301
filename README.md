@@ -51,3 +51,52 @@ Includes all guest functionalities plus:
 - View and manage reported books and users.
 - Remove users violating platform policies.  
 - Remove books flagged as inappropriate or violating copyright.
+
+## Wireframe or screenshots of the system
+
+### GUIs
+- Login page
+
+![login page](./assets/login.png)
+
+- Create user page
+
+![create user page](./assets/create-user.png)
+
+- Main page
+
+![main page](./assets/main-page.png)
+
+- Search page
+
+![search page](./assets/search.png)
+
+- Summary page
+
+![summary page](./assets/summary.png)
+
+- Read page
+
+![read page](./assets/read.png)
+
+- User profile page
+
+![profile page](./assets/user-profile.png)
+
+- User profile update page
+
+![user profile update page](./assets/profile-update.png)
+
+- Admin overview page
+
+![admin overview](./assets/admin-overview.png)
+
+- Admin book page
+
+![admin book page](./assets/admin-book.png)
+
+- Admin user page
+
+![admin user page](./assets/admin-user.png)
+
+### Site Map
