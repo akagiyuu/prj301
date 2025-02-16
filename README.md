@@ -91,13 +91,25 @@ Includes all guest functionalities plus:
 
 ![admin overview](./assets/admin-overview.png)
 
-- Admin book page
+- Admin all book page
 
-![admin book page](./assets/admin-book.png)
+![admin all book page](./assets/admin-book-all.png)
 
-- Admin user page
+- Admin reported book page
 
-![admin user page](./assets/admin-user.png)
+![admin reported book page](./assets/admin-book-reported.png)
+
+- Admin all user page
+
+![admin user book page](./assets/admin-user-all.png)
+
+- Admin reported user page
+
+![admin reported user page](./assets/admin-user-reported.png)
+
+- Admin reported comment page
+
+![admin reported comment page](./assets/admin-comment-reported.png)
 
 ### Site Map
 
