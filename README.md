@@ -114,3 +114,6 @@ Includes all guest functionalities plus:
 ### Site Map
 
 ![sitemap](./assets/sitemap.png)
+
+## Database design
+![ERD](./assets/erd.png)
