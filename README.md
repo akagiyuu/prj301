@@ -87,6 +87,14 @@ Includes all guest functionalities plus:
 
 ![user profile update page](./assets/profile-update.png)
 
+- Upload book page
+
+![Upload book page](./assets/upload.png)
+
+- Upload book page - genre choose
+
+![Upload book page](./assets/upload-genre.png)
+
 - Admin overview page
 
 ![admin overview](./assets/admin-overview.png)
