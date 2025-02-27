@@ -1,6 +1,8 @@
 package com.prj301.prj301.models.entity;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "authors")
@@ -11,6 +13,9 @@ public class Author {
 
     @Column(unique = true, nullable = false)
     private String name;
+
+    @ManyToMany(mappedBy = "authors")
+    private Set<Book> books = new HashSet<>();
 
     public long id() {
         return id;
@@ -27,6 +32,15 @@ public class Author {
 
     public Author setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public Set<Book> books() {
+        return books;
+    }
+
+    public Author setBooks(Set<Book> books) {
+        this.books = books;
         return this;
     }
 }
