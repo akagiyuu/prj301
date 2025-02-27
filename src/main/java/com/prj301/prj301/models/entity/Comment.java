@@ -10,11 +10,11 @@ public class Comment {
     @GeneratedValue
     private long id;
 
-    @OneToMany
+    @ManyToOne
     @JoinColumn(nullable = false)
     private User user;
 
-    @OneToMany
+    @ManyToOne
     @JoinColumn(nullable = false)
     private Book book;
 
