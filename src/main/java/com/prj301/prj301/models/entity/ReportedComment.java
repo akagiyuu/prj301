@@ -1,24 +1,25 @@
 package com.prj301.prj301.models.entity;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
-@Embeddable
-class ReportedCommentId implements Serializable {
-    @ManyToOne
-    @JoinColumn(nullable = false)
+class ReportedCommentId {
     private Comment comment;
-
-    @ManyToOne
-    @JoinColumn(nullable = false)
     private User reportingUser;
 }
 
 @Entity
 @Table(name = "reported_comment")
+@IdClass(ReportedCommentId.class)
 public class ReportedComment {
-    @EmbeddedId
-    private ReportedCommentId id;
+    @Id
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Comment comment;
+
+    @Id
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private User reportingUser;
 
     @Column(nullable = false)
     private String reason;
