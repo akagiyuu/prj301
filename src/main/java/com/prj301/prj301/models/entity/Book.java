@@ -81,10 +81,10 @@ public class Book {
     private int view;
 
     @ColumnDefault("0")
-    private int total_rate;
+    private int totalRate;
 
     @ColumnDefault("0")
-    private int rate_count;
+    private int rateCount;
 
     public long id() {
         return id;
@@ -185,21 +185,21 @@ public class Book {
         return this;
     }
 
-    public int total_rate() {
-        return total_rate;
+    public int totalRate() {
+        return totalRate;
     }
 
-    public Book setTotal_rate(int total_rate) {
-        this.total_rate = total_rate;
+    public Book setTotalRate(int totalRate) {
+        this.totalRate = totalRate;
         return this;
     }
 
-    public int rate_count() {
-        return rate_count;
+    public int rateCount() {
+        return rateCount;
     }
 
-    public Book setRate_count(int rate_count) {
-        this.rate_count = rate_count;
+    public Book setRateCount(int rateCount) {
+        this.rateCount = rateCount;
         return this;
     }
 }
