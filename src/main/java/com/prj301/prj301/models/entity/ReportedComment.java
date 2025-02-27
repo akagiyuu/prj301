@@ -1,8 +1,9 @@
 package com.prj301.prj301.models.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
-class ReportedCommentId {
+class ReportedCommentId implements Serializable {
     private Comment comment;
     private User reportingUser;
 }

@@ -1,8 +1,9 @@
 package com.prj301.prj301.models.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
-class ReportedBookId {
+class ReportedBookId implements Serializable {
     private Book book;
     private User reportingUser;
 }

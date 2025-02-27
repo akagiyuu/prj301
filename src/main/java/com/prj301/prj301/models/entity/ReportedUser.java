@@ -1,8 +1,9 @@
 package com.prj301.prj301.models.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
-class ReportedUserId {
+class ReportedUserId implements Serializable {
     private User user;
     private User reportingUser;
 }
