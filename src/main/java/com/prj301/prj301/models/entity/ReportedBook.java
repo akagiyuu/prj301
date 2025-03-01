@@ -3,43 +3,21 @@ package com.prj301.prj301.models.entity;
 import javax.persistence.*;
 import java.io.Serializable;
 
-class ReportedBookId implements Serializable {
-    private Book book;
-    private User reportingUser;
-}
-
 @Entity
 @Table(name = "reported_books")
-@IdClass(ReportedBookId.class)
 public class ReportedBook {
-    @Id
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private Book book;
-
-    @Id
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private User reportingUser;
+    @EmbeddedId
+    private ReportedBookId id;
 
     @Column(nullable = false)
     private String reason;
 
-    public Book book() {
-        return book;
+    public ReportedBookId id() {
+        return id;
     }
 
-    public ReportedBook setBook(Book book) {
-        this.book = book;
-        return this;
-    }
-
-    public User reportingUser() {
-        return reportingUser;
-    }
-
-    public ReportedBook setReportingUser(User reportingUser) {
-        this.reportingUser = reportingUser;
+    public ReportedBook setId(ReportedBookId id) {
+        this.id = id;
         return this;
     }
 
