@@ -4,7 +4,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:sus}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:prj301-assignment}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:12345x}
   jpa:
@@ -17,6 +17,10 @@ server:
   port: 3000
   error:
     include-message: always
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  expiration-time: ${JWT_EXPIRATION_TIME}
 
 springdoc:
   api-docs:
