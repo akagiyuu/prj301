@@ -11,9 +11,6 @@ public class User {
     private long id;
 
     @Column(unique = true, nullable = false)
-    private String email;
-
-    @Column(unique = true, nullable = false)
     private String username;
 
     @Column(nullable = false)
@@ -64,15 +61,6 @@ public class User {
 
     public User setAvatarPath(String avatarPath) {
         this.avatarPath = avatarPath;
-        return this;
-    }
-
-    public String email() {
-        return email;
-    }
-
-    public User setEmail(String email) {
-        this.email = email;
         return this;
     }
 
