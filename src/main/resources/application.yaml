@@ -19,8 +19,8 @@ server:
     include-message: always
 
 jwt:
-  secret-key: ${JWT_SECRET_KEY}
-  expiration-time: ${JWT_EXPIRATION_TIME}
+  secret-key: ${JWT_SECRET_KEY:secret}
+  expiration-time: ${JWT_EXPIRATION_TIME:604800000}
 
 springdoc:
   api-docs:
