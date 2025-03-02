@@ -24,8 +24,15 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        final User user = userRepository.findByEmail(loginRequest.email());
-        if (user == null || !passwordEncoder.matches(loginRequest.password(), user.password())) {
+        final Optional<User> userOptional = userRepository.findByEmail(loginRequest.email());
+        if (!userOptional.isPresent()) {
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ERROR_MESSAGE);
+        }
+
+        final User user = userOptional.get();
+        if (!passwordEncoder.matches(loginRequest.password(), user.password())) {
             return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(ERROR_MESSAGE);
