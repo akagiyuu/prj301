@@ -1,5 +1,7 @@
 package com.prj301.prj301.models.entity;
 
+import lombok.*;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.annotation.Generated;
@@ -34,6 +36,12 @@ class EmptyOrValidISBNValidator implements ConstraintValidator<EmptyOrValidISBN,
     }
 }
 
+@Accessors(fluent = true)
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "books")
 public class Book {
@@ -85,121 +93,4 @@ public class Book {
 
     @ColumnDefault("0")
     private int rateCount;
-
-    public long id() {
-        return id;
-    }
-
-    public Book setId(long id) {
-        this.id = id;
-        return this;
-    }
-
-    public String isbn() {
-        return isbn;
-    }
-
-    public Book setIsbn(String isbn) {
-        this.isbn = isbn;
-        return this;
-    }
-
-    public User postedUser() {
-        return postedUser;
-    }
-
-    public Book setPostedUser(User postedUser) {
-        this.postedUser = postedUser;
-        return this;
-    }
-
-    public String title() {
-        return title;
-    }
-
-    public Book setTitle(String title) {
-        this.title = title;
-        return this;
-    }
-
-    public String coverPath() {
-        return coverPath;
-    }
-
-    public Book setCoverPath(String coverPath) {
-        this.coverPath = coverPath;
-        return this;
-    }
-
-    public Set<Author> authors() {
-        return authors;
-    }
-
-    public Book setAuthors(Set<Author> authors) {
-        this.authors = authors;
-        return this;
-    }
-
-    public Set<Genre> genres() {
-        return genres;
-    }
-
-    public Book setGenres(Set<Genre> genres) {
-        this.genres = genres;
-        return this;
-    }
-
-    public LocalDate publicationDate() {
-        return publicationDate;
-    }
-
-    public Book setPublicationDate(LocalDate publicationDate) {
-        this.publicationDate = publicationDate;
-        return this;
-    }
-
-    public String summary() {
-        return summary;
-    }
-
-    public Book setSummary(String summary) {
-        this.summary = summary;
-        return this;
-    }
-
-    public String pdfPath() {
-        return pdfPath;
-    }
-
-    public Book setPdfPath(String pdfPath) {
-        this.pdfPath = pdfPath;
-        return this;
-    }
-
-    public int view() {
-        return view;
-    }
-
-    public Book setView(int view) {
-        this.view = view;
-        return this;
-    }
-
-    public int totalRate() {
-        return totalRate;
-    }
-
-    public Book setTotalRate(int totalRate) {
-        this.totalRate = totalRate;
-        return this;
-    }
-
-    public int rateCount() {
-        return rateCount;
-    }
-
-    public Book setRateCount(int rateCount) {
-        this.rateCount = rateCount;
-        return this;
-    }
 }
