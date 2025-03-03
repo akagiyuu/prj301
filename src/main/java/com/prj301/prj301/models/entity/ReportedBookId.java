@@ -1,8 +1,17 @@
 package com.prj301.prj301.models.entity;
 
+import lombok.*;
+import lombok.experimental.Accessors;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
+@Accessors(fluent = true)
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Embeddable
 public class ReportedBookId implements Serializable {
     @ManyToOne
@@ -12,22 +21,4 @@ public class ReportedBookId implements Serializable {
     @ManyToOne
     @JoinColumn(nullable = false)
     private User reportingUser;
-
-    public Book book() {
-        return book;
-    }
-
-    public ReportedBookId setBook(Book book) {
-        this.book = book;
-        return this;
-    }
-
-    public User reportingUser() {
-        return reportingUser;
-    }
-
-    public ReportedBookId setReportingUser(User reportingUser) {
-        this.reportingUser = reportingUser;
-        return this;
-    }
 }
