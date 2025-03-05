@@ -6,13 +6,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class JWTUtil {
     @Value("${jwt.expiration-time}")
     private long EXPIRATION_TIME;
 
-    public String generateToken(Long id) {
+    public String generateToken(UUID id) {
         return Jwts
             .builder()
             .setSubject(id.toString())
@@ -33,7 +34,7 @@ public class JWTUtil {
         }
     }
 
-    public long extractId(String token) throws JwtException {
+    public UUID extractId(String token) throws JwtException {
         String rawId = Jwts
             .parserBuilder()
             .build()
@@ -41,6 +42,6 @@ public class JWTUtil {
             .getBody()
             .getSubject();
 
-        return Long.parseLong(rawId);
+        return UUID.fromString(rawId);
     }
 }
