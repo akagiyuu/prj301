@@ -1,13 +1,11 @@
 package com.prj301.prj301.models.entity;
 
 import lombok.*;
-import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Accessors(fluent = true)
 @Getter
 @Setter
 @Builder

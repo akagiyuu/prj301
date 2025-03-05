@@ -2,7 +2,6 @@ package com.prj301.prj301.services;
 
 import com.prj301.prj301.models.entity.User;
 import com.prj301.prj301.repositories.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,8 +20,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         return new org.springframework.security.core.userdetails.User(
-            user.username(),
-            user.password(),
+            user.getUsername(),
+            user.getPassword(),
             Collections.emptyList()
         );
     }

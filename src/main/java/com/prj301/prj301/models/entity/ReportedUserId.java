@@ -1,12 +1,12 @@
 package com.prj301.prj301.models.entity;
 
 import lombok.*;
-import lombok.experimental.Accessors;
 
-import javax.persistence.*;
+import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
-@Accessors(fluent = true)
 @Getter
 @Setter
 @Builder
