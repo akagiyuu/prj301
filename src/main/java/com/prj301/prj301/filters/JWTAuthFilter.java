@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.UUID;
 
 @Component
 public class JWTAuthFilter extends OncePerRequestFilter {
@@ -36,7 +37,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
         final String token = authHeader.substring(7);
 
-        final long id = jwtUtil.extractId(token);
+        final UUID id = jwtUtil.extractId(token);
 
         request.setAttribute("user-id", id);
 
