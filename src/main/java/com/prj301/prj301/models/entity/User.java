@@ -1,19 +1,17 @@
 package com.prj301.prj301.models.entity;
 
 import lombok.*;
-import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "users")
 @Getter
 @Setter
-@Accessors(fluent = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue

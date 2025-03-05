@@ -63,7 +63,7 @@ public class AuthController {
                 .body("Username already existed");
         }
 
-        final String token = jwtUtil.generateToken(user.id());
+        final String token = jwtUtil.generateToken(user.getId());
 
         return ResponseEntity.ok(token);
     }
@@ -94,13 +94,13 @@ public class AuthController {
         }
 
         final User user = userOptional.get();
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.password())) {
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(ERROR_MESSAGE);
         }
 
-        final String token = jwtUtil.generateToken(user.id());
+        final String token = jwtUtil.generateToken(user.getId());
 
         return ResponseEntity.ok(token);
     }

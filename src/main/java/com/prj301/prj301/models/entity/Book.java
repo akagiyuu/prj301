@@ -1,13 +1,13 @@
 package com.prj301.prj301.models.entity;
 
 import lombok.*;
-import lombok.experimental.Accessors;
 import org.hibernate.annotations.ColumnDefault;
 
-import javax.annotation.Generated;
 import javax.persistence.*;
 import javax.validation.Constraint;
-import javax.validation.*;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+import javax.validation.Payload;
 import java.lang.annotation.*;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -36,7 +36,6 @@ class EmptyOrValidISBNValidator implements ConstraintValidator<EmptyOrValidISBN,
     }
 }
 
-@Accessors(fluent = true)
 @Getter
 @Setter
 @Builder

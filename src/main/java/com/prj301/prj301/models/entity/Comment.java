@@ -1,12 +1,10 @@
 package com.prj301.prj301.models.entity;
 
 import lombok.*;
-import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@Accessors(fluent = true)
 @Getter
 @Setter
 @Builder
