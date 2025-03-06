@@ -12,6 +12,7 @@ import java.lang.annotation.*;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Documented
 @Constraint(validatedBy = EmptyOrValidISBNValidator.class)
@@ -45,8 +46,8 @@ class EmptyOrValidISBNValidator implements ConstraintValidator<EmptyOrValidISBN,
 @Table(name = "books")
 public class Book {
     @Id
-    @GeneratedValue
-    private long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
 
     @Column(length = 13, unique = true, nullable = false)
     @EmptyOrValidISBN
