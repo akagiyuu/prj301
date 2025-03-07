@@ -1,12 +1,9 @@
 package com.prj301.admin.models.entity;
 
 import lombok.*;
-import org.springframework.data.elasticsearch.annotations.Document;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -15,10 +12,18 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Entity
 @Table(name = "book_reports")
-@Document(indexName = "book_reports")
 public class BookReport {
-    @EmbeddedId
-    private BookReportId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
+
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Book book;
+
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private User reportingUser;
 
     @Column(nullable = false)
     private String reason;
