@@ -14,6 +14,10 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: false
+  data:
+    elasticsearch:
+      repositories:
+        enabled: false
 server:
   admin:
     username: ${ADMIN_USERNAME:admin}
