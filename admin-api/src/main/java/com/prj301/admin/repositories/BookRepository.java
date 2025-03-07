@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface BookRepository extends JpaRepository<Book, UUID> {
-    public Page<Book> findByTitle(String title, Pageable pageable);
+    public Page<Book> findByTitleContainingIgnoreCase(String title, Pageable pageable);
 
-    @Query("SELECT COUNT(*) FROM Book WHERE date_part('year', createdAt) = date_part('year', CURRENT_DATE) GROUP BY MONTH(createdAt)")
+    @Query("SELECT COUNT(*) FROM Book WHERE date_part('year', createdAt) = date_part('year', CURRENT_DATE) GROUP BY date_part('month', createdAt)")
     public List<Long> countByMonth();
 }
