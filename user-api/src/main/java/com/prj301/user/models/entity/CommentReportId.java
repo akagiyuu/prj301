@@ -13,7 +13,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
-public class ReportedCommentId implements Serializable {
+public class CommentReportId implements Serializable {
     @ManyToOne
     @JoinColumn(nullable = false)
     private Comment comment;

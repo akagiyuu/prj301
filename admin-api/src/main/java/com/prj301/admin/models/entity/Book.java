@@ -19,10 +19,10 @@ import java.util.Set;
 import java.util.UUID;
 
 @Documented
-@Constraint(validatedBy = EmptyOrValidISBNValidator.class)
+@Constraint(validatedBy = ValidISBNValidator.class)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-@interface EmptyOrValidISBN {
+@interface ValidISBN {
     String message() default "Invalid ISBN";
 
     Class<?>[] groups() default {};
@@ -30,9 +30,9 @@ import java.util.UUID;
     Class<? extends Payload>[] payload() default {};
 }
 
-class EmptyOrValidISBNValidator implements ConstraintValidator<EmptyOrValidISBN, String> {
+class ValidISBNValidator implements ConstraintValidator<ValidISBN, String> {
     @Override
-    public void initialize(EmptyOrValidISBN constraintAnnotation) {
+    public void initialize(ValidISBN constraintAnnotation) {
     }
 
     @Override
@@ -55,7 +55,7 @@ public class Book {
     private UUID id;
 
     @Column(length = 13, unique = true, nullable = false)
-    @EmptyOrValidISBN
+    @ValidISBN
     private String isbn;
 
     @ManyToOne(fetch = FetchType.LAZY)

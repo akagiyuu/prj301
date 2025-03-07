@@ -13,10 +13,10 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "reported_users")
-public class ReportedUser {
+@Table(name = "book_reports")
+public class BookReport {
     @EmbeddedId
-    private ReportedUserId id;
+    private BookReportId id;
 
     @Column(nullable = false)
     private String reason;

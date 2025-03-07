@@ -1,4 +1,4 @@
-package com.prj301.user.models.entity;
+package com.prj301.admin.models.entity;
 
 import lombok.*;
 
@@ -13,12 +13,13 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
-public class ReportedBookId implements Serializable {
+public class CommentReportId implements Serializable {
     @ManyToOne
     @JoinColumn(nullable = false)
-    private Book book;
+    private Comment comment;
 
     @ManyToOne
     @JoinColumn(nullable = false)
     private User reportingUser;
 }
+

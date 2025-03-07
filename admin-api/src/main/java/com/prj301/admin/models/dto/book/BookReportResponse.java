@@ -11,7 +11,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class ReportedBookResponse {
+public class BookReportResponse {
     private final UUID id;
     private final String title;
     private final List<String> authors;
