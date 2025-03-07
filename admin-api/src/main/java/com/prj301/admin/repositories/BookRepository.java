@@ -10,6 +10,6 @@ import java.util.UUID;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, UUID> {
-    @Query("SELECT COUNT(*) FROM books GROUP BY MONTH(createdAt) WHERE date_part('year', createdAt) = date_part('year', CURRENT_DATE);")
+    @Query("SELECT COUNT(*) FROM Book WHERE date_part('year', createdAt) = date_part('year', CURRENT_DATE) GROUP BY MONTH(createdAt)")
     public List<Long> countByMonth();
 }

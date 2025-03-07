@@ -10,13 +10,13 @@ import lombok.RequiredArgsConstructor;
 public class LoginRequest {
     @Schema(
         description = "User's login username",
-        example = "john.doe"
+        example = "admin"
     )
     private String username;
 
     @Schema(
         description = "User's password",
-        example = "P@ssw0rd!"
+        example = "admin"
     )
     private String password;
 }
