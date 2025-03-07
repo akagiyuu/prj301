@@ -42,7 +42,7 @@ public class BookController {
     }
 
     @DeleteMapping("/")
-    public void delete(@RequestBody UUID id) {
+    public void delete(@RequestParam("id") UUID id) {
         service.delete(id);
     }
 
@@ -62,7 +62,7 @@ public class BookController {
     }
 
     @DeleteMapping("/report")
-    public void deleteReport(@RequestBody UUID id) {
+    public void deleteReport(@RequestParam("id") UUID id) {
         service.deleteReport(id);
     }
 }
