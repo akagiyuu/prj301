@@ -1,6 +1,7 @@
 package com.prj301.user.models.entity;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -26,10 +27,10 @@ public class Comment {
     @JoinColumn(nullable = false)
     private Book book;
 
-    @Column(nullable = false)
-    private LocalDate createdAt;
-
     @Lob
     @Column(nullable = false)
     private String content;
+
+    @CreationTimestamp
+    private LocalDate createdAt;
 }

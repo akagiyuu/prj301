@@ -1,6 +1,7 @@
 package com.prj301.user.models.entity;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -34,5 +35,6 @@ public class User {
 
     private String bio;
 
+    @CreationTimestamp
     private LocalDate createdAt;
 }
