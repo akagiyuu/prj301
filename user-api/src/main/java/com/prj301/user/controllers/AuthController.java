@@ -4,7 +4,7 @@ import com.prj301.user.models.dto.auth.LoginRequest;
 import com.prj301.user.models.dto.auth.SigninRequest;
 import com.prj301.user.models.entity.User;
 import com.prj301.user.repositories.UserRepository;
-import com.prj301.user.utils.JWTUtil;
+import com.prj301.user.services.JWTService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,7 +27,7 @@ import java.util.Optional;
 public class AuthController {
     private static final String ERROR_MESSAGE = "Invalid username or password";
     private final UserRepository userRepository;
-    private final JWTUtil jwtUtil;
+    private final JWTService jwtService;
     private final PasswordEncoder passwordEncoder;
 
     @Operation(
@@ -63,7 +63,7 @@ public class AuthController {
                 .body("Username already existed");
         }
 
-        final String token = jwtUtil.generateToken(user.getId());
+        final String token = jwtService.generateToken(user.getId());
 
         return ResponseEntity.ok(token);
     }
@@ -100,7 +100,7 @@ public class AuthController {
                 .body(ERROR_MESSAGE);
         }
 
-        final String token = jwtUtil.generateToken(user.getId());
+        final String token = jwtService.generateToken(user.getId());
 
         return ResponseEntity.ok(token);
     }
