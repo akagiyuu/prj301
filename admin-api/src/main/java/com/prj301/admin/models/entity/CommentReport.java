@@ -2,10 +2,8 @@ package com.prj301.admin.models.entity;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -15,8 +13,17 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "comment_reports")
 public class CommentReport {
-    @EmbeddedId
-    private CommentReportId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
+
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Comment comment;
+
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private User reportingUser;
 
     @Column(nullable = false)
     private String reason;
