@@ -1,32 +1,34 @@
 package com.prj301.admin.services;
 
-import com.prj301.admin.models.dto.book.BookResponse;
 import com.prj301.admin.models.dto.book.BookReportResponse;
+import com.prj301.admin.models.dto.book.BookResponse;
 import com.prj301.admin.models.entity.Author;
 import com.prj301.admin.models.entity.Book;
 import com.prj301.admin.models.entity.BookReport;
 import com.prj301.admin.models.entity.BookReportId;
-import com.prj301.admin.repositories.BookRepository;
 import com.prj301.admin.repositories.BookReportRepository;
-import lombok.extern.slf4j.Slf4j;
+import com.prj301.admin.repositories.BookRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.hibernate.search.engine.search.query.SearchResult;
-import org.hibernate.search.mapper.orm.Search;
-import org.hibernate.search.mapper.orm.session.SearchSession;
+import org.elasticsearch.common.unit.Fuzziness;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
+@RequiredArgsConstructor
 public class BookService {
     @Autowired
     private BookRepository bookRepository;
@@ -34,8 +36,7 @@ public class BookService {
     @Autowired
     private BookReportRepository bookReportRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final ElasticsearchOperations elasticsearchOperations;
 
     private BookResponse toResponse(Book book) {
         val authors = book
@@ -83,30 +84,23 @@ public class BookService {
     }
 
     public Page<BookResponse> findAll(String query, Pageable pageable) {
-        SearchSession searchSession = Search.session(entityManager);
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+            .withQuery(QueryBuilders
+                           .multiMatchQuery(query, "title", "summary", "authors.name")
+                           .fuzziness(Fuzziness.AUTO))
+            .withPageable(pageable)
+            .build();
 
-        int offset = (int) pageable.getOffset();
-        int limit = pageable.getPageSize();
+        SearchHits<Book> searchHits = elasticsearchOperations.search(searchQuery, Book.class);
 
-        SearchResult<Book> result = searchSession
-            .search(Book.class)
-            .where(f -> f
-                .match()
-                .fields("title", "summary", "authors.name")
-                .matching(query)
-                .fuzzy(1))
-            .fetch(offset, limit);
-
-        List<BookResponse> bookResponses = result
-            .hits()
+        List<BookResponse> books = searchHits
+            .getSearchHits()
             .stream()
+            .map(SearchHit::getContent)
             .map(this::toResponse)
             .collect(Collectors.toList());
 
-        return new PageImpl<>(bookResponses, pageable, result
-            .total()
-            .hitCount()
-        );
+        return new PageImpl<>(books, pageable, searchHits.getTotalHits());
     }
 
     public Page<BookReportResponse> findAllReport(Pageable pageable) {
@@ -116,30 +110,23 @@ public class BookService {
     }
 
     public Page<BookReportResponse> findAllReport(String query, Pageable pageable) {
-        SearchSession searchSession = Search.session(entityManager);
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+            .withQuery(QueryBuilders
+                           .multiMatchQuery(query, "title", "summary", "authors.name")
+                           .fuzziness(Fuzziness.AUTO))
+            .withPageable(pageable)
+            .build();
 
-        int offset = (int) pageable.getOffset();
-        int limit = pageable.getPageSize();
+        SearchHits<BookReport> searchHits = elasticsearchOperations.search(searchQuery, BookReport.class);
 
-        SearchResult<BookReport> result = searchSession
-            .search(BookReport.class)
-            .where(f -> f
-                .match()
-                .fields("id.book.title", "id.book.summary", "id.book.authors.name")
-                .matching(query)
-                .fuzzy(1))
-            .fetch(offset, limit);
-
-        List<BookReportResponse> bookResponses = result
-            .hits()
+        List<BookReportResponse> books = searchHits
+            .getSearchHits()
             .stream()
+            .map(SearchHit::getContent)
             .map(this::toResponse)
             .collect(Collectors.toList());
 
-        return new PageImpl<>(bookResponses, pageable, result
-            .total()
-            .hitCount()
-        );
+        return new PageImpl<>(books, pageable, searchHits.getTotalHits());
     }
 
     public long count() {

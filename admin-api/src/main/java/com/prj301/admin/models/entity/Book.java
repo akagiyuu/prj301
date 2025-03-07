@@ -3,9 +3,9 @@ package com.prj301.admin.models.entity;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
-import org.springframework.stereotype.Indexed;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import javax.persistence.*;
 import javax.validation.Constraint;
@@ -46,11 +46,12 @@ class ValidISBNValidator implements ConstraintValidator<ValidISBN, String> {
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Indexed
 @Entity
 @Table(name = "books")
+@Document(indexName = "books")
 public class Book {
     @Id
+    @org.springframework.data.annotation.Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
@@ -62,13 +63,12 @@ public class Book {
     @JoinColumn(nullable = false)
     private User postedUser;
 
-    @FullTextField
+    @Field(type = FieldType.Text, analyzer = "english")
     @Column(nullable = false)
     private String title;
 
     private String coverPath;
 
-    @IndexedEmbedded
     @ManyToMany
     @JoinTable(
         name = "book_author",
@@ -87,7 +87,7 @@ public class Book {
 
     private LocalDate publicationDate;
 
-    @FullTextField
+    @Field(type = FieldType.Text, analyzer = "english")
     private String summary;
 
     @Column(nullable = false)
