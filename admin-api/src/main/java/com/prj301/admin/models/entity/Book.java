@@ -3,6 +3,9 @@ package com.prj301.admin.models.entity;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.springframework.stereotype.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 
 import javax.persistence.*;
 import javax.validation.Constraint;
@@ -43,6 +46,7 @@ class EmptyOrValidISBNValidator implements ConstraintValidator<EmptyOrValidISBN,
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Indexed
 @Entity
 @Table(name = "books")
 public class Book {
@@ -58,11 +62,13 @@ public class Book {
     @JoinColumn(nullable = false)
     private User postedUser;
 
+    @FullTextField
     @Column(nullable = false)
     private String title;
 
     private String coverPath;
 
+    @IndexedEmbedded
     @ManyToMany
     @JoinTable(
         name = "book_author",
@@ -81,6 +87,7 @@ public class Book {
 
     private LocalDate publicationDate;
 
+    @FullTextField
     private String summary;
 
     @Column(nullable = false)

@@ -1,6 +1,7 @@
 package com.prj301.admin.models.entity;
 
 import lombok.*;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -19,6 +20,7 @@ public class Author {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @FullTextField
     @Column(unique = true, nullable = false)
     private String name;
 
