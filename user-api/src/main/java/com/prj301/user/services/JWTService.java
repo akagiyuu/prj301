@@ -1,4 +1,4 @@
-package com.prj301.user.utils;
+package com.prj301.user.services;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Component
-public class JWTUtil {
+public class JWTService {
     @Value("${jwt.expiration-time}")
     private long EXPIRATION_TIME;
 
