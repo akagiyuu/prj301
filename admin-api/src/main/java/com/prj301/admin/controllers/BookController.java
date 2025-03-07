@@ -23,12 +23,12 @@ public class BookController {
 
     @GetMapping("/")
     public Page<BookResponse> findAll(
-        @RequestParam(value = "query", required = false) String query, Pageable pageable) {
-        if (query == null || query.isEmpty()) {
+        @RequestParam(value = "title", required = false) String title, Pageable pageable) {
+        if (title == null || title.isEmpty()) {
             return service.findAll(pageable);
         }
 
-        return service.findAll(query, pageable);
+        return service.findAll(title, pageable);
     }
 
     @GetMapping("/count")
@@ -41,19 +41,19 @@ public class BookController {
         return service.countByMonth();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/")
     public void delete(@RequestBody UUID id) {
         service.delete(id);
     }
 
     @GetMapping("/report")
     public Page<BookReportResponse> findAllReport(
-        @RequestParam(value = "query", required = false) String query, Pageable pageable) {
-        if (query == null || query.isEmpty()) {
+        @RequestParam(value = "title", required = false) String title, Pageable pageable) {
+        if (title == null || title.isEmpty()) {
             return service.findAllReport(pageable);
         }
 
-        return service.findAllReport(query, pageable);
+        return service.findAllReport(title, pageable);
     }
 
     @GetMapping("/report/count")
@@ -61,7 +61,8 @@ public class BookController {
         return service.countReport();
     }
 
-    public void deleteReport() {
-
+    @DeleteMapping("/report")
+    public void deleteReport(@RequestBody UUID id) {
+        service.deleteReport(id);
     }
 }
