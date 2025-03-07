@@ -2,6 +2,7 @@ package com.prj301.user.models.entity;
 
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.Constraint;
@@ -93,4 +94,7 @@ public class Book {
 
     @ColumnDefault("0")
     private int rateCount;
+
+    @CreationTimestamp
+    private LocalDate createdAt;
 }
