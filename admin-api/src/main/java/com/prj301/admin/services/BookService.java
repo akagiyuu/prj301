@@ -8,6 +8,7 @@ import com.prj301.admin.models.entity.ReportedBook;
 import com.prj301.admin.models.entity.ReportedBookId;
 import com.prj301.admin.repositories.BookRepository;
 import com.prj301.admin.repositories.ReportedBookRepository;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hibernate.search.engine.search.query.SearchResult;
 import org.hibernate.search.mapper.orm.Search;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class BookService {
     @Autowired
@@ -107,10 +109,37 @@ public class BookService {
         );
     }
 
-    public Page<ReportedBookResponse> findAllReported(Pageable pageable) {
+    public Page<ReportedBookResponse> findAllReport(Pageable pageable) {
         return reportedBookRepository
             .findAll(pageable)
             .map(this::toResponse);
+    }
+
+    public Page<ReportedBookResponse> findAllReport(String query, Pageable pageable) {
+        SearchSession searchSession = Search.session(entityManager);
+
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+
+        SearchResult<ReportedBook> result = searchSession
+            .search(ReportedBook.class)
+            .where(f -> f
+                .match()
+                .fields("id.book.title", "id.book.summary", "id.book.authors.name")
+                .matching(query)
+                .fuzzy(1))
+            .fetch(offset, limit);
+
+        List<ReportedBookResponse> bookResponses = result
+            .hits()
+            .stream()
+            .map(this::toResponse)
+            .collect(Collectors.toList());
+
+        return new PageImpl<>(bookResponses, pageable, result
+            .total()
+            .hitCount()
+        );
     }
 
     public long count() {
@@ -121,7 +150,7 @@ public class BookService {
         return bookRepository.countByMonth();
     }
 
-    public long countReported() {
+    public long countReport() {
         return reportedBookRepository.count();
     }
 
@@ -129,7 +158,7 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
-    public void dismissReport(ReportedBookId id) {
+    public void deleteReport(ReportedBookId id) {
         reportedBookRepository.deleteById(id);
     }
 }
