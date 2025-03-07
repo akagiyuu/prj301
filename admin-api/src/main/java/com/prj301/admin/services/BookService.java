@@ -1,13 +1,13 @@
 package com.prj301.admin.services;
 
 import com.prj301.admin.models.dto.book.BookResponse;
-import com.prj301.admin.models.dto.book.ReportedBookResponse;
+import com.prj301.admin.models.dto.book.BookReportResponse;
 import com.prj301.admin.models.entity.Author;
 import com.prj301.admin.models.entity.Book;
-import com.prj301.admin.models.entity.ReportedBook;
-import com.prj301.admin.models.entity.ReportedBookId;
+import com.prj301.admin.models.entity.BookReport;
+import com.prj301.admin.models.entity.BookReportId;
 import com.prj301.admin.repositories.BookRepository;
-import com.prj301.admin.repositories.ReportedBookRepository;
+import com.prj301.admin.repositories.BookReportRepository;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hibernate.search.engine.search.query.SearchResult;
@@ -32,7 +32,7 @@ public class BookService {
     private BookRepository bookRepository;
 
     @Autowired
-    private ReportedBookRepository reportedBookRepository;
+    private BookReportRepository bookReportRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -52,7 +52,7 @@ public class BookService {
         );
     }
 
-    private ReportedBookResponse toResponse(ReportedBook report) {
+    private BookReportResponse toResponse(BookReport report) {
         val book = report
             .getId()
             .getBook();
@@ -66,7 +66,7 @@ public class BookService {
             .map(Author::getName)
             .collect(Collectors.toList());
 
-        return new ReportedBookResponse(
+        return new BookReportResponse(
             book.getId(),
             book.getTitle(),
             authors,
@@ -109,20 +109,20 @@ public class BookService {
         );
     }
 
-    public Page<ReportedBookResponse> findAllReport(Pageable pageable) {
-        return reportedBookRepository
+    public Page<BookReportResponse> findAllReport(Pageable pageable) {
+        return bookReportRepository
             .findAll(pageable)
             .map(this::toResponse);
     }
 
-    public Page<ReportedBookResponse> findAllReport(String query, Pageable pageable) {
+    public Page<BookReportResponse> findAllReport(String query, Pageable pageable) {
         SearchSession searchSession = Search.session(entityManager);
 
         int offset = (int) pageable.getOffset();
         int limit = pageable.getPageSize();
 
-        SearchResult<ReportedBook> result = searchSession
-            .search(ReportedBook.class)
+        SearchResult<BookReport> result = searchSession
+            .search(BookReport.class)
             .where(f -> f
                 .match()
                 .fields("id.book.title", "id.book.summary", "id.book.authors.name")
@@ -130,7 +130,7 @@ public class BookService {
                 .fuzzy(1))
             .fetch(offset, limit);
 
-        List<ReportedBookResponse> bookResponses = result
+        List<BookReportResponse> bookResponses = result
             .hits()
             .stream()
             .map(this::toResponse)
@@ -151,14 +151,14 @@ public class BookService {
     }
 
     public long countReport() {
-        return reportedBookRepository.count();
+        return bookReportRepository.count();
     }
 
     public void delete(UUID id) {
         bookRepository.deleteById(id);
     }
 
-    public void deleteReport(ReportedBookId id) {
-        reportedBookRepository.deleteById(id);
+    public void deleteReport(BookReportId id) {
+        bookReportRepository.deleteById(id);
     }
 }

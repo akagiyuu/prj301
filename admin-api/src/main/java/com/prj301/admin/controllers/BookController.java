@@ -2,7 +2,7 @@ package com.prj301.admin.controllers;
 
 import com.prj301.admin.interceptors.JWSProtected;
 import com.prj301.admin.models.dto.book.BookResponse;
-import com.prj301.admin.models.dto.book.ReportedBookResponse;
+import com.prj301.admin.models.dto.book.BookReportResponse;
 import com.prj301.admin.services.BookService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class BookController {
     }
 
     @GetMapping("/report")
-    public Page<ReportedBookResponse> findAllReport(
+    public Page<BookReportResponse> findAllReport(
         @RequestParam(value = "query", required = false) String query, Pageable pageable) {
         if (query == null || query.isEmpty()) {
             return service.findAllReport(pageable);

@@ -1,4 +1,4 @@
-package com.prj301.admin.models.entity;
+package com.prj301.user.models.entity;
 
 import lombok.*;
 
@@ -13,10 +13,10 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "reported_books")
-public class ReportedBook {
+@Table(name = "book_reports")
+public class BookReport {
     @EmbeddedId
-    private ReportedBookId id;
+    private BookReportId id;
 
     @Column(nullable = false)
     private String reason;

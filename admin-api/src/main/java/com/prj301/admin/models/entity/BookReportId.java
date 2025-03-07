@@ -13,13 +13,12 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
-public class ReportedCommentId implements Serializable {
+public class BookReportId implements Serializable {
     @ManyToOne
     @JoinColumn(nullable = false)
-    private Comment comment;
+    private Book book;
 
     @ManyToOne
     @JoinColumn(nullable = false)
     private User reportingUser;
 }
-
