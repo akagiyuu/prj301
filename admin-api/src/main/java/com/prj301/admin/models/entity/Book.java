@@ -3,9 +3,6 @@ package com.prj301.admin.models.entity;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import javax.persistence.*;
 import javax.validation.Constraint;
@@ -48,7 +45,6 @@ class ValidISBNValidator implements ConstraintValidator<ValidISBN, String> {
 @AllArgsConstructor
 @Entity
 @Table(name = "books")
-@Document(indexName = "books")
 public class Book {
     @Id
     @org.springframework.data.annotation.Id
@@ -63,7 +59,6 @@ public class Book {
     @JoinColumn(nullable = false)
     private User postedUser;
 
-    @Field(type = FieldType.Text, analyzer = "english")
     @Column(nullable = false)
     private String title;
 
@@ -87,7 +82,6 @@ public class Book {
 
     private LocalDate publicationDate;
 
-    @Field(type = FieldType.Text, analyzer = "english")
     private String summary;
 
     @Column(nullable = false)

@@ -12,7 +12,6 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class BookService {
-    private final ElasticsearchOperations elasticsearchOperations;
     @Autowired
     private BookRepository bookRepository;
     @Autowired
@@ -45,10 +43,8 @@ public class BookService {
 
     private BookReportResponse toResponse(BookReport report) {
         val book = report
-            .getId()
             .getBook();
         val reportingUser = report
-            .getId()
             .getReportingUser();
 
         val authors = book
@@ -75,7 +71,7 @@ public class BookService {
 
     public Page<BookResponse> findAll(String title, Pageable pageable) {
         return bookRepository
-            .findByTitle(title, pageable)
+            .findByTitleContainingIgnoreCase(title, pageable)
             .map(this::toResponse);
     }
 
@@ -87,7 +83,7 @@ public class BookService {
 
     public Page<BookReportResponse> findAllReport(String title, Pageable pageable) {
         return bookReportRepository
-            .findByIdBookTitleContaining(title, pageable)
+            .findByBookTitleContainingIgnoreCase(title, pageable)
             .map(this::toResponse);
     }
 
@@ -107,7 +103,7 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
-    public void deleteReport(BookReportId id) {
+    public void deleteReport(UUID id) {
         bookReportRepository.deleteById(id);
     }
 }
