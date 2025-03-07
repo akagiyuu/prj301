@@ -96,5 +96,5 @@ public class Book {
     private int rateCount;
 
     @CreationTimestamp
-    public LocalDate createdAt;
+    private LocalDate createdAt;
 }
