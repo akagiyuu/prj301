@@ -6,6 +6,7 @@ import com.prj301.admin.models.entity.User;
 import com.prj301.admin.models.entity.UserReport;
 import com.prj301.admin.repositories.UserReportRepository;
 import com.prj301.admin.repositories.UserRepository;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,11 +23,26 @@ public class UserService {
     private UserReportRepository userReportRepository;
 
     private UserResponse toResponse(User user) {
-        return null;
+        return new UserResponse(
+            user.getId(),
+            user.getUsername(),
+            user.getFullName(),
+            user.getCreatedAt()
+        );
     }
 
     private UserReportResponse toResponse(UserReport report) {
-        return null;
+        val user = report.getUser();
+        val reportingUser = report.getReportingUser();
+
+        return new UserReportResponse(
+            user.getId(),
+            user.getUsername(),
+            user.getFullName(),
+            user.getCreatedAt(),
+            reportingUser.getUsername(),
+            report.getReason()
+        );
     }
 
     public Page<UserResponse> findAll(Pageable pageable) {

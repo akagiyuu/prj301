@@ -11,8 +11,8 @@ import java.util.UUID;
 @Setter
 @RequiredArgsConstructor
 public class UserResponse {
-    private UUID id;
-    private String username;
-    private String fullName;
-    private LocalDate createdAt;
+    private final UUID id;
+    private final String username;
+    private final String fullName;
+    private final LocalDate createdAt;
 }
