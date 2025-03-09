@@ -17,11 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/book")
 public class BookController {
     @Autowired
-    private final BookService bookService;
+    private BookService bookService;
 
     @GetMapping
     public Page<BookResponse> getBooks(
@@ -29,7 +28,10 @@ public class BookController {
         @RequestParam(required = false) List<String> genres,
         Pageable pageable
     ) {
+        if (query == null || query.isEmpty()) {
+            return bookService.findAll(genres, pageable);
+        }
 
-        return bookService.searchBook(query, genres, pageable);
+        throw new UnsupportedOperationException("Not implement, yet");
     }
 }
