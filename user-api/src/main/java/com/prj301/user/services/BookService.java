@@ -11,13 +11,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class BookService {
 
     private final BookRepository bookRepository;
-
+    // Response a single book
     private BookResponse toResponse(Book book) {
         val authors = book
                 .getAuthors()
@@ -40,9 +41,21 @@ public class BookService {
             book.getPublicationDate()
         );
     }
+
+    // Default: search by title or author is null, genres is null,sort_by TITLE, direction is ASC
+    public Page<BookResponse> searchBook(String querry, List<String> genres, Pageable pageable) {
+       // Default case
+        if(querry == null && (genres == null || genres.isEmpty())) {
+           findAll(pageable);
+       }
+        return null; // temporary
+    }
+
+    // Response all of books with pagination
     public Page<BookResponse> findAll(Pageable pageable) {
         return bookRepository
                 .findAll(pageable)
                 .map(this::toResponse);
     }
+
 }

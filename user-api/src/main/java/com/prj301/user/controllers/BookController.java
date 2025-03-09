@@ -7,10 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,11 +25,21 @@ public class BookController {
     private final int startingPage = 0;
     private final int sizeOfPage = 8;
 
-    @GetMapping("/")
-    public ResponseEntity<Page<BookResponse>> getAllBooks() {
+    @GetMapping
+    public ResponseEntity<Page<BookResponse>> getBooks(
+        @RequestParam(required = false) String query,
+        @RequestParam(required = false) List<String> genres,
+        @RequestParam(defaultValue = "title") String sort_by,
+        @RequestParam(defaultValue = "asc") String direction
+    ) {
 
-        Pageable pageable = PageRequest.of(startingPage,sizeOfPage);
-        Page<BookResponse> bookPage = bookService.findAll(pageable);
+        Sort sort = direction.equalsIgnoreCase("asc")
+                ? Sort.by(sort_by).ascending()
+                : Sort.by(sort_by).descending();
+
+
+        Pageable pageable = PageRequest.of(startingPage,sizeOfPage, sort);
+        Page<BookResponse> bookPage = bookService.searchBook(query, genres, pageable);
         return ResponseEntity.ok(bookPage);
     }
 }
