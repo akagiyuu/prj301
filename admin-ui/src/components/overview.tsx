@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 import { AlertTriangle, Book, BookHeart, LucideIcon, User } from 'lucide-react';
 
 const Section = (item: {
@@ -28,14 +27,9 @@ const Section = (item: {
     );
 };
 
-export const Overview = ({ className }: { className: string }) => {
+export const Overview = () => {
     return (
-        <div
-            className={cn(
-                'grid gap-4 sm:grid-cols-2 lg:grid-cols-4',
-                className,
-            )}
-        >
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Section
                 title="Total Users"
                 icon={User}
