@@ -26,7 +26,7 @@ public class BookController {
     private final int sizeOfPage = 8;
 
     @GetMapping
-    public ResponseEntity<Page<BookResponse>> getBooks(
+    public Page<BookResponse> getBooks(
         @RequestParam(required = false) String query,
         @RequestParam(required = false) List<String> genres,
         @RequestParam(defaultValue = "title") String sort_by,
@@ -39,7 +39,6 @@ public class BookController {
 
 
         Pageable pageable = PageRequest.of(startingPage,sizeOfPage, sort);
-        Page<BookResponse> bookPage = bookService.searchBook(query, genres, pageable);
-        return ResponseEntity.ok(bookPage);
+        return bookService.searchBook(query, genres, pageable);
     }
 }

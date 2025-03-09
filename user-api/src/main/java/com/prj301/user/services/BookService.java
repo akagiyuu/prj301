@@ -46,13 +46,13 @@ public class BookService {
     public Page<BookResponse> searchBook(String querry, List<String> genres, Pageable pageable) {
        // Default case
         if(querry == null && (genres == null || genres.isEmpty())) {
-           findAll(pageable);
+            handleSortBy(pageable);
        }
         return null; // temporary
     }
 
     // Response all of books with pagination
-    public Page<BookResponse> findAll(Pageable pageable) {
+    public Page<BookResponse> handleSortBy(Pageable pageable) {
         return bookRepository
                 .findAll(pageable)
                 .map(this::toResponse);
