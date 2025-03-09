@@ -11,11 +11,15 @@ import java.util.UUID;
 @Setter
 @RequiredArgsConstructor
 public class BookResponse {
-    private final UUID id;
+    private final String isbn;
+    private final String postedUser;
     private final String title;
     private final String coverPath;
     private final List<String> authors;
     private final List<String> genres;
-    private final int totalRating;
-    private final LocalDate publishDate;
+    private final LocalDate publicationDate;
+    private final String summary;
+    private final String pdfPath;
+    private final int view;
+    private final float rate;
 }

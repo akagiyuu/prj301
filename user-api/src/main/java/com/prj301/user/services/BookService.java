@@ -21,6 +21,8 @@ public class BookService {
     private BookRepository bookRepository;
 
     private BookResponse toResponse(Book book) {
+        val postedUser = book.getPostedUser();
+
         val authors = book
             .getAuthors()
             .stream()
@@ -32,14 +34,19 @@ public class BookService {
             .stream()
             .map(Genre::getName)
             .collect(Collectors.toList());
+
         return new BookResponse(
-            book.getId(),
+            book.getIsbn(),
+            postedUser.getUsername(),
             book.getTitle(),
             book.getCoverPath(),
             authors,
             genres,
-            book.getTotalRate(),
-            book.getPublicationDate()
+            book.getPublicationDate(),
+            book.getSummary(),
+            book.getPdfPath(),
+            book.getView(),
+            (float) book.getTotalRate() / (float) book.getRateCount()
         );
     }
 
