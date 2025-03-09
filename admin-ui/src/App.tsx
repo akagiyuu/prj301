@@ -15,7 +15,6 @@ import { type RootState, type AppDispatch, store } from '@/store';
 import { Overview } from '@/components/overview';
 import { DataTable } from '@/components/data-table';
 import { BreadcrumbHeader } from '@/components/breadcrum-header';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 export const useAppDispatch = (): AppDispatch => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
@@ -26,7 +25,7 @@ const Content = () => {
     switch (state) {
         case 'overview':
             return <Overview />;
-        default:
+        case 'book.all':
             return (
                 <DataTable
                     dataApi="http://localhost:3000/api/v1/book/"
@@ -55,9 +54,145 @@ const Content = () => {
                             header: 'Created At',
                         },
                     ]}
-                    action={{
-                        delete: (id) => console.log(id),
-                    }}
+                    action={{}}
+                />
+            );
+        case 'book.report':
+            return (
+                <DataTable
+                    dataApi="http://localhost:3000/api/v1/book/report"
+                    queryKey="title"
+                    columns={[
+                        {
+                            accessorKey: 'id',
+                            header: 'Id',
+                        },
+                        {
+                            accessorKey: 'title',
+                            header: 'Title',
+                        },
+                        {
+                            accessorKey: 'authors',
+                            header: 'Authors',
+                            cell: ({ row }) => {
+                                const authors: string[] =
+                                    row.getValue('authors');
+                                const formatted = authors.join(', ');
+                                return <div>{formatted}</div>;
+                            },
+                        },
+                        {
+                            accessorKey: 'createdAt',
+                            header: 'Created At',
+                        },
+                        {
+                            accessorKey: 'reportingUser',
+                            header: 'Reporting User',
+                        },
+                        {
+                            accessorKey: 'reason',
+                            header: 'Reason',
+                        },
+                    ]}
+                    action={{}}
+                />
+            );
+        case 'user.all':
+            return (
+                <DataTable
+                    dataApi="http://localhost:3000/api/v1/user/"
+                    queryKey="title"
+                    columns={[
+                        {
+                            accessorKey: 'id',
+                            header: 'Id',
+                        },
+                        {
+                            accessorKey: 'username',
+                            header: 'Username',
+                        },
+                        {
+                            accessorKey: 'fullName',
+                            header: 'Full Name',
+                        },
+                        {
+                            accessorKey: 'createdAt',
+                            header: 'Created At',
+                        },
+                    ]}
+                    action={{}}
+                />
+            );
+        case 'user.report':
+            return (
+                <DataTable
+                    dataApi="http://localhost:3000/api/v1/user/report"
+                    queryKey="title"
+                    columns={[
+                        {
+                            accessorKey: 'id',
+                            header: 'Id',
+                        },
+                        {
+                            accessorKey: 'username',
+                            header: 'Username',
+                        },
+                        {
+                            accessorKey: 'fullName',
+                            header: 'Full Name',
+                        },
+                        {
+                            accessorKey: 'createdAt',
+                            header: 'Created At',
+                        },
+                        {
+                            accessorKey: 'reportingUser',
+                            header: 'Reporting User',
+                        },
+                        {
+                            accessorKey: 'reason',
+                            header: 'Reason',
+                        },
+                    ]}
+                    action={{}}
+                />
+            );
+        case 'comment.report':
+            return (
+                <DataTable
+                    dataApi="http://localhost:3000/api/v1/comment/report"
+                    queryKey="title"
+                    columns={[
+                        {
+                            accessorKey: 'id',
+                            header: 'Id',
+                        },
+                        {
+                            accessorKey: 'content',
+                            header: 'Content',
+                        },
+                        {
+                            accessorKey: 'user',
+                            header: 'User',
+                        },
+                        {
+                            accessorKey: 'book',
+                            header: 'Book',
+                        },
+                        {
+                            accessorKey: 'createdAt',
+                            header: 'Created At',
+                        },
+                        {
+                            accessorKey: 'reportingUser',
+                            header: 'Reporting User',
+                        },
+                        {
+                            accessorKey: 'reason',
+                            header: 'Reason',
+                        },
+                    ]}
+                    action={{}}
                 />
             );
     }
@@ -80,19 +215,15 @@ const Main = () => {
     );
 };
 
-const queryClient = new QueryClient();
-
 const App = () => {
     return (
         <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-                <SidebarProvider>
-                    <AppSidebar />
-                    <SidebarInset>
-                        <Main />
-                    </SidebarInset>
-                </SidebarProvider>
-            </QueryClientProvider>
+            <SidebarProvider>
+                <AppSidebar />
+                <SidebarInset>
+                    <Main />
+                </SidebarInset>
+            </SidebarProvider>
         </Provider>
     );
 };

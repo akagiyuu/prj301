@@ -248,7 +248,7 @@ export const AppSidebar = ({
                         items={[
                             {
                                 title: 'Report',
-                                state: 'user.report',
+                                state: 'comment.report',
                             },
                         ]}
                     />
