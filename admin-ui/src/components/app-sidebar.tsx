@@ -255,9 +255,6 @@ export const AppSidebar = ({
                 </SidebarGroup>
             </SidebarContent>
             <SidebarRail />
-            <SidebarFooter>
-                <SidebarTrigger />
-            </SidebarFooter>
         </Sidebar>
     );
 };
