@@ -22,23 +22,14 @@ import java.util.List;
 public class BookController {
     @Autowired
     private final BookService bookService;
-    private final int startingPage = 0;
-    private final int sizeOfPage = 8;
 
     @GetMapping
     public Page<BookResponse> getBooks(
         @RequestParam(required = false) String query,
         @RequestParam(required = false) List<String> genres,
-        @RequestParam(defaultValue = "title") String sort_by,
-        @RequestParam(defaultValue = "asc") String direction
+        Pageable pageable
     ) {
 
-        Sort sort = direction.equalsIgnoreCase("asc")
-                ? Sort.by(sort_by).ascending()
-                : Sort.by(sort_by).descending();
-
-
-        Pageable pageable = PageRequest.of(startingPage,sizeOfPage, sort);
         return bookService.searchBook(query, genres, pageable);
     }
 }
