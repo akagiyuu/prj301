@@ -1,4 +1,3 @@
-import { createContext, useState } from 'react';
 import {
     SidebarInset,
     SidebarProvider,
@@ -14,8 +13,6 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from './components/ui/breadcrumb';
-import { configureStore } from '@reduxjs/toolkit';
-import { stateSlice } from './slices/state';
 import {
     Provider,
     TypedUseSelectorHook,
@@ -23,11 +20,23 @@ import {
     useSelector,
 } from 'react-redux';
 import { type RootState, type AppDispatch, store } from './store';
+import { Overview } from './components/overview';
 
 export const useAppDispatch = (): AppDispatch => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 const Content = () => {
+    const state = useAppSelector((state) => state.state.value);
+
+    switch (state) {
+        case 'overview':
+            return <Overview className="p-4 pt-0" />;
+        default:
+            return <div></div>;
+    }
+};
+
+const Main = () => {
     const state = useAppSelector((state) => state.state.value);
 
     return (
@@ -57,14 +66,7 @@ const Content = () => {
                     </Breadcrumb>
                 </div>
             </header>
-            <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="aspect-video rounded-xl bg-muted/50" />
-                    <div className="aspect-video rounded-xl bg-muted/50" />
-                    <div className="aspect-video rounded-xl bg-muted/50" />
-                </div>
-                <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-            </div>
+            <Content />
         </div>
     );
 };
@@ -75,7 +77,7 @@ const App = () => {
             <SidebarProvider>
                 <AppSidebar />
                 <SidebarInset>
-                    <Content />
+                    <Main />
                 </SidebarInset>
             </SidebarProvider>
         </Provider>
