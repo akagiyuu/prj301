@@ -233,7 +233,7 @@ export function DataTable<TData extends { id: string }, TValue = unknown>({
                                                 {header.column.getCanSort() && (
                                                     <Button
                                                         variant="ghost"
-                                                        onClick={header.column.getToggleSortingHandler()}
+                                                        onClick={() => header.column.toggleSorting(undefined, true)}
                                                     >
                                                         {header.column.getIsSorted() ? (
                                                             header.column.getIsSorted() ===
