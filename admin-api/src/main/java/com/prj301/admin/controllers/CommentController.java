@@ -1,6 +1,7 @@
 package com.prj301.admin.controllers;
 
 import com.prj301.admin.interceptors.JWSProtected;
+import com.prj301.admin.models.dto.DeleteDTO;
 import com.prj301.admin.models.dto.comment.CommentReportResponse;
 import com.prj301.admin.services.CommentService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -8,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/comment")
@@ -41,15 +40,15 @@ public class CommentController {
 
     @DeleteMapping("/")
     public void delete(
-        @RequestParam("id") UUID id
+        @RequestBody DeleteDTO data
     ) {
-        service.delete(id);
+        service.delete(data.getId());
     }
 
     @DeleteMapping("/report")
     public void deleteReport(
-        @RequestParam("id") UUID id
+        @RequestBody DeleteDTO data
     ) {
-        service.deleteReport(id);
+        service.deleteReport(data.getId());
     }
 }
