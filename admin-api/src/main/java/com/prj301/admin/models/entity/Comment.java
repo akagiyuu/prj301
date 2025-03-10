@@ -27,8 +27,7 @@ public class Comment {
     @JoinColumn(nullable = false)
     private Book book;
 
-    @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "text")
     private String content;
 
     @CreationTimestamp

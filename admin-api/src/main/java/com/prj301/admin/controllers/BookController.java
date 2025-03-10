@@ -1,8 +1,9 @@
 package com.prj301.admin.controllers;
 
 import com.prj301.admin.interceptors.JWSProtected;
-import com.prj301.admin.models.dto.book.BookResponse;
+import com.prj301.admin.models.dto.DeleteDTO;
 import com.prj301.admin.models.dto.book.BookReportResponse;
+import com.prj301.admin.models.dto.book.BookResponse;
 import com.prj301.admin.services.BookService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/book")
@@ -42,8 +42,8 @@ public class BookController {
     }
 
     @DeleteMapping("/")
-    public void delete(@RequestParam("id") UUID id) {
-        service.delete(id);
+    public void delete(@RequestBody DeleteDTO data) {
+        service.delete(data.getId());
     }
 
     @GetMapping("/report")
@@ -62,7 +62,7 @@ public class BookController {
     }
 
     @DeleteMapping("/report")
-    public void deleteReport(@RequestParam("id") UUID id) {
-        service.deleteReport(id);
+    public void deleteReport(@RequestBody DeleteDTO data) {
+        service.deleteReport(data.getId());
     }
 }

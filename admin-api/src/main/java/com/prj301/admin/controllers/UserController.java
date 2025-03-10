@@ -1,6 +1,7 @@
 package com.prj301.admin.controllers;
 
 import com.prj301.admin.interceptors.JWSProtected;
+import com.prj301.admin.models.dto.DeleteDTO;
 import com.prj301.admin.models.dto.user.UserReportResponse;
 import com.prj301.admin.models.dto.user.UserResponse;
 import com.prj301.admin.services.UserService;
@@ -11,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/user")
@@ -23,7 +23,9 @@ public class UserController {
 
     @GetMapping("/")
     public Page<UserResponse> findAll(
-        @RequestParam(value = "title", required = false) String title, Pageable pageable) {
+        @RequestParam(value = "title", required = false) String title,
+        Pageable pageable
+    ) {
         if (title == null || title.isEmpty()) {
             return service.findAll(pageable);
         }
@@ -42,13 +44,17 @@ public class UserController {
     }
 
     @DeleteMapping("/")
-    public void delete(@RequestParam("id") UUID id) {
-        service.delete(id);
+    public void delete(
+        @RequestBody DeleteDTO data
+    ) {
+        service.delete(data.getId());
     }
 
     @GetMapping("/report")
     public Page<UserReportResponse> findAllReport(
-        @RequestParam(value = "title", required = false) String title, Pageable pageable) {
+        @RequestParam(value = "title", required = false) String title,
+        Pageable pageable
+    ) {
         if (title == null || title.isEmpty()) {
             return service.findAllReport(pageable);
         }
@@ -62,7 +68,7 @@ public class UserController {
     }
 
     @DeleteMapping("/report")
-    public void deleteReport(@RequestParam("id") UUID id) {
-        service.deleteReport(id);
+    public void deleteReport(@RequestBody DeleteDTO data) {
+        service.deleteReport(data.getId());
     }
 }
