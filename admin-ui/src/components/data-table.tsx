@@ -50,16 +50,20 @@ import {
     SelectTrigger,
     SelectValue,
 } from './ui/select';
+import { fetchWithAuth } from '@/lib/utils';
 
 type Action = {
-    [name: string]: (id: string) => void;
+    [name: string]: (
+        id: string,
+        fetchData: () => Promise<void>,
+    ) => Promise<void>;
 };
 
 type DataTableProps<TData extends { id: string }, TValue> = {
     dataApi: string;
     queryKey: string;
     columns: ColumnDef<TData, TValue>[];
-    action: Action;
+    action?: Action;
 };
 
 export function DataTable<TData extends { id: string }, TValue = unknown>({
@@ -77,38 +81,53 @@ export function DataTable<TData extends { id: string }, TValue = unknown>({
     const [pageCount, setPageCount] = useState(0);
     const [data, setData] = useState<TData[]>([]);
     const [query, setQuery] = useState('');
-
-    useEffect(() => {
-        const fetchData = async () => {
+    const fetchData = useMemo(() => {
+        return async () => {
             const sortQuery = sorting
                 .map(
                     (s) =>
                         `&sort=${encodeURIComponent(s.id)},${s.desc ? 'desc' : 'asc'}`,
                 )
                 .join('');
-            const response = await fetch(
+            const response = await fetchWithAuth(
                 `${dataApi}?page=${pagination.pageIndex}&size=${pagination.pageSize}${sortQuery}&${queryKey}=${query}`,
-                {
-                    headers: new Headers({
-                        Authorization:
-                            'Bearer eyJhbGciOiJFUzI1NiJ9.eyJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NDE1MzU4NzYsImV4cCI6MTc0MjE0MDY3Nn0.LcsSS2rPS7lO9BRt338xvqzN1sa3pevIcUVPihNF9p8cefJynhaMJCQmFrFdYpC20ADCIXn5zv2e9BkzIUbVdQ',
-                    }),
-                },
             );
             const json = await response.json();
             setData(json.content);
             setPageCount(json.totalPages);
         };
-
-        fetchData();
     }, [query, dataApi, sorting, pagination]);
+    const defaultAction: Action = useMemo(() => {
+        return {
+            delete: async (id, fetchData) => {
+                const response = await fetchWithAuth(dataApi, {
+                    method: 'DELETE',
+                    body: JSON.stringify({ id }),
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    return;
+                }
+
+                await fetchData();
+            },
+        };
+    }, [dataApi, fetchData]);
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
 
     const columns = useMemo(() => {
         const actionColumn: ColumnDef<TData, TValue> = {
             id: 'actions',
             cell: ({ row, table }) => {
                 const record = row.original;
-                const action = table.options.meta as Action;
+                const action = table.options.meta as Action | undefined;
 
                 return (
                     <DropdownMenu>
@@ -121,10 +140,12 @@ export function DataTable<TData extends { id: string }, TValue = unknown>({
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-                            {Object.entries(action).map(([name, func]) => (
+                            {Object.entries(
+                                Object.assign(defaultAction, action),
+                            ).map(([name, func]) => (
                                 <DropdownMenuItem
                                     className="capitalize"
-                                    onClick={() => func(record.id)}
+                                    onClick={() => func(record.id, fetchData)}
                                 >
                                     {name}
                                 </DropdownMenuItem>
@@ -195,7 +216,7 @@ export function DataTable<TData extends { id: string }, TValue = unknown>({
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-            <div className="rounded-md border">
+            <div className="rounded-md border overflow-x-auto">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -244,7 +265,10 @@ export function DataTable<TData extends { id: string }, TValue = unknown>({
                                     }
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
+                                        <TableCell
+                                            className="whitespace-normal break-words"
+                                            key={cell.id}
+                                        >
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext(),
