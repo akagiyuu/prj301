@@ -52,6 +52,12 @@ const UserProfile = ({
 }) => {
     const { isMobile } = useSidebar();
 
+    const logout = () => {
+        localStorage.removeItem('token');
+
+        location.reload();
+    };
+
     return (
         <SidebarMenu>
             <SidebarMenuItem>
@@ -99,7 +105,7 @@ const UserProfile = ({
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={logout}>
                             <LogOut />
                             Log out
                         </DropdownMenuItem>
