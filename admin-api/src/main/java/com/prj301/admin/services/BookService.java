@@ -1,5 +1,6 @@
 package com.prj301.admin.services;
 
+import com.prj301.admin.models.dto.book.BookCount;
 import com.prj301.admin.models.dto.book.BookReportResponse;
 import com.prj301.admin.models.dto.book.BookResponse;
 import com.prj301.admin.models.entity.Author;
@@ -91,7 +92,7 @@ public class BookService {
         return bookRepository.count();
     }
 
-    public List<Long> countByMonth() {
+    public List<BookCount> countByMonth() {
         return bookRepository.countByMonth();
     }
 
