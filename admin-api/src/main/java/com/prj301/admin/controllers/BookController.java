@@ -2,6 +2,7 @@ package com.prj301.admin.controllers;
 
 import com.prj301.admin.interceptors.JWSProtected;
 import com.prj301.admin.models.dto.DeleteDTO;
+import com.prj301.admin.models.dto.book.BookCount;
 import com.prj301.admin.models.dto.book.BookReportResponse;
 import com.prj301.admin.models.dto.book.BookResponse;
 import com.prj301.admin.services.BookService;
@@ -37,7 +38,7 @@ public class BookController {
     }
 
     @GetMapping("/count/month")
-    public List<Long> countByMonth() {
+    public List<BookCount> countByMonth() {
         return service.countByMonth();
     }
 

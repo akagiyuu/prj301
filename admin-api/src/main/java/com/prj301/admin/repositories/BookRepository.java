@@ -1,5 +1,6 @@
 package com.prj301.admin.repositories;
 
+import com.prj301.admin.models.dto.book.BookCount;
 import com.prj301.admin.models.entity.Book;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,6 @@ import java.util.UUID;
 public interface BookRepository extends JpaRepository<Book, UUID> {
     public Page<Book> findByTitleContainingIgnoreCase(String title, Pageable pageable);
 
-    @Query("SELECT COUNT(*) FROM Book WHERE date_part('year', createdAt) = date_part('year', CURRENT_DATE) GROUP BY date_part('month', createdAt)")
-    public List<Long> countByMonth();
+    @Query("SELECT new com.prj301.admin.models.dto.book.BookCount(MONTH(b.createdAt), COUNT(b)) " + "FROM Book b " + "WHERE YEAR(b.createdAt) = YEAR(CURRENT_DATE) " + "GROUP BY MONTH(b.createdAt)")
+    public List<BookCount> countByMonth();
 }
