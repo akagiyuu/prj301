@@ -1,5 +1,6 @@
 package com.prj301.admin.services;
 
+import com.prj301.admin.models.dto.CountResponse;
 import com.prj301.admin.models.dto.user.UserReportResponse;
 import com.prj301.admin.models.dto.user.UserResponse;
 import com.prj301.admin.models.entity.User;
@@ -73,7 +74,7 @@ public class UserService {
         return userRepository.count();
     }
 
-    public List<Long> countByMonth() {
+    public List<CountResponse> countByMonth() {
         return userRepository.countByMonth();
     }
 

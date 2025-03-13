@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export const fetchWithAuth = (url: RequestInfo | URL, init?: RequestInit) => {
     const token = localStorage.getItem('token');
 
-    if (token === null) return null;
+    if (token === null) location.reload();
 
     return fetch(url, {
         ...init,
@@ -18,3 +18,18 @@ export const fetchWithAuth = (url: RequestInfo | URL, init?: RequestInit) => {
         },
     });
 };
+
+export const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+];
