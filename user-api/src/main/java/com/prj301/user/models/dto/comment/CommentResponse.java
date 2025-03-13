@@ -11,7 +11,6 @@ import java.util.UUID;
 @Setter
 @RequiredArgsConstructor
 public class CommentResponse {
-    private final UUID id;
     private final String username;
     private final String content;
     private final LocalDate createdAt;

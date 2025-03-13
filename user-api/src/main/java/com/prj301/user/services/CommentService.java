@@ -43,7 +43,6 @@ public class CommentService {
 
     private CommentResponse toRespone(Comment comment){
         return new CommentResponse(
-                comment.getId(),
                 comment.getUser().getUsername(),
                 comment.getContent(),
                 comment.getCreatedAt()
