@@ -22,7 +22,7 @@ public class BookController {
     @Autowired
     private BookService service;
 
-    @GetMapping("/")
+    @GetMapping
     public Page<BookResponse> findAll(
         @RequestParam(value = "title", required = false) String title, Pageable pageable) {
         if (title == null || title.isEmpty()) {
@@ -42,7 +42,7 @@ public class BookController {
         return service.countByMonth();
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping
     public void delete(@RequestBody DeleteDTO data) {
         service.delete(data.getId());
     }
@@ -55,11 +55,6 @@ public class BookController {
         }
 
         return service.findAllReport(title, pageable);
-    }
-
-    @GetMapping("/report/count")
-    public long countReport() {
-        return service.countReport();
     }
 
     @DeleteMapping("/report")

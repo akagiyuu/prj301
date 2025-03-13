@@ -22,7 +22,7 @@ public class UserController {
     @Autowired
     private UserService service;
 
-    @GetMapping("/")
+    @GetMapping
     public Page<UserResponse> findAll(
         @RequestParam(value = "title", required = false) String title,
         Pageable pageable
@@ -44,7 +44,7 @@ public class UserController {
         return service.countByMonth();
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping
     public void delete(
         @RequestBody DeleteDTO data
     ) {
@@ -61,11 +61,6 @@ public class UserController {
         }
 
         return service.findAllReport(title, pageable);
-    }
-
-    @GetMapping("/report/count")
-    public long countReport() {
-        return service.countReport();
     }
 
     @DeleteMapping("/report")

@@ -1,19 +1,20 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+const ADMIN_API_URL =
+    import.meta.env.ADMIN_API_URL ?? 'http://localhost:3000/api/v1';
+
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-export const fetchWithAuth = (url: RequestInfo | URL, init?: RequestInit) => {
+export const fetchWrapper = (url: RequestInfo | URL, init?: RequestInit) => {
     const token = localStorage.getItem('token');
 
-    if (token === null) location.reload();
-
-    return fetch(url, {
+    return fetch(`${ADMIN_API_URL}/${url}`, {
         ...init,
         headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: token === null ? '' : `Bearer ${token}`,
             ...init?.headers,
         },
     });

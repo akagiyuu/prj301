@@ -1,11 +1,4 @@
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     AlertTriangle,
     Book,
@@ -29,9 +22,10 @@ import {
     XAxis,
     YAxis,
 } from 'recharts';
-import { fetchWithAuth, months } from '@/lib/utils';
+import { fetchWrapper, months } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { useMemo } from 'react';
 
 const Section = (item: {
     title: string;
@@ -59,40 +53,28 @@ const Section = (item: {
     );
 };
 
-type RawData = {
+type MonthCount = {
     month: number;
     count: number;
-};
+}[];
 
 const Chart = ({
     title,
     label,
-    apiUrl,
+    data: rawData,
 }: {
     title: string;
     label: string;
-    apiUrl: string;
+    data: MonthCount;
 }) => {
-    const { isPending, error, data } = useQuery({
-        queryKey: [apiUrl],
-        queryFn: () =>
-            fetchWithAuth(apiUrl)
-                .then((res) => res.json())
-                .then((res) => res as RawData[])
-                .then((data) =>
-                    months.map((month, i) => {
-                        const item = data.find((d) => d.month == i + 1);
-                        return { month, count: item?.count ?? 0 };
-                    }),
-                ),
-    });
-
-    if (isPending) return null;
-
-    if (error)
-        toast.error(`Failed to fetch chart data for ${title}`, {
-            description: error,
-        });
+    const data = useMemo(
+        () =>
+            months.map((month, i) => {
+                const item = rawData.find((d) => d.month == i + 1);
+                return { month, count: item?.count ?? 0 };
+            }),
+        [rawData],
+    );
 
     return (
         <Card>
@@ -147,43 +129,74 @@ const Chart = ({
     );
 };
 
+type Data = {
+    bookCount: number;
+    mostViewedBook: {
+        title: string;
+        view: number;
+    };
+    bookCountByMonth: MonthCount;
+
+    userCount: number;
+    userCountByMonth: MonthCount;
+
+    reportCount: number;
+};
+
+const dataApi = 'overview';
+
 export const Overview = () => {
+    const { isPending, error, data } = useQuery({
+        queryKey: [dataApi],
+        queryFn: () =>
+            fetchWrapper(dataApi)
+                .then((res) => res.json())
+                .then((res) => res as Data),
+    });
+
+    if (isPending) return null;
+
+    if (error)
+        toast.error("Failed to fetch overview data", {
+            description: error,
+        });
+
     return (
         <div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <Section
                     title="Total Users"
                     icon={User}
-                    data={Math.floor(Math.random() * 100)}
+                    data={data!.userCount}
                 />
                 <Section
                     title="Total Reports"
                     icon={AlertTriangle}
-                    data={Math.floor(Math.random() * 100)}
+                    data={data!.reportCount}
                 />
                 <Section
                     title="Total Books"
                     icon={Book}
-                    data={Math.floor(Math.random() * 100)}
+                    data={data!.bookCount}
                 />
                 <Section
                     title="Most Viewed Books"
                     icon={BookHeart}
-                    data={Math.floor(Math.random() * 100)}
-                    detail={'Introduction to algorithm'}
+                    data={data!.mostViewedBook.view}
+                    detail={data!.mostViewedBook.title}
                 />
             </div>
             <div className="grid gap-4 grid-cols-2 my-4">
                 <Chart
                     title="Book"
                     label="Book"
-                    apiUrl="http://localhost:3000/api/v1/book/count/month"
+                    data={data!.bookCountByMonth}
                 />
                 <Chart
                     title="User"
                     label="User"
-                    apiUrl="http://localhost:3000/api/v1/user/count/month"
-                />
+                    data={data!.userCountByMonth}
+                />{' '}
             </div>
         </div>
     );
