@@ -38,7 +38,7 @@ public class CommentController {
         return service.findAllReport(content, pageable);
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping
     public void delete(
         @RequestBody DeleteDTO data
     ) {

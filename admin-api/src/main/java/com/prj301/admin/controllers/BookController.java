@@ -1,8 +1,8 @@
 package com.prj301.admin.controllers;
 
 import com.prj301.admin.interceptors.JWSProtected;
+import com.prj301.admin.models.dto.CountResponse;
 import com.prj301.admin.models.dto.DeleteDTO;
-import com.prj301.admin.models.dto.book.BookCount;
 import com.prj301.admin.models.dto.book.BookReportResponse;
 import com.prj301.admin.models.dto.book.BookResponse;
 import com.prj301.admin.services.BookService;
@@ -22,7 +22,7 @@ public class BookController {
     @Autowired
     private BookService service;
 
-    @GetMapping("/")
+    @GetMapping
     public Page<BookResponse> findAll(
         @RequestParam(value = "title", required = false) String title, Pageable pageable) {
         if (title == null || title.isEmpty()) {
@@ -38,11 +38,11 @@ public class BookController {
     }
 
     @GetMapping("/count/month")
-    public List<BookCount> countByMonth() {
+    public List<CountResponse> countByMonth() {
         return service.countByMonth();
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping
     public void delete(@RequestBody DeleteDTO data) {
         service.delete(data.getId());
     }
@@ -55,11 +55,6 @@ public class BookController {
         }
 
         return service.findAllReport(title, pageable);
-    }
-
-    @GetMapping("/report/count")
-    public long countReport() {
-        return service.countReport();
     }
 
     @DeleteMapping("/report")

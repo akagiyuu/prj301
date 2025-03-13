@@ -1,6 +1,7 @@
 package com.prj301.admin.controllers;
 
 import com.prj301.admin.interceptors.JWSProtected;
+import com.prj301.admin.models.dto.CountResponse;
 import com.prj301.admin.models.dto.DeleteDTO;
 import com.prj301.admin.models.dto.user.UserReportResponse;
 import com.prj301.admin.models.dto.user.UserResponse;
@@ -21,7 +22,7 @@ public class UserController {
     @Autowired
     private UserService service;
 
-    @GetMapping("/")
+    @GetMapping
     public Page<UserResponse> findAll(
         @RequestParam(value = "title", required = false) String title,
         Pageable pageable
@@ -39,11 +40,11 @@ public class UserController {
     }
 
     @GetMapping("/count/month")
-    public List<Long> countByMonth() {
+    public List<CountResponse> countByMonth() {
         return service.countByMonth();
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping
     public void delete(
         @RequestBody DeleteDTO data
     ) {
@@ -60,11 +61,6 @@ public class UserController {
         }
 
         return service.findAllReport(title, pageable);
-    }
-
-    @GetMapping("/report/count")
-    public long countReport() {
-        return service.countReport();
     }
 
     @DeleteMapping("/report")

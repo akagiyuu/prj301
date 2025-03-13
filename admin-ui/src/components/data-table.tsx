@@ -50,7 +50,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from './ui/select';
-import { fetchWithAuth } from '@/lib/utils';
+import { fetchWrapper } from '@/lib/utils';
 
 type Action = {
     [name: string]: (
@@ -89,7 +89,7 @@ export function DataTable<TData extends { id: string }, TValue = unknown>({
                         `&sort=${encodeURIComponent(s.id)},${s.desc ? 'desc' : 'asc'}`,
                 )
                 .join('');
-            const response = await fetchWithAuth(
+            const response = await fetchWrapper(
                 `${dataApi}?page=${pagination.pageIndex}&size=${pagination.pageSize}${sortQuery}&${queryKey}=${query}`,
             );
             const json = await response.json();
@@ -100,7 +100,7 @@ export function DataTable<TData extends { id: string }, TValue = unknown>({
     const defaultAction: Action = useMemo(() => {
         return {
             delete: async (id, fetchData) => {
-                const response = await fetchWithAuth(dataApi, {
+                const response = await fetchWrapper(dataApi, {
                     method: 'DELETE',
                     body: JSON.stringify({ id }),
                     headers: {
