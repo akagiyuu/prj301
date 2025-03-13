@@ -157,7 +157,7 @@ export const Overview = () => {
     if (isPending) return null;
 
     if (error)
-        toast.error(`Failed to fetch chart data for ${title}`, {
+        toast.error("Failed to fetch overview data", {
             description: error,
         });
 
