@@ -8,6 +8,7 @@ import org.springframework.lang.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface BookRepository extends JpaRepository<Book, UUID> {
