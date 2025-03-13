@@ -1,6 +1,7 @@
 package com.prj301.admin.controllers;
 
 import com.prj301.admin.interceptors.JWSProtected;
+import com.prj301.admin.models.dto.CountResponse;
 import com.prj301.admin.models.dto.DeleteDTO;
 import com.prj301.admin.models.dto.user.UserReportResponse;
 import com.prj301.admin.models.dto.user.UserResponse;
@@ -39,7 +40,7 @@ public class UserController {
     }
 
     @GetMapping("/count/month")
-    public List<Long> countByMonth() {
+    public List<CountResponse> countByMonth() {
         return service.countByMonth();
     }
 
