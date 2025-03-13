@@ -29,16 +29,30 @@ import {
     XAxis,
     YAxis,
 } from 'recharts';
-import { fetchWithAuth, months } from '@/lib/utils';
+import { fetchWrapper, months } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 const Section = (item: {
     title: string;
+    dataApi: string;
     icon: LucideIcon;
     data: string | number;
     detail?: string;
 }) => {
+    const { isPending, error, data } = useQuery({
+        queryKey: [item.dataApi],
+        queryFn: () =>
+            fetchWrapper(item.dataApi)
+                .then((res) => res.text())
+                .then((res) => Number(res)),
+    });
+
+    if (error)
+        toast.error(`Failed to fetch data for ${title}`, {
+            description: error,
+        });
+
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -48,7 +62,7 @@ const Section = (item: {
                 <item.icon />
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-bold">{item.data}</div>
+                <div className="text-2xl font-bold">{data}</div>
                 {item.detail ?? (
                     <p className="text-xs text-muted-foreground">
                         {item.detail}
@@ -67,16 +81,16 @@ type RawData = {
 const Chart = ({
     title,
     label,
-    apiUrl,
+    dataApi,
 }: {
     title: string;
     label: string;
-    apiUrl: string;
+    dataApi: string;
 }) => {
     const { isPending, error, data } = useQuery({
-        queryKey: [apiUrl],
+        queryKey: [dataApi],
         queryFn: () =>
-            fetchWithAuth(apiUrl)
+            fetchWrapper(dataApi)
                 .then((res) => res.json())
                 .then((res) => res as RawData[])
                 .then((data) =>
@@ -153,37 +167,32 @@ export const Overview = () => {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <Section
                     title="Total Users"
+                    dataApi='user/count'
                     icon={User}
                     data={Math.floor(Math.random() * 100)}
                 />
                 <Section
                     title="Total Reports"
+                    dataApi='report/count'
                     icon={AlertTriangle}
                     data={Math.floor(Math.random() * 100)}
                 />
                 <Section
                     title="Total Books"
+                    dataApi='book/count'
                     icon={Book}
                     data={Math.floor(Math.random() * 100)}
                 />
                 <Section
                     title="Most Viewed Books"
+                    dataApi='book/count'
                     icon={BookHeart}
                     data={Math.floor(Math.random() * 100)}
-                    detail={'Introduction to algorithm'}
                 />
             </div>
             <div className="grid gap-4 grid-cols-2 my-4">
-                <Chart
-                    title="Book"
-                    label="Book"
-                    apiUrl="http://localhost:3000/api/v1/book/count/month"
-                />
-                <Chart
-                    title="User"
-                    label="User"
-                    apiUrl="http://localhost:3000/api/v1/user/count/month"
-                />
+                <Chart title="Book" label="Book" dataApi="book/count/month" />
+                <Chart title="User" label="User" dataApi="user/count/month" />
             </div>
         </div>
     );

@@ -3,7 +3,7 @@ import { DataTable } from './data-table';
 export const User = () => {
     return (
         <DataTable
-            dataApi="http://localhost:3000/api/v1/user/"
+            dataApi="user/"
             queryKey="title"
             columns={[
                 {
