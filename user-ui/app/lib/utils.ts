@@ -19,3 +19,7 @@ export const fetchWrapper = (url: RequestInfo | URL, init?: RequestInit) => {
         },
     });
 };
+
+export const logout = () => {
+    localStorage.removeItem('token');
+};
