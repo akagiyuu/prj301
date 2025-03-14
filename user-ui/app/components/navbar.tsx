@@ -72,13 +72,13 @@ export const Navbar = ({ logo, menu, auth }: Props) => {
                     {logo.title}
                 </span>
             </div>
-            <div className="col-2 gap-6">
+            <div className="gap-6">
                 <NavigationMenu className="size-fit m-auto">
                     <NavigationMenuList className="space-x-5">
                         {menu.map((item) => (
                             <a
                                 key={item.title}
-                                className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-3 py-2 text-sm font-normal text-foreground/80 transition-colors hover:bg-accent/30 hover:text-foreground"
+                                className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-3 py-2 font-normal text-foreground/80 transition-colors hover:bg-accent/30 hover:text-foreground"
                                 href={item.url}
                             >
                                 <span>{item.title}</span>
@@ -87,11 +87,11 @@ export const Navbar = ({ logo, menu, auth }: Props) => {
                     </NavigationMenuList>
                 </NavigationMenu>
             </div>
-            <div className="col-3 grid grid-cols-2 gap-6 size-fit h-full mr-0 ml-auto">
+            <div className="size-fit h-full mr-0 ml-auto">
                 {user ? (
                     <UserMenu user={user} />
                 ) : (
-                    <>
+                    <div className="grid grid-cols-2 gap-6 ">
                         <Button
                             className="h-9 px-4 font-normal"
                             asChild
@@ -105,7 +105,7 @@ export const Navbar = ({ logo, menu, auth }: Props) => {
                         >
                             <NavLink to={auth.signup}>Sign up</NavLink>
                         </Button>
-                    </>
+                    </div>
                 )}
             </div>
         </nav>
