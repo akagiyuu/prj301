@@ -8,6 +8,7 @@ import com.prj301.user.models.entity.User;
 import com.prj301.user.repositories.UserRepository;
 import com.prj301.user.services.BookService;
 import com.prj301.user.services.CommentService;
+import com.prj301.user.services.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,10 @@ import java.util.UUID;
 public class BookController {
     @Autowired
     private BookService bookService;
-
     @Autowired
     private CommentService commentService;
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @GetMapping
     public Page<BookResponse> getBooks(
@@ -61,8 +61,8 @@ public class BookController {
             @PathVariable UUID id,
             @RequestBody CommentRequest commentRequest,
             @RequestAttribute("user-id") UUID userId
-    ){
-        User currentUser = userRepository.findById(userId)
+    ) {
+        User currentUser = userService.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User Not Found!"));
         CommentResponse response = commentService.addComment(id, commentRequest, currentUser);
         return ResponseEntity.ok(response);
