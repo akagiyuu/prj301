@@ -30,7 +30,6 @@ public class UserService {
     // Mapping method from User to UserResponse DTO
     public UserResponse toUserResponse(User user) {
         return UserResponse.builder()
-                .id(user.getId())
                 .username(user.getUsername())
                 .avatarPath(user.getAvatarPath())
                 .fullName(user.getFullName())
