@@ -6,16 +6,45 @@ import { Button } from './ui/button';
 import { NavLink, useNavigate } from 'react-router';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from './ui/form';
+
+const schema = z.object({
+    username: z
+        .string()
+        .min(2, {
+            message: 'Username must be at least 2 characters.',
+        })
+        .max(50),
+    password: z.string().nonempty({
+        message: 'Password must not be empty',
+    }),
+});
 
 export const LoginForm = ({
     className,
     ...props
 }: React.ComponentPropsWithoutRef<'div'>) => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const onSubmit = async () => {
+    const form = useForm<z.infer<typeof schema>>({
+        resolver: zodResolver(schema),
+        defaultValues: {
+            username: '',
+            password: '',
+        },
+    });
+
+    const onSubmit = async (values: z.infer<typeof schema>) => {
         try {
             const response = await fetchWrapper('auth/login', {
                 method: 'POST',
@@ -24,25 +53,22 @@ export const LoginForm = ({
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    username: username,
-                    password: password,
+                    username: values.username,
+                    password: values.password,
                 }),
             });
 
             if (!response.ok) {
-                toast.error('Invalid username or password');
-                return;
+                throw new Error("Invalid username or password");
             }
 
             const token = await response.text();
 
             localStorage.setItem('token', token);
 
-            navigate("/");
+            navigate('/');
         } catch (error) {
-            toast.error('Invalid username or password', {
-                description: error,
-            });
+            toast.error(error.toString());
         }
     };
 
@@ -55,50 +81,54 @@ export const LoginForm = ({
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form>
-                        <div className="flex flex-col gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Username</Label>
-                                <Input
-                                    id="username"
-                                    type="username"
-                                    value={username}
-                                    onChange={(event) =>
-                                        setUsername(event.target.value)
-                                    }
-                                    required
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)}>
+                            <div className="flex flex-col gap-6">
+                                <FormField
+                                    control={form.control}
+                                    name="username"
+                                    render={({ field }) => (
+                                        <FormItem className="grid gap-2">
+                                            <FormLabel>Username</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} required />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
                                 />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    value={password}
-                                    onChange={(event) =>
-                                        setPassword(event.target.value)
-                                    }
-                                    required
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem className="grid gap-2">
+                                            <FormLabel>Password</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="password"
+                                                    {...field}
+                                                    required
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
                                 />
+                                <Button type="submit" className="w-full">
+                                    Login
+                                </Button>
                             </div>
-                            <Button
-                                type="button"
-                                onClick={onSubmit}
-                                className="w-full"
-                            >
-                                Login
-                            </Button>
-                        </div>
-                        <div className="mt-4 text-center text-sm">
-                            Don&apos;t have an account?{' '}
-                            <NavLink
-                                to="/signup"
-                                className="underline underline-offset-4"
-                            >
-                                Sign up
-                            </NavLink>
-                        </div>
-                    </form>
+                            <div className="mt-4 text-center text-sm">
+                                Don&apos;t have an account?{' '}
+                                <NavLink
+                                    to="/signup"
+                                    className="underline underline-offset-4"
+                                >
+                                    Sign up
+                                </NavLink>
+                            </div>
+                        </form>
+                    </Form>
                 </CardContent>
             </Card>
         </div>
