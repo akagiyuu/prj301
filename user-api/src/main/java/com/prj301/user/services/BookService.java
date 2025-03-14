@@ -58,9 +58,31 @@ public class BookService {
         );
     }
 
+    // search by genres and pagination
     public Page<BookResponse> findAll(List<String> genres, Pageable pageable) {
         return bookRepository
-            .findByGenres_NameInIgnoreCase(genres, pageable)
-            .map(this::toResponse);
+                .findByGenres_NameInIgnoreCase(genres, pageable)
+                .map(this::toResponse);
+    }
+
+    // default: sort_by title and direction asc
+    public Page<BookResponse> findAll(Pageable pageable) {
+        return bookRepository
+                .findAll(pageable)
+                .map(this::toResponse);
+    }
+
+    // search by query and pagination
+    public Page<BookResponse> findAll(String title, String author, Pageable pageable) {
+        return bookRepository
+                .findByTitleContainingIgnoreCaseOrAuthors_NameContainingIgnoreCase(title, author, pageable)
+                .map(this::toResponse);
+    }
+
+    // search by both query, genres and pagination
+    public Page<BookResponse> findAll(String title, String author, List<String> genres, Pageable pageable) {
+        return bookRepository
+                .searchByGenresAndTitleOrAuthor(title, author, genres, pageable)
+                .map(this::toResponse);
     }
 }
