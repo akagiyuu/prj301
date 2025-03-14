@@ -38,12 +38,9 @@ public class BookController {
         @RequestParam(required = false) List<String> genres,
         Pageable pageable
     ) {
-        if (query == null || query.isEmpty()) {
-            return bookService.findAll(genres, pageable);
-        }
-
-        throw new UnsupportedOperationException("Not implement, yet");
+        return bookService.findAll(query, genres, pageable);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<BookResponse> getBookById(@PathVariable UUID id){

@@ -7,10 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface BookRepository extends JpaRepository<Book, UUID> {
-    Page<Book> findByGenres_NameInIgnoreCase(@Nullable Collection<String> names, Pageable pageable);
+    Page<Book> findByTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCase(
+        @Nullable String title, @Nullable String name, @Nullable Collection<String> names, Pageable pageable);
 }
