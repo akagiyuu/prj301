@@ -36,45 +36,9 @@ public class BookController {
     public Page<BookResponse> getBooks(
         @RequestParam(required = false) String query,
         @RequestParam(required = false) List<String> genres,
-        @RequestParam(defaultValue = "title") String sort_by,
-        @RequestParam(defaultValue = "asc") String direction,
         Pageable pageable
     ) {
-        final int startingPage = 1; // starting page
-        final int sizeOfPage = 8; // number of books in one page
-        // query include both book's title and authors
-        String queryTitle = query;
-        String queryAuthor = query;
-        // Sort by title and direction
-        Sort sort = direction.equalsIgnoreCase("asc")
-                ? Sort.by(sort_by).ascending()
-                : Sort.by(sort_by).descending();
-
-        // Default: Sort_by title and direction asc
-        // query = null && genres == null
-        // Just sort_by and direction asc
-        if(query == null && (genres == null || genres.isEmpty())) {
-            pageable = PageRequest.of(startingPage,sizeOfPage, sort);
-            return bookService.findAll(pageable);
-        }
-        // query = null && genres != null
-        // Search by genres, sort_by and direction
-        else if (query == null || query.isEmpty()) {
-            pageable = PageRequest.of(startingPage,sizeOfPage, sort);
-            return bookService.findAll(genres, pageable);
-        }
-        // genres = null && query != null
-        // Search book's title, author by query with sort_by and direction
-        else if(genres == null || genres.isEmpty()) {
-            pageable = PageRequest.of(startingPage, sizeOfPage, sort);
-            return bookService.findAll(queryTitle, queryAuthor, pageable);
-        }
-        // Use both search by title, author and genres
-        else if(!genres.isEmpty() && query != null) {
-            pageable = PageRequest.of(startingPage, sizeOfPage,sort);
-            return bookService.findAll(queryTitle, queryAuthor, genres, pageable);
-        }
-        throw new UnsupportedOperationException("Not implement, yet");
+        return bookService.findAll(query, genres, pageable);
     }
 
 
