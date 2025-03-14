@@ -26,7 +26,7 @@ const schema = z.object({
         })
         .max(50),
     password: z.string().nonempty({
-        message: 'Password must not be empty',
+        message: 'Password must not be empty.',
     }),
 });
 
@@ -121,7 +121,7 @@ export const LoginForm = ({
                             <div className="mt-4 text-center text-sm">
                                 Don&apos;t have an account?{' '}
                                 <NavLink
-                                    to="/signup"
+                                    to="/auth/signup"
                                     className="underline underline-offset-4"
                                 >
                                     Sign up
