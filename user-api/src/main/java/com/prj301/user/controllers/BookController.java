@@ -2,8 +2,10 @@ package com.prj301.user.controllers;
 
 import com.prj301.user.interceptors.JWTProtected;
 import com.prj301.user.models.dto.book.BookResponse;
+import com.prj301.user.models.dto.book.UploadBookRequest;
 import com.prj301.user.models.dto.comment.CommentRequest;
 import com.prj301.user.models.dto.comment.CommentResponse;
+import com.prj301.user.models.entity.Book;
 import com.prj301.user.models.entity.User;
 import com.prj301.user.repositories.UserRepository;
 import com.prj301.user.services.BookService;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +44,13 @@ public class BookController {
         return bookService.findAll(query, genres, pageable);
     }
 
+    @JWTProtected
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Book uploadBook(@RequestBody UploadBookRequest uploadBookRequest) {
+        return bookService.createBook(uploadBookRequest.getBookRequest(), uploadBookRequest.getPostedUser());
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<BookResponse> getBookById(@PathVariable UUID id){
