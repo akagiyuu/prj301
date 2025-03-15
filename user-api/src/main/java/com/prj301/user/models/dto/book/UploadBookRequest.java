@@ -4,11 +4,20 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.util.Set;
+
 @Setter
 @Getter
 @RequiredArgsConstructor
 public class UploadBookRequest {
-    private BookRequest bookRequest;
-    private PostedUserRequest postedUser;
+    private String isbn;
+    private String title;
+    private String coverPath;
+    private Set<String> authors;
+    private Set<String> genres;
+    private LocalDate publicationDate;
+    private String summary;
+    private String pdfPath;
 }
 

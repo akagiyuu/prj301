@@ -1,19 +1,15 @@
 package com.prj301.user.services;
 
-import com.prj301.user.models.dto.book.BookRequest;
 import com.prj301.user.models.dto.book.BookResponse;
-import com.prj301.user.models.dto.book.PostedUserRequest;
+import com.prj301.user.models.dto.book.UploadBookRequest;
 import com.prj301.user.models.entity.Author;
 import com.prj301.user.models.entity.Book;
 import com.prj301.user.models.entity.Genre;
 import com.prj301.user.models.entity.User;
-import com.prj301.user.repositories.AuthorRepository;
 import com.prj301.user.repositories.BookRepository;
-import com.prj301.user.repositories.GenreRepository;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -26,10 +22,12 @@ import java.util.stream.Collectors;
 public class BookService {
     @Autowired
     private BookRepository bookRepository;
+
     @Autowired
-    private AuthorRepository authorRepository;
+    private AuthorService authorService;
+
     @Autowired
-    private GenreRepository genreRepository;
+    private GenreService genreService;
 
     public BookResponse getBookById(UUID id) {
         return bookRepository
@@ -70,7 +68,7 @@ public class BookService {
 
     public Page<BookResponse> findAll(String query, List<String> genres, Pageable pageable) {
         return bookRepository
-            .findByTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCase(
+            .findTopByTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCaseTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCaseTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCaseTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCaseTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCaseTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCaseTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCaseTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCase(
                 query,
                 query,
                 genres,
@@ -79,76 +77,33 @@ public class BookService {
             .map(this::toResponse);
     }
 
-    public User convertPostedUserRequestToUser(PostedUserRequest postedUserRequest) {
-        return User.builder()
-                .username(postedUserRequest.getUsername())
-                .password(postedUserRequest.getPassword())
-                .avatarPath(postedUserRequest.getAvatarPath())
-                .fullName(postedUserRequest.getFullName())
-                .hobbies(postedUserRequest.getHobbies())
-                .dob(postedUserRequest.getDob())
-                .bio(postedUserRequest.getBio())
-                .build();
-    }
+    public Book createBook(
+        UploadBookRequest uploadBookRequest,
+        User postedUser
+    ) {
+        Set<Author> authors = uploadBookRequest
+            .getAuthors()
+            .stream()
+            .map(authorService::findOrCreate)
+            .collect(Collectors.toSet());
 
+        Set<Genre> genres = uploadBookRequest
+            .getGenres()
+            .stream()
+            .map(genreService::findOrCreate)
+            .collect(Collectors.toSet());
 
-
-
-    // upload new book
-    public Book createBook(BookRequest bookRequest, PostedUserRequest postedUser) {
-        Set<Author> authorEntities = bookRequest.getAuthors().stream()
-                .map(authorRequest -> {
-
-                    if (authorRequest.getId() != null) {
-                        return authorRepository.findById(authorRequest.getId())
-                                .map(existingAuthor -> {
-                                    existingAuthor.setName(authorRequest.getName());
-                                    return existingAuthor;
-                                })
-                                .orElseGet(() -> {
-                                    Author newAuthor = new Author();
-                                    newAuthor.setName(authorRequest.getName());
-                                    return newAuthor;
-                                });
-                    } else {
-                        Author newAuthor = new Author();
-                        newAuthor.setName(authorRequest.getName());
-                        return newAuthor;
-                    }
-                })
-                .collect(Collectors.toSet());
-
-
-        Set<Genre> genreEntities = bookRequest.getGenres().stream()
-                .map(genreRequest -> {
-                    if (genreRequest.getId() != null) {
-                        return genreRepository.findById(genreRequest.getId())
-                                .map(existingGenre -> {
-                                    existingGenre.setName(genreRequest.getName());
-                                    return existingGenre;
-                                })
-                                .orElseGet(() -> {
-                                    Genre newGenre = new Genre();
-                                    newGenre.setName(genreRequest.getName());
-                                    return newGenre;
-                                });
-                    } else {
-                        Genre newGenre = new Genre();
-                        newGenre.setName(genreRequest.getName());
-                        return newGenre;
-                    }
-                })
-                .collect(Collectors.toSet());
-        Book book = new Book();
-        book.setPostedUser(convertPostedUserRequestToUser(postedUser));
-        book.setIsbn(bookRequest.getIsbn());
-        book.setTitle(bookRequest.getTitle());
-        book.setAuthors(authorEntities);
-        book.setGenres(genreEntities);
-        book.setPublicationDate(bookRequest.getPublicationDate());
-        book.setPdfPath(bookRequest.getPdfPath());
-        book.setCoverPath(bookRequest.getCoverPath());
+        val book = new Book();
+        book.setIsbn(uploadBookRequest.getIsbn());
+        book.setPostedUser(postedUser);
+        book.setTitle(uploadBookRequest.getTitle());
+        book.setCoverPath(uploadBookRequest.getCoverPath());
+        book.setAuthors(authors);
+        book.setGenres(genres);
+        book.setPublicationDate(uploadBookRequest.getPublicationDate());
         book.setSummary(book.getSummary());
+        book.setPdfPath(uploadBookRequest.getPdfPath());
+
         return bookRepository.save(book);
     }
 }

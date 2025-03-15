@@ -13,6 +13,7 @@ import com.prj301.user.services.CommentService;
 import com.prj301.user.services.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -48,18 +49,22 @@ public class BookController {
     @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Book uploadBook(@RequestBody UploadBookRequest uploadBookRequest) {
-        return bookService.createBook(uploadBookRequest.getBookRequest(), uploadBookRequest.getPostedUser());
+    public Book uploadBook(@RequestAttribute("user-id") UUID id, @RequestBody UploadBookRequest uploadBookRequest) {
+        val user = userService
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("invalid user id"));
+
+        return bookService.createBook(uploadBookRequest, user);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookResponse> getBookById(@PathVariable UUID id){
+    public ResponseEntity<BookResponse> getBookById(@PathVariable UUID id) {
         BookResponse bookResponse = bookService.getBookById(id);
         return ResponseEntity.ok(bookResponse);
     }
 
     @GetMapping("/{id}/comment")
-    public ResponseEntity<List<CommentResponse>> getCommentsByBookId(@PathVariable UUID id){
+    public ResponseEntity<List<CommentResponse>> getCommentsByBookId(@PathVariable UUID id) {
         List<CommentResponse> comments = commentService.getCommentsById(id);
         return ResponseEntity.ok(comments);
     }
@@ -68,12 +73,13 @@ public class BookController {
     @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/{id}/comment")
     public ResponseEntity<CommentResponse> postComment(
-            @PathVariable UUID id,
-            @RequestBody CommentRequest commentRequest,
-            @RequestAttribute("user-id") UUID userId
+        @PathVariable UUID id,
+        @RequestBody CommentRequest commentRequest,
+        @RequestAttribute("user-id") UUID userId
     ) {
-        User currentUser = userService.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User Not Found!"));
+        User currentUser = userService
+            .findById(userId)
+            .orElseThrow(() -> new RuntimeException("User Not Found!"));
         CommentResponse response = commentService.addComment(id, commentRequest, currentUser);
         return ResponseEntity.ok(response);
     }
