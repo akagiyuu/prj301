@@ -1,6 +1,7 @@
 package com.prj301.user.services;
 
 import com.prj301.user.models.dto.user.UserResponse;
+import com.prj301.user.models.dto.user.UserUpdate;
 import com.prj301.user.models.entity.User;
 import com.prj301.user.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -12,29 +13,44 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
+
+    public UserResponse toUserResponse(User user) {
+        return new UserResponse(
+            user.getUsername(),
+            user.getAvatarPath(),
+            user.getFullName(),
+            user.getHobbies(),
+            user.getDob(),
+            user.getBio()
+        );
+    }
 
     public Optional<User> findById(UUID id) {
         return userRepository.findById(id);
     }
 
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public UserResponse findByUsername(String username) {
+        return userRepository
+            .findByUsernameContainsIgnoreCase(username)
+            .map(this::toUserResponse)
+            .orElse(null);
     }
 
-    public User save(User user) {
-        return userRepository.save(user);
-    }
+    public boolean update(UUID id, UserUpdate data) {
+        try {
+            userRepository.updateAvatarPathAndFullNameAndHobbiesAndDobAndBioById(
+                data.getAvatarPath(),
+                data.getFullName(),
+                data.getHobbies(),
+                data.getDob(),
+                data.getBio(),
+                id
+            );
 
-    // Mapping method from User to UserResponse DTO
-    public UserResponse toUserResponse(User user) {
-        return UserResponse.builder()
-                .username(user.getUsername())
-                .avatarPath(user.getAvatarPath())
-                .fullName(user.getFullName())
-                .hobbies(user.getHobbies())
-                .bio(user.getBio())
-                .build();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

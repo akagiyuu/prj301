@@ -31,8 +31,8 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     @Operation(
-        summary = "User Sign In",
-        description = "Creates a new user sign in and returns a JWT token upon successful registration."
+        summary = "User Signup",
+        description = "Creates a new user and returns a JWT token upon successful registration."
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -46,8 +46,8 @@ public class AuthController {
             content = @Content(mediaType = "text/plain")
         )
     })
-    @PostMapping("/signin")
-    public ResponseEntity<?> signin(@RequestBody SigninRequest signinRequest) {
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody SigninRequest signinRequest) {
         User user = User
             .builder()
             .username(signinRequest.getUsername())
@@ -86,7 +86,7 @@ public class AuthController {
     })
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        final Optional<User> userOptional = userRepository.findByUsername(loginRequest.getUsername());
+        final Optional<User> userOptional = userRepository.findByUsernameContainsIgnoreCase(loginRequest.getUsername());
         if (!userOptional.isPresent()) {
             return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
