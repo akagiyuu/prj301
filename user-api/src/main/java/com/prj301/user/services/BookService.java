@@ -11,11 +11,13 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,13 +30,6 @@ public class BookService {
 
     @Autowired
     private GenreService genreService;
-
-    public BookResponse getBookById(UUID id) {
-        return bookRepository
-            .findById(id)
-            .map(this::toResponse)
-            .orElseThrow(() -> new RuntimeException("Book Not Found!"));
-    }
 
     private BookResponse toResponse(Book book) {
         val postedUser = book.getPostedUser();
@@ -66,14 +61,47 @@ public class BookService {
         );
     }
 
+    public BookResponse getBookById(UUID id) {
+        return bookRepository
+            .findById(id)
+            .map(this::toResponse)
+            .orElseThrow(() -> new RuntimeException("Book Not Found!"));
+    }
+
+    public Specification<Book> findCriteria(String searchTerm, Collection<String> genreNames) {
+        return (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (searchTerm != null && !searchTerm.isEmpty()) {
+                Join<Book, Author> authorJoin = root.join("authors", JoinType.LEFT);
+                Predicate titlePredicate = cb.like(cb.lower(root.get("title")), "%" + searchTerm.toLowerCase() + "%");
+                Predicate authorPredicate = cb.like(cb.lower(authorJoin.get("name")),
+                                                    "%" + searchTerm.toLowerCase() + "%"
+                );
+                predicates.add(cb.or(titlePredicate, authorPredicate));
+            }
+
+            if (genreNames != null && !genreNames.isEmpty()) {
+                Join<Book, Genre> genreJoin = root.join("genres", JoinType.LEFT);
+                List<String> lowerGenreNames = genreNames
+                    .stream()
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toList());
+                predicates.add(
+                    cb
+                        .lower(genreJoin.get("name"))
+                        .in(lowerGenreNames)
+                );
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+
     public Page<BookResponse> findAll(String query, List<String> genres, Pageable pageable) {
         return bookRepository
-            .findTopByTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCaseTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCaseTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCaseTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCaseTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCaseTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCaseTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCaseTitleContainsIgnoreCaseOrAuthors_NameContainsIgnoreCaseAndGenres_NameInIgnoreCase(
-                query,
-                query,
-                genres,
-                pageable
-            )
+            .findAll(findCriteria(query, genres), pageable)
             .map(this::toResponse);
     }
 
