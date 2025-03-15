@@ -17,7 +17,7 @@ const Layout = () => {
             <body>
                 <Navbar
                     logo={{
-                        title: 'virtualbookarchive.com',
+                        title: 'virtualbookarchive',
                     }}
                     menu={[
                         {
