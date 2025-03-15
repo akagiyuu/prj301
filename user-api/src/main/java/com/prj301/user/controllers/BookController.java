@@ -2,8 +2,10 @@ package com.prj301.user.controllers;
 
 import com.prj301.user.interceptors.JWTProtected;
 import com.prj301.user.models.dto.book.BookResponse;
+import com.prj301.user.models.dto.book.UploadBookRequest;
 import com.prj301.user.models.dto.comment.CommentRequest;
 import com.prj301.user.models.dto.comment.CommentResponse;
+import com.prj301.user.models.entity.Book;
 import com.prj301.user.models.entity.User;
 import com.prj301.user.repositories.UserRepository;
 import com.prj301.user.services.BookService;
@@ -11,11 +13,13 @@ import com.prj301.user.services.CommentService;
 import com.prj301.user.services.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,15 +45,26 @@ public class BookController {
         return bookService.findAll(query, genres, pageable);
     }
 
+    @JWTProtected
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Book uploadBook(@RequestAttribute("user-id") UUID id, @RequestBody UploadBookRequest uploadBookRequest) {
+        val user = userService
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("invalid user id"));
+
+        return bookService.createBook(uploadBookRequest, user);
+    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookResponse> getBookById(@PathVariable UUID id){
+    public ResponseEntity<BookResponse> getBookById(@PathVariable UUID id) {
         BookResponse bookResponse = bookService.getBookById(id);
         return ResponseEntity.ok(bookResponse);
     }
 
     @GetMapping("/{id}/comment")
-    public ResponseEntity<List<CommentResponse>> getCommentsByBookId(@PathVariable UUID id){
+    public ResponseEntity<List<CommentResponse>> getCommentsByBookId(@PathVariable UUID id) {
         List<CommentResponse> comments = commentService.getCommentsById(id);
         return ResponseEntity.ok(comments);
     }
@@ -58,9 +73,9 @@ public class BookController {
     @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/{id}/comment")
     public ResponseEntity<CommentResponse> postComment(
-            @PathVariable UUID id,
-            @RequestBody CommentRequest commentRequest,
-            @RequestAttribute("user-id") UUID userId
+        @PathVariable UUID id,
+        @RequestBody CommentRequest commentRequest,
+        @RequestAttribute("user-id") UUID userId
     ) {
         User currentUser = userService.findById(userId).orElse(null);
         CommentResponse response = commentService.addComment(id, commentRequest, currentUser);
