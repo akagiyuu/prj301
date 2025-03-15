@@ -1,15 +1,15 @@
 package com.prj301.user.models.dto.user;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class UserResponse {
-    private final String username;
+public class UserUpdate {
     private final String avatarPath;
     private final String fullName;
     private final String hobbies;

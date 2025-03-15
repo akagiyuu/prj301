@@ -62,8 +62,7 @@ public class BookController {
             @RequestBody CommentRequest commentRequest,
             @RequestAttribute("user-id") UUID userId
     ) {
-        User currentUser = userService.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User Not Found!"));
+        User currentUser = userService.findById(userId).orElse(null);
         CommentResponse response = commentService.addComment(id, commentRequest, currentUser);
         return ResponseEntity.ok(response);
     }
