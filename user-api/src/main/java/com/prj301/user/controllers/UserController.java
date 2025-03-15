@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
+    private final int startingPage = 1;
+    private final int sizeOfPage = 10;
 
     @SecurityRequirement(name = "Bearer Authentication")
     @JWTProtected
@@ -42,11 +46,14 @@ public class UserController {
         }
         return ResponseEntity.ok(userService.toUserResponse(userService.updateUser(userId, updatedUser)));
     }
-
     @SecurityRequirement(name = "Bearer Authentication")
     @JWTProtected
     @GetMapping("/")
-    public ResponseEntity<List<UserResponse>> getAllUsers(Pageable pageable) {
+    public ResponseEntity<List<UserResponse>> getAllUsers(@RequestParam(defaultValue = "title") String sort_by, @RequestParam(defaultValue = "asc") String direction) {
+        Sort sort = direction.equalsIgnoreCase("asc")
+                ? Sort.by(sort_by).ascending()
+                : Sort.by(sort_by).descending();
+        Pageable pageable = PageRequest.of(startingPage, sizeOfPage, sort);
         Page<User> userPage = userService.findAll(pageable);
 
         if (userPage.isEmpty()) {
