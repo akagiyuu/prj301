@@ -1,0 +1,35 @@
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from './ui/carousel';
+import { BookThumbnail, type BookThumbnailProps } from './book-thumbnail';
+
+export const BookCarousel = ({ books }: { books: BookThumbnailProps[] }) => {
+    return (
+        <div className="relative">
+            <Carousel
+                opts={{
+                    align: 'start',
+                    loop: true,
+                }}
+                className="w-full"
+            >
+                <CarouselContent className="-ml-2 md:-ml-4">
+                    {books.map((book, index) => (
+                        <CarouselItem
+                            key={index}
+                            className="pl-2 md:basis-1/2 md:pl-4 lg:basis-1/4 xl:basis-1/5"
+                        >
+                            <BookThumbnail {...book} />
+                        </CarouselItem>
+                    ))}
+                </CarouselContent>
+                <CarouselPrevious className="absolute -left-4 top-1/2 z-10 -translate-y-1/2 bg-background/80 shadow-md hover:bg-background" />
+                <CarouselNext className="absolute -right-4 top-1/2 z-10 -translate-y-1/2 bg-background/80 shadow-md hover:bg-background" />
+            </Carousel>
+        </div>
+    );
+};
