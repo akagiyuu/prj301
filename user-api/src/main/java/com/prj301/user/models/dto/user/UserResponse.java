@@ -1,17 +1,18 @@
 package com.prj301.user.models.dto.user;
 
 import lombok.*;
+
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserResponse {
-    private String username;
-    private String avatarPath;
-    private String fullName;
-    private String hobbies;
-    private String bio;
+    private final String username;
+    private final String avatarPath;
+    private final String fullName;
+    private final String hobbies;
+    private final LocalDate dob;
+    private final String bio;
 }

@@ -16,14 +16,14 @@ public class UserService {
     private final UserRepository userRepository;
 
     public UserResponse toUserResponse(User user) {
-        return UserResponse
-            .builder()
-            .username(user.getUsername())
-            .avatarPath(user.getAvatarPath())
-            .fullName(user.getFullName())
-            .hobbies(user.getHobbies())
-            .bio(user.getBio())
-            .build();
+        return new UserResponse(
+            user.getUsername(),
+            user.getAvatarPath(),
+            user.getFullName(),
+            user.getHobbies(),
+            user.getDob(),
+            user.getBio()
+        );
     }
 
     public Optional<User> findById(UUID id) {
