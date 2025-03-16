@@ -4,7 +4,7 @@ import { AuthorizedLayout } from './layout/authorized-layout';
 import { UnauthorizedLayout } from './layout/unauthorized-layout';
 import { Login } from './pages/auth/login';
 import { Signup } from './pages/auth/signup';
-import { BookSearch } from './pages/book-search';
+import { BookSearch } from './pages/book/search';
 
 const App = () => {
     return (
