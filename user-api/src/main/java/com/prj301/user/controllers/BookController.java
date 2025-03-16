@@ -11,6 +11,8 @@ import com.prj301.user.repositories.UserRepository;
 import com.prj301.user.services.BookService;
 import com.prj301.user.services.CommentService;
 import com.prj301.user.services.UserService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -20,8 +22,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -47,14 +51,29 @@ public class BookController {
 
     @JWTProtected
     @SecurityRequirement(name = "Bearer Authentication")
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Book uploadBook(@RequestAttribute("user-id") UUID id, @RequestBody UploadBookRequest uploadBookRequest) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> uploadBook(
+        @RequestAttribute("user-id") UUID id,
+        @RequestPart("coverFile") MultipartFile coverFile,
+        @RequestPart("pdfFile") MultipartFile pdfFile,
+        @RequestPart("uploadBookRequest")
+        @Parameter(description = "Book details", content = @Content(mediaType = "application/json"))
+        UploadBookRequest uploadBookRequest
+    ) {
         val user = userService
             .findById(id)
             .orElseThrow(() -> new RuntimeException("invalid user id"));
 
-        return bookService.createBook(uploadBookRequest, user);
+        boolean isSuccess = bookService.createBook(uploadBookRequest, coverFile, pdfFile, user);
+        if (!isSuccess) {
+            ResponseEntity
+                .badRequest()
+                .build();
+        }
+
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .build();
     }
 
     @GetMapping("/{id}")
@@ -77,7 +96,9 @@ public class BookController {
         @RequestBody CommentRequest commentRequest,
         @RequestAttribute("user-id") UUID userId
     ) {
-        User currentUser = userService.findById(userId).orElse(null);
+        User currentUser = userService
+            .findById(userId)
+            .orElse(null);
         CommentResponse response = commentService.addComment(id, commentRequest, currentUser);
         return ResponseEntity.ok(response);
     }

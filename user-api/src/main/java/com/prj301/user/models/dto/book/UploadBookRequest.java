@@ -13,11 +13,8 @@ import java.util.Set;
 public class UploadBookRequest {
     private String isbn;
     private String title;
-    private String coverPath;
     private Set<String> authors;
     private Set<String> genres;
     private LocalDate publicationDate;
     private String summary;
-    private String pdfPath;
 }
-

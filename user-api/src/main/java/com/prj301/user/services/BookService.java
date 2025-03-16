@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
@@ -30,6 +31,9 @@ public class BookService {
 
     @Autowired
     private GenreService genreService;
+
+    @Autowired
+    private S3Service s3Service;
 
     private BookResponse toResponse(Book book) {
         val postedUser = book.getPostedUser();
@@ -106,8 +110,10 @@ public class BookService {
             .map(this::toResponse);
     }
 
-    public Book createBook(
+    public boolean createBook(
         UploadBookRequest uploadBookRequest,
+        MultipartFile coverFile,
+        MultipartFile pdfFile,
         User postedUser
     ) {
         Set<Author> authors = uploadBookRequest
@@ -122,17 +128,25 @@ public class BookService {
             .map(genreService::findOrCreate)
             .collect(Collectors.toSet());
 
+        val coverPath = s3Service.upload("covers/", coverFile);
+        if (coverPath == null) return false;
+
+        val pdfPath = s3Service.upload("pdfs/", pdfFile);
+        if (pdfPath == null) return false;
+
         val book = new Book();
         book.setIsbn(uploadBookRequest.getIsbn());
         book.setPostedUser(postedUser);
         book.setTitle(uploadBookRequest.getTitle());
-        book.setCoverPath(uploadBookRequest.getCoverPath());
+        book.setCoverPath(coverPath);
         book.setAuthors(authors);
         book.setGenres(genres);
         book.setPublicationDate(uploadBookRequest.getPublicationDate());
         book.setSummary(book.getSummary());
-        book.setPdfPath(uploadBookRequest.getPdfPath());
+        book.setPdfPath(pdfPath);
 
-        return bookRepository.save(book);
+        bookRepository.save(book);
+
+        return true;
     }
 }
