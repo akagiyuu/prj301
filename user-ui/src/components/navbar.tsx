@@ -1,5 +1,5 @@
 import { Book } from 'lucide-react';
-import { NavLink } from 'react-router';
+import { Link, NavLink } from 'react-router';
 import { Button } from './ui/button';
 import {
     NavigationMenu,
@@ -46,13 +46,13 @@ export const Navbar = ({ logo, menu, auth }: Props) => {
                 <NavigationMenu className="size-fit m-auto">
                     <NavigationMenuList className="space-x-5">
                         {menu.map((item) => (
-                            <a
+                            <Link
                                 key={item.title}
                                 className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-3 py-2 font-normal text-foreground/80 transition-colors hover:bg-accent/30 hover:text-foreground"
-                                href={item.url}
+                                to={item.url}
                             >
                                 <span>{item.title}</span>
-                            </a>
+                            </Link>
                         ))}
                     </NavigationMenuList>
                 </NavigationMenu>

@@ -55,7 +55,7 @@ export const BookSearch = () => {
 
                     <div className="flex flex-wrap gap-3 w-full md:w-auto">
                         <Select>
-                            <SelectTrigger className="w-full md:w-[180px] h-10 border-gray-200">
+                            <SelectTrigger className="w-full my-auto md:w-[180px] h-10 border-gray-200">
                                 <SelectValue placeholder="Select genres..." />
                             </SelectTrigger>
                             <SelectContent>
@@ -75,7 +75,7 @@ export const BookSearch = () => {
 
                         <div className="flex gap-2">
                             <Select>
-                                <SelectTrigger className="w-[120px] h-10 border-gray-200">
+                                <SelectTrigger className="w-[120px] my-auto h-10 border-gray-200">
                                     <SelectValue placeholder="Sort by..." />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -92,7 +92,7 @@ export const BookSearch = () => {
                             </Select>
 
                             <Select>
-                                <SelectTrigger className="w-[120px] h-10 border-gray-200">
+                                <SelectTrigger className="w-[120px] my-auto h-10 border-gray-200">
                                     <SelectValue placeholder="Ascending" />
                                 </SelectTrigger>
                                 <SelectContent>
