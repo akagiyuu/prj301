@@ -5,8 +5,19 @@ import { BookGrid } from '@/components/book-grid';
 export const Home = () => {
     const sampleBooks = Array.from({ length: 16 }).map((_, index) => {
         return {
-            title: `Book ${index}`,
-            coverSrc: 'https://m.media-amazon.com/images/I/61O6K0yPmzL._AC_UF1000,1000_QL80_.jpg',
+            id: "1",
+            title: 'Introduction to Algorithms',
+            authors: [
+                'Thomas H. Cormen',
+                'Charles E. Leiserson',
+                'Ronald L. Rivest',
+                'Clifford Stein',
+            ],
+            publicationDate: '2025-03-16',
+            rate: 4.8,
+            genres: ['Computer Science', 'Programming', 'Mathematics'],
+            view: 12453,
+            cover: 'https://m.media-amazon.com/images/I/61O6K0yPmzL._AC_UF1000,1000_QL80_.jpg',
         };
     });
 
