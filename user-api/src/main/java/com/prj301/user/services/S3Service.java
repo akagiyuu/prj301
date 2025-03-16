@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -33,6 +35,19 @@ public class S3Service {
 
             return true;
         } catch (S3Exception e) {
+            return false;
+        }
+    }
+
+    public boolean upload(String prefix, MultipartFile multipartFile) {
+        try {
+            File file = File.createTempFile("temp", multipartFile.getOriginalFilename());
+            multipartFile.transferTo(file);
+            upload(prefix + multipartFile.getOriginalFilename(), file);
+            file.delete();
+
+            return true;
+        } catch (Exception e) {
             return false;
         }
     }
