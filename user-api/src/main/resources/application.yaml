@@ -43,3 +43,12 @@ logging:
         orm:
           jdbc:
             bind: trace
+
+aws:
+  access_key_id: HLY6SEP9DZPC8TBA2E9N
+  secret_access_key: ilfiBgerkFD06XU86Mct5YUQBscF15W3dMLTKffC
+  region: hcm
+
+s3:
+  bucket: prj301
+  endpoint: "https://prj301.hcm.ss.bfcplatform.vn"
