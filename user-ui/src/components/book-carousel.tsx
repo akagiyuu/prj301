@@ -5,9 +5,9 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from './ui/carousel';
-import { BookThumbnail, type BookThumbnailProps } from './book-thumbnail';
+import { BookCard, type BookCardProps } from './book-card';
 
-export const BookCarousel = ({ books }: { books: BookThumbnailProps[] }) => {
+export const BookCarousel = ({ books }: { books: BookCardProps[] }) => {
     return (
         <div className="relative">
             <Carousel
@@ -22,7 +22,7 @@ export const BookCarousel = ({ books }: { books: BookThumbnailProps[] }) => {
                             key={index}
                             className="pl-6 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
                         >
-                            <BookThumbnail {...book} />
+                            <BookCard {...book} />
                         </CarouselItem>
                     ))}
                 </CarouselContent>
