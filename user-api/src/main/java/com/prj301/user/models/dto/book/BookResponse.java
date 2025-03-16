@@ -11,6 +11,7 @@ import java.util.UUID;
 @Setter
 @RequiredArgsConstructor
 public class BookResponse {
+    private final UUID id;
     private final String isbn;
     private final String postedUser;
     private final String title;

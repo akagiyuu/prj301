@@ -22,30 +22,39 @@ public class CommentService {
     @Autowired
     private BookRepository bookRepository;
 
-    public List<CommentResponse> getCommentsById(UUID bookId){
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book Not Found!"));
+    public List<CommentResponse> getCommentsById(UUID bookId) {
+        Book book = bookRepository
+            .findById(bookId)
+            .orElseThrow(() -> new RuntimeException("Book Not Found!"));
         List<Comment> comments = commentRepository.findByBook(book);
-        return comments.stream().map(this::toRespone).collect(Collectors.toList());
+        return comments
+            .stream()
+            .map(this::toResponse)
+            .collect(Collectors.toList());
     }
 
-    public CommentResponse addComment(UUID bookId, CommentRequest commentRequest, User user){
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book Not Found!"));
-        Comment comment = Comment.builder()
-                .book(book)
-                .user(user)
-                .content(commentRequest.getContent())
-                .build();
+    public CommentResponse addComment(UUID bookId, CommentRequest commentRequest, User user) {
+        Book book = bookRepository
+            .findById(bookId)
+            .orElseThrow(() -> new RuntimeException("Book Not Found!"));
+        Comment comment = Comment
+            .builder()
+            .book(book)
+            .user(user)
+            .content(commentRequest.getContent())
+            .build();
         Comment savedComment = commentRepository.save(comment);
-        return toRespone(savedComment);
+        return toResponse(savedComment);
     }
 
-    private CommentResponse toRespone(Comment comment){
+    private CommentResponse toResponse(Comment comment) {
         return new CommentResponse(
-                comment.getUser().getUsername(),
-                comment.getContent(),
-                comment.getCreatedAt()
+            comment.getId(),
+            comment
+                .getUser()
+                .getUsername(),
+            comment.getContent(),
+            comment.getCreatedAt()
         );
     }
 }

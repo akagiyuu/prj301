@@ -47,6 +47,7 @@ public class BookService {
             .collect(Collectors.toList());
 
         return new BookResponse(
+            book.getId(),
             book.getIsbn(),
             postedUser.getUsername(),
             book.getTitle(),
