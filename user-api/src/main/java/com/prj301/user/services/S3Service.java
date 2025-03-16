@@ -2,6 +2,7 @@ package com.prj301.user.services;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 import java.io.File;
 import java.io.InputStream;
 
+@Slf4j
 @Service
 public class S3Service {
     @Value("${s3.bucket}")
@@ -35,20 +37,26 @@ public class S3Service {
 
             return true;
         } catch (S3Exception e) {
+            log.error(e.toString());
             return false;
         }
     }
 
-    public boolean upload(String prefix, MultipartFile multipartFile) {
+    public String upload(String prefix, MultipartFile multipartFile) {
         try {
             File file = File.createTempFile("temp", multipartFile.getOriginalFilename());
             multipartFile.transferTo(file);
-            upload(prefix + multipartFile.getOriginalFilename(), file);
+
+            String key = prefix + multipartFile.getOriginalFilename();
+            if (!upload(key, file)) {
+                return null;
+            }
             file.delete();
 
-            return true;
+            return key;
         } catch (Exception e) {
-            return false;
+            log.error(e.toString());
+            return null;
         }
     }
 
@@ -61,6 +69,7 @@ public class S3Service {
                 .build();
             return s3Client.getObject(getObjectRequest);
         } catch (S3Exception e) {
+            log.error(e.toString());
             return null;
         }
     }
