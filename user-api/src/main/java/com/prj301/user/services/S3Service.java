@@ -15,6 +15,7 @@ import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.InputStream;
 
@@ -24,10 +25,20 @@ public class S3Service {
     @Value("${s3.bucket}")
     private String bucketName;
 
+    @Value("${s3.endpoint}")
+    private String endpoint;
+
+    private String prefix;
     @Autowired
     private S3Client s3Client;
 
-    public boolean upload(String key, File file) {
+    @PostConstruct
+    private void init() {
+        this.prefix = String.format(
+            "%s/%s/%s/", this.endpoint, this.bucketName, this.bucketName);
+    }
+
+    public String upload(String key, File file) {
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest
                 .builder()
@@ -37,22 +48,19 @@ public class S3Service {
                 .build();
             s3Client.putObject(putObjectRequest, RequestBody.fromFile(file));
 
-            return true;
+            return prefix + key;
         } catch (S3Exception e) {
             log.error(e.toString());
-            return false;
+            return null;
         }
     }
 
-    public String upload(String prefix, MultipartFile multipartFile) {
+    public String upload(String keyPrefix, MultipartFile multipartFile) {
         try {
             File file = File.createTempFile("temp", multipartFile.getOriginalFilename());
             multipartFile.transferTo(file);
 
-            String key = prefix + multipartFile.getOriginalFilename();
-            if (!upload(key, file)) {
-                return null;
-            }
+            String key = upload(keyPrefix + multipartFile.getOriginalFilename(), file);
             file.delete();
 
             return key;

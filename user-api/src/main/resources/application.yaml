@@ -51,4 +51,4 @@ aws:
 
 s3:
   bucket: prj301
-  endpoint: "https://prj301.hcm.ss.bfcplatform.vn"
+  endpoint: "https://hcm.ss.bfcplatform.vn"
