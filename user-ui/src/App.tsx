@@ -5,6 +5,7 @@ import { UnauthorizedLayout } from './layout/unauthorized-layout';
 import { Login } from './pages/auth/login';
 import { Signup } from './pages/auth/signup';
 import { BookSearch } from './pages/book/search';
+import { BookSummary } from './pages/book/summary';
 
 const App = () => {
     return (
@@ -12,7 +13,10 @@ const App = () => {
             <Routes>
                 <Route element={<AuthorizedLayout />}>
                     <Route index element={<Home />} />
-                    <Route path="book" element={<BookSearch />} />
+                    <Route path="book">
+                        <Route index element={<BookSearch />} />
+                        <Route path=':id' element={<BookSummary />} />
+                    </Route>
                 </Route>
 
                 <Route element={<UnauthorizedLayout />}>
