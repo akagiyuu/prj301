@@ -2,6 +2,7 @@ import { BookCard, BookCardFull } from '@/components/book-card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { MultiSelect } from '@/components/ui/multi-select';
 import {
     Select,
     SelectContent,
@@ -11,6 +12,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Eye, Search, Star, Users } from 'lucide-react';
+import { useState } from 'react';
 
 const books = Array.from({ length: 16 }).map((_, index) => {
     return {
@@ -31,6 +33,8 @@ const books = Array.from({ length: 16 }).map((_, index) => {
 });
 
 export const BookSearch = () => {
+    const [selectedItems, setSelectedItems] = useState<string[]>([]);
+
     return (
         <main className="container mx-auto py-8 px-4">
             <div className="mb-8">
@@ -54,25 +58,30 @@ export const BookSearch = () => {
                     </div>
 
                     <div className="flex flex-wrap gap-3 w-full md:w-auto">
-                        <Select>
-                            <SelectTrigger className="w-full my-auto md:w-[180px] h-10 border-gray-200">
-                                <SelectValue placeholder="Select genres..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="fiction">Fiction</SelectItem>
-                                <SelectItem value="non-fiction">
-                                    Non-fiction
-                                </SelectItem>
-                                <SelectItem value="science-fiction">
-                                    Science Fiction
-                                </SelectItem>
-                                <SelectItem value="fantasy">Fantasy</SelectItem>
-                                <SelectItem value="computer-science">
-                                    Computer Science
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-
+                        <MultiSelect
+                            className="w-full my-auto md:w-[180px] h-10 border-gray-200"
+                            placeholder="Genres"
+                            options={[
+                                {
+                                    label: 'Fiction',
+                                    value: 'fiction',
+                                },
+                                {
+                                    label: 'Science Fiction',
+                                    value: 'science-fiction',
+                                },
+                                {
+                                    label: 'Fantasy',
+                                    value: 'fantasy',
+                                },
+                                {
+                                    label: 'Computer Science',
+                                    value: 'computer-science',
+                                },
+                            ]}
+                            selectedOptions={selectedItems}
+                            setSelectedOptions={setSelectedItems}
+                        />
                         <div className="flex gap-2">
                             <Select>
                                 <SelectTrigger className="w-[120px] my-auto h-10 border-gray-200">
