@@ -19,13 +19,13 @@ public class CommentController {
     @JWTProtected
     @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/{id}/report")
-    public ResponseEntity<?> postReportComment(
+    public ResponseEntity<?> report(
             @PathVariable UUID id,
             @RequestBody CommentReportRequest reason,
-            @RequestAttribute("user-id") UUID reportUserId
+            @RequestAttribute("user-id") UUID reportingUserId
     ){
 
-        if (commentService.reportComment(reason, id, reportUserId)) {
+        if (commentService.report(reason, id, reportingUserId)) {
             return ResponseEntity
                     .ok()
                     .build();

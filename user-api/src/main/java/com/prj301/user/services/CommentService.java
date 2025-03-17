@@ -2,7 +2,6 @@ package com.prj301.user.services;
 
 import com.prj301.user.models.dto.comment.CommentRequest;
 import com.prj301.user.models.dto.comment.CommentResponse;
-import com.prj301.user.models.dto.report.BookReportRequest;
 import com.prj301.user.models.dto.report.CommentReportRequest;
 import com.prj301.user.models.entity.*;
 import com.prj301.user.repositories.BookRepository;
@@ -68,9 +67,9 @@ public class CommentService {
         );
     }
 
-    public boolean reportComment(CommentReportRequest reason, UUID commentId, UUID userReportId) {
+    public boolean report(CommentReportRequest reason, UUID commentId, UUID reportingUserId) {
         try {
-            createAndSaveReportComment(reason, commentId, userReportId);
+            createAndSaveReport(reason, commentId, reportingUserId);
             return true;
         } catch (EntityNotFoundException e) {
             System.out.printf("Failed to report comment: %s%n", e.getMessage());
@@ -81,17 +80,17 @@ public class CommentService {
         }
     }
 
-    public void createAndSaveReportComment(
+    public void createAndSaveReport(
             @Nullable CommentReportRequest reason,
             UUID commentId,
-            UUID userReportId
+            UUID reportingUserId
     ) {
         String reportReason = (reason != null && !reason.getReason().isEmpty()) ? reason.getReason() : "No reason provided";
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
 
-        User user = userRepository.findById(userReportId)
+        User user = userRepository.findById(reportingUserId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         CommentReport commentReport = CommentReport.builder()
