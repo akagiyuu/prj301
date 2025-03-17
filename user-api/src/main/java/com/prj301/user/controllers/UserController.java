@@ -59,10 +59,10 @@ public class UserController {
     public ResponseEntity<?> postReportUser(
             @PathVariable UUID id,
             @RequestBody UserReportRequest reason,
-            @RequestAttribute("user-id") UUID reportUserId
+            @RequestAttribute("user-id") UUID reportingUserId
     ){
 
-        if (service.reportUser(reason, id, reportUserId)) {
+        if (service.report(reason, id, reportingUserId)) {
             return ResponseEntity
                     .ok()
                     .build();

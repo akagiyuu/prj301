@@ -64,9 +64,9 @@ public class UserService {
         }
     }
 
-    public boolean reportUser(UserReportRequest reason, UUID userId, UUID reportUserId) {
+    public boolean report(UserReportRequest reason, UUID userId, UUID reportingUserId) {
         try {
-            createAndSaveReportUser(reason, userId, reportUserId);
+            createAndSaveReport(reason, userId, reportingUserId);
             return true;
         } catch (EntityNotFoundException e) {
             System.out.printf("Failed to report user: %s%n", e.getMessage());
@@ -77,22 +77,22 @@ public class UserService {
         }
     }
 
-    public void createAndSaveReportUser(
+    public void createAndSaveReport(
             @Nullable UserReportRequest reason,
             UUID userId,
-            @RequestAttribute("user-id") UUID reportUserId
+            @RequestAttribute("user-id") UUID reportingUserId
     ) {
         String reportReason = (reason != null && !reason.getReason().isEmpty()) ? reason.getReason() : "No reason provided";
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        User reportUser = userRepository.findById(reportUserId)
+        User reportingUser = userRepository.findById(reportingUserId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         UserReport userReport = UserReport.builder()
                 .user(user)
-                .reportingUser(reportUser)
+                .reportingUser(reportingUser)
                 .reason(reportReason)
                 .build();
 
