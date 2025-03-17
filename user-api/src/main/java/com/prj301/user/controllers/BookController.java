@@ -112,7 +112,7 @@ public class BookController {
     @JWTProtected
     @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/{id}/rating")
-    public ResponseEntity<RatingResponse> postRating(
+    public ResponseEntity<Void> postRating(
             @PathVariable UUID id,
             @RequestBody RatingRequest ratingRequest,
             @RequestAttribute("user-id") UUID userId
@@ -127,8 +127,11 @@ public class BookController {
         User user = userService.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Rating rating = ratingService.rateBook(book, user, ratingRequest.getRating());
-        RatingResponse response = new RatingResponse(rating.getRating());
-        return ResponseEntity.ok(response);
+        boolean success = ratingService.rateBook(book, user, ratingRequest.getRating());
+        if(!success){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        return ResponseEntity.ok().build();
     }
 }
