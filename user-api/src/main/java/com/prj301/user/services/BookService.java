@@ -149,4 +149,8 @@ public class BookService {
 
         return true;
     }
+
+    public Optional<Book> findBookById(UUID id) {
+        return bookRepository.findById(id);
+    }
 }

@@ -5,11 +5,14 @@ import com.prj301.user.models.dto.book.BookResponse;
 import com.prj301.user.models.dto.book.UploadBookRequest;
 import com.prj301.user.models.dto.comment.CommentRequest;
 import com.prj301.user.models.dto.comment.CommentResponse;
+import com.prj301.user.models.dto.rating.RatingRequest;
 import com.prj301.user.models.entity.Book;
+import com.prj301.user.models.entity.Rating;
 import com.prj301.user.models.entity.User;
 import com.prj301.user.repositories.UserRepository;
 import com.prj301.user.services.BookService;
 import com.prj301.user.services.CommentService;
+import com.prj301.user.services.RatingService;
 import com.prj301.user.services.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -39,6 +42,8 @@ public class BookController {
     private CommentService commentService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private RatingService ratingService;
 
     @GetMapping
     public Page<BookResponse> getBooks(
@@ -101,5 +106,31 @@ public class BookController {
             .orElse(null);
         CommentResponse response = commentService.addComment(id, commentRequest, currentUser);
         return ResponseEntity.ok(response);
+    }
+
+    @JWTProtected
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PostMapping("/{id}/rating")
+    public ResponseEntity<Void> postRating(
+            @PathVariable UUID id,
+            @RequestBody RatingRequest ratingRequest,
+            @RequestAttribute("user-id") UUID userId
+    ) {
+        if (ratingRequest.getRating() < 1 || ratingRequest.getRating() > 5) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Book book = bookService.findBookById(id)
+                .orElseThrow(() -> new RuntimeException("Book not found"));
+
+        User user = userService.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        boolean success = ratingService.rateBook(book, user, ratingRequest.getRating());
+        if(!success){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        return ResponseEntity.ok().build();
     }
 }
