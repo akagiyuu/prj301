@@ -6,6 +6,7 @@ import com.prj301.user.models.dto.book.UploadBookRequest;
 import com.prj301.user.models.dto.comment.CommentRequest;
 import com.prj301.user.models.dto.comment.CommentResponse;
 import com.prj301.user.models.dto.rating.RatingRequest;
+import com.prj301.user.models.dto.report.BookReportRequest;
 import com.prj301.user.models.entity.Book;
 import com.prj301.user.models.entity.Rating;
 import com.prj301.user.models.entity.User;
@@ -132,5 +133,25 @@ public class BookController {
         }
 
         return ResponseEntity.ok().build();
+    }
+
+    @JWTProtected
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PostMapping("/{id}/report")
+    public ResponseEntity<?> postReportBook(
+            @PathVariable UUID id,
+            @RequestBody BookReportRequest reason,
+            @RequestAttribute("user-id") UUID reportingUserId
+    ){
+
+        if (bookService.report(reason, id, reportingUserId)) {
+            return ResponseEntity
+                    .ok()
+                    .build();
+        }
+
+        return ResponseEntity
+                .badRequest()
+                .body("Failed to report");
     }
 }
