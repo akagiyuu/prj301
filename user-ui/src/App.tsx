@@ -7,8 +7,9 @@ import { Signup } from './pages/auth/signup';
 import { BookSearch } from './pages/book/search';
 import { BookSummary } from './pages/book/summary';
 import { BookRead } from './pages/book/read';
-import { BookUploadForm } from './components/book-upload-form';
 import { BookUpload } from './pages/book/upload';
+import UserProfile from './pages/user-profile';
+import { UserProfileUpdate } from './pages/user-profile-update';
 
 const App = () => {
     return (
@@ -16,6 +17,10 @@ const App = () => {
             <Routes>
                 <Route element={<AuthorizedLayout />}>
                     <Route index element={<Home />} />
+                    <Route path="user">
+                        <Route path="update" element={<UserProfileUpdate />} />
+                        <Route path=":username" element={<UserProfile />} />
+                    </Route>
                     <Route path="book">
                         <Route index element={<BookSearch />} />
                         <Route path="upload" element={<BookUpload />} />
