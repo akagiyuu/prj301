@@ -6,6 +6,7 @@ import { Login } from './pages/auth/login';
 import { Signup } from './pages/auth/signup';
 import { BookSearch } from './pages/book/search';
 import { BookSummary } from './pages/book/summary';
+import { BookRead } from './pages/book/read';
 
 const App = () => {
     return (
@@ -15,7 +16,10 @@ const App = () => {
                     <Route index element={<Home />} />
                     <Route path="book">
                         <Route index element={<BookSearch />} />
-                        <Route path=':id' element={<BookSummary />} />
+                        <Route path=":id">
+                            <Route index element={<BookSummary />} />
+                            <Route path="read" element={<BookRead />}></Route>
+                        </Route>
                     </Route>
                 </Route>
 
