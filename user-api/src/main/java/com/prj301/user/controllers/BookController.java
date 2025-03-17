@@ -6,7 +6,6 @@ import com.prj301.user.models.dto.book.UploadBookRequest;
 import com.prj301.user.models.dto.comment.CommentRequest;
 import com.prj301.user.models.dto.comment.CommentResponse;
 import com.prj301.user.models.dto.rating.RatingRequest;
-import com.prj301.user.models.dto.rating.RatingResponse;
 import com.prj301.user.models.entity.Book;
 import com.prj301.user.models.entity.Rating;
 import com.prj301.user.models.entity.User;
