@@ -26,7 +26,6 @@ export type User = {
 export type Stats = {
     user: User;
     books: Book[];
-    upload: number;
     comment: number;
 };
 

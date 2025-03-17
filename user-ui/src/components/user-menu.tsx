@@ -34,20 +34,18 @@ export const UserMenu = ({ user }: { user: User }) => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-9 gap-2 px-2 font-normal">
-                    <Avatar className="h-8 w-8 rounded-lg">
-                        <AvatarImage src={user.imagePath} alt={user.fullName} />
-                        <AvatarFallback className="rounded-lg">
-                            {user.fullName}
+                <Button variant="ghost" className="h-12 gap-2 px-2 font-normal">
+                    <Avatar className="h-10 w-10 border border-border/20">
+                        <AvatarImage src={user.imagePath} alt={user.name} />
+                        <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                            {user.name
+                                .split(' ')
+                                .map((n) => n[0])
+                                .join('')
+                                .toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-semibold">
-                            {user.fullName}
-                        </span>
-                        <span className="truncate text-xs">{user.name}</span>
-                    </div>
-                    <ChevronsUpDown className="ml-auto size-4" />
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
