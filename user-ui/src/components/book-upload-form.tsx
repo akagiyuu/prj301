@@ -14,17 +14,22 @@ import {
     FormLabel,
     FormMessage,
 } from './ui/form';
-import { NavLink, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { TagInput, Tag } from 'emblor';
 import { useState } from 'react';
 
 const schema = z.object({
+    isbn: z
+        .string()
+        .min(10, 'ISBN must be at least 10 character long')
+        .max(13, 'ISBN must be at most 13 character'),
     title: z.string().min(1, 'Title is required'),
-    author: z.string().min(1, 'Author is required'),
+    authors: z.array(z.string()).min(1, 'At least one author is required'),
     genres: z.array(z.string()).min(1, 'At least one genre is required'),
     publicationDate: z
         .string()
         .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format'),
+    summary: z.string().nullable(),
     pdf: z
         .instanceof(File)
         .refine((file) => file.size > 0, 'PDF file is required'),
@@ -33,21 +38,24 @@ const schema = z.object({
         .refine((file) => file.size > 0, 'Cover image is required'),
 });
 
-export const UploadBookForm = ({
+export const BookUploadForm = ({
     className,
     ...props
 }: React.ComponentPropsWithoutRef<'div'>) => {
     const navigate = useNavigate();
 
-    const [tags, setTags] = useState<Tag[]>([]);
+    const [genreTags, setGenreTags] = useState<Tag[]>([]);
+    const [authorTags, setAuthorTags] = useState<Tag[]>([]);
 
     const form = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema),
         defaultValues: {
+            isbn: '',
             title: '',
-            author: '',
+            authors: [],
             genres: [],
             publicationDate: '',
+            summary: '',
         },
     });
 
@@ -83,7 +91,7 @@ export const UploadBookForm = ({
             <Card>
                 <CardHeader>
                     <CardTitle className="text-2xl text-center">
-                        Login
+                        Book Upload
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -110,14 +118,30 @@ export const UploadBookForm = ({
                             />
                             <FormField
                                 control={form.control}
-                                name="author"
+                                name="authors"
                                 render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Author</FormLabel>
+                                    <FormItem className="flex flex-col items-start">
+                                        <FormLabel className="text-left">
+                                            Authors
+                                        </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder="Author name"
+                                            <TagInput
                                                 {...field}
+                                                placeholder="Enter a author"
+                                                className="sm:min-w-[450px]"
+                                                tags={authorTags}
+                                                setTags={(newTags) => {
+                                                    setAuthorTags(newTags);
+                                                    setValue(
+                                                        'authors',
+                                                        (
+                                                            newTags as [
+                                                                Tag,
+                                                                ...Tag[]
+                                                            ]
+                                                        ).map((tag) => tag.text)
+                                                    );
+                                                }}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -136,20 +160,18 @@ export const UploadBookForm = ({
                                             <TagInput
                                                 {...field}
                                                 placeholder="Enter a topic"
-                                                tags={tags}
                                                 className="sm:min-w-[450px]"
+                                                tags={genreTags}
                                                 setTags={(newTags) => {
-                                                    setTags(newTags);
+                                                    setGenreTags(newTags);
                                                     setValue(
                                                         'genres',
                                                         (
                                                             newTags as [
                                                                 Tag,
-                                                                ...Tag[],
+                                                                ...Tag[]
                                                             ]
-                                                        ).map(
-                                                            (tag) => tag.text,
-                                                        ),
+                                                        ).map((tag) => tag.text)
                                                     );
                                                 }}
                                             />
@@ -183,7 +205,7 @@ export const UploadBookForm = ({
                                                 accept="application/pdf"
                                                 onChange={(e) =>
                                                     field.onChange(
-                                                        e.target.files?.[0],
+                                                        e.target.files?.[0]
                                                     )
                                                 }
                                             />
@@ -204,7 +226,7 @@ export const UploadBookForm = ({
                                                 accept="image/*"
                                                 onChange={(e) =>
                                                     field.onChange(
-                                                        e.target.files?.[0],
+                                                        e.target.files?.[0]
                                                     )
                                                 }
                                             />
@@ -213,8 +235,8 @@ export const UploadBookForm = ({
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit" disabled={uploading}>
-                                {uploading ? 'Uploading...' : 'Upload Book'}
+                            <Button type="submit" className="w-full">
+                                Upload
                             </Button>
                         </form>
                     </Form>
