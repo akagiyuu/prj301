@@ -7,6 +7,8 @@ import { Signup } from './pages/auth/signup';
 import { BookSearch } from './pages/book/search';
 import { BookSummary } from './pages/book/summary';
 import { BookRead } from './pages/book/read';
+import { BookUploadForm } from './components/book-upload-form';
+import { BookUpload } from './pages/book/upload';
 
 const App = () => {
     return (
@@ -16,6 +18,7 @@ const App = () => {
                     <Route index element={<Home />} />
                     <Route path="book">
                         <Route index element={<BookSearch />} />
+                        <Route path="upload" element={<BookUpload />} />
                         <Route path=":id">
                             <Route index element={<BookSummary />} />
                             <Route path="read" element={<BookRead />}></Route>
