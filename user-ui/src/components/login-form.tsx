@@ -48,10 +48,7 @@ export const LoginForm = ({
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    username: values.username,
-                    password: values.password,
-                }),
+                body: JSON.stringify(values),
             });
 
             if (!response.ok) {
