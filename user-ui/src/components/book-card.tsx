@@ -10,7 +10,7 @@ export type BookCardProps = {
     publicationDate: string;
     view: number;
     rate: number;
-    cover?: string;
+    coverPath?: string;
 };
 
 export const BookCard = (book: BookCardProps) => {
@@ -21,7 +21,7 @@ export const BookCard = (book: BookCardProps) => {
         >
             <div className="relative aspect-[2/3] overflow-hidden bg-gray-50">
                 <img
-                    src={book.cover || '/placeholder.svg'}
+                    src={book.coverPath || '/placeholder.svg'}
                     alt={book.title}
                     className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
                     onError={(e) => {
@@ -33,7 +33,7 @@ export const BookCard = (book: BookCardProps) => {
                 <div className="absolute top-0 right-0 m-2">
                     <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm text-gray-700 rounded-full px-2 py-0.5 text-xs font-medium shadow-sm">
                         <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-                        {book.rate.toFixed(1)}
+                        {Number(book.rate).toFixed(1)}
                     </div>
                 </div>
 
