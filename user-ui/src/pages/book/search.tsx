@@ -138,7 +138,7 @@ export const BookSearch = () => {
                                     <SelectItem value="publicationDate">
                                         Publication Date
                                     </SelectItem>
-                                    <SelectItem value="totalRate">
+                                    <SelectItem value="totalRating">
                                         Rate
                                     </SelectItem>
                                     <SelectItem value="view">View</SelectItem>

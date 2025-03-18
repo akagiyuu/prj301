@@ -49,7 +49,7 @@ const MostRatedBooks = () => {
                     pageable: {
                         page: 0,
                         size: 10,
-                        sort: ['totalRate,desc'],
+                        sort: ['totalRating,desc'],
                     },
                 })
                 .then((response) => response.content),

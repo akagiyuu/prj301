@@ -1,4 +1,4 @@
-import { fetchWrapper } from '.';
+import { fetchWrapper, Pageable } from '.';
 import { Book } from './book';
 
 export type User = {
@@ -8,6 +8,7 @@ export type User = {
     hobbies: string;
     dob: string;
     bio: string;
+    createdAt: string;
 };
 
 type UserUpdateRequest = {
@@ -57,10 +58,19 @@ export const update = async (values: UserUpdateRequest) => {
     }
 };
 
-export const postedBook = async (username: string) => {
+type BookResponse = {
+    totalPages: number;
+    content: Book[];
+};
+
+export const postedBook = async (username: string, pageable: Pageable) => {
     const params = new URLSearchParams({
         username,
+        page: pageable.page.toString(),
+        size: pageable.size.toString(),
     });
+
+    pageable.sort.forEach((sort) => params.append('sort', sort));
 
     const response = await fetchWrapper(`user/postedBook?${params.toString()}`);
 
@@ -68,7 +78,7 @@ export const postedBook = async (username: string) => {
         throw new Error('Request failed');
     }
 
-    return (await response.json()) as Book[];
+    return (await response.json()) as BookResponse;
 };
 
 export const countComment = async (username: string) => {

@@ -13,6 +13,12 @@ export const fetchWrapper = (url: RequestInfo | URL, init?: RequestInit) => {
     });
 };
 
+export type Pageable = {
+    page: number;
+    size: number;
+    sort: string[];
+};
+
 export * as auth from './auth';
 export * as book from './book';
 export * as genre from './genre';

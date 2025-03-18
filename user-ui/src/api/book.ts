@@ -1,4 +1,4 @@
-import { fetchWrapper } from '.';
+import { fetchWrapper, Pageable } from '.';
 
 export type Book = {
     id: string;
@@ -21,12 +21,6 @@ export type Comment = {
     username: string;
     content: string;
     createdAt: string;
-};
-
-type Pageable = {
-    page: number;
-    size: number;
-    sort: string[];
 };
 
 type SearchRequest = {

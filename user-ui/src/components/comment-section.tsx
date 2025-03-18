@@ -10,7 +10,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
-import { NavLink } from 'react-router';
+import { NavLink, useNavigate } from 'react-router';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import * as api from '@/api';
 import { toast } from 'sonner';
@@ -102,9 +102,21 @@ export const CommentSection = ({ bookId }: { bookId: string }) => {
         queryFn: () => api.book.getComment(bookId),
     });
 
+    const navigate = useNavigate();
+
     const [newComment, setNewComment] = useState('');
 
-    const handleSubmitComment = async () => {};
+    const handleSubmitComment = async () => {
+        if (!newComment.trim()) return;
+
+        try {
+            api.book.comment(bookId, newComment);
+            toast.info('Your comment has been successfully posted.');
+            navigate(0);
+        } catch (error) {
+            toast.error('Failed to post your comment. Please try again.');
+        }
+    };
 
     if (status === 'pending') {
         return <span>Loading...</span>;
@@ -173,4 +185,4 @@ export const CommentSection = ({ bookId }: { bookId: string }) => {
             </div>
         </div>
     );
-}
+};

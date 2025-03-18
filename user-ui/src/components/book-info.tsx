@@ -18,7 +18,7 @@ export const BookInfo = ({
     onRead,
     onShare,
     onDownload,
-    onReport
+    onReport,
 }: Props) => {
     return (
         <div className="flex-1 space-y-6 text-center md:text-left">
@@ -54,7 +54,10 @@ export const BookInfo = ({
                 </div>
 
                 <div className="flex items-center gap-4 justify-center md:justify-start">
-                    <Rate rate={book.rate} rateCount={100} />
+                    <Rate
+                        rate={book.totalRating / book.ratingCount}
+                        rateCount={book.ratingCount}
+                    />
                     <div className="flex items-center text-sm text-muted-foreground">
                         <Eye className="h-4 w-4 mr-1" />
                         <span>{book.view.toLocaleString()} views</span>
