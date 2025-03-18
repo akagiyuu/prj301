@@ -1,4 +1,5 @@
 import { BookCard, BookCardFull } from '@/components/book-card';
+import { Pagination } from '@/components/pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,7 +34,11 @@ const books = Array.from({ length: 16 }).map((_, index) => {
 });
 
 export const BookSearch = () => {
-    const [selectedItems, setSelectedItems] = useState<string[]>([]);
+    const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+    const pageCount = 10;
+    const entryCount = 10;
+    const [pageSize, setPageSize] = useState(15);
+    const [pageIndex, setPageIndex] = useState(0);
 
     return (
         <main className="container mx-auto py-8 px-4">
@@ -79,8 +84,8 @@ export const BookSearch = () => {
                                     value: 'computer-science',
                                 },
                             ]}
-                            selectedOptions={selectedItems}
-                            setSelectedOptions={setSelectedItems}
+                            selectedOptions={selectedGenres}
+                            setSelectedOptions={setSelectedGenres}
                         />
                         <div className="flex gap-2">
                             <Select>
@@ -195,6 +200,14 @@ export const BookSearch = () => {
                     </div>
                 </TabsContent>
             </Tabs>
+            <Pagination
+                pageSize={pageSize}
+                setPageSize={setPageSize}
+                pageIndex={pageIndex}
+                setPageIndex={setPageIndex}
+                pageCount={pageCount}
+                entryCount={entryCount}
+            />
         </main>
     );
 };
