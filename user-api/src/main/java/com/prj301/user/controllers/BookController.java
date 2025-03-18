@@ -138,7 +138,7 @@ public class BookController {
     @JWTProtected
     @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/{id}/report")
-    public ResponseEntity<?> postReportBook(
+    public ResponseEntity<?> report(
             @PathVariable UUID id,
             @RequestBody BookReportRequest reason,
             @RequestAttribute("user-id") UUID reportingUserId
