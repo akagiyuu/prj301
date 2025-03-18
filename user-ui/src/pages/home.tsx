@@ -1,11 +1,44 @@
 import { BookCarousel } from '@/components/book-carousel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookGrid } from '@/components/book-grid';
+import { useQuery } from '@tanstack/react-query';
+import { fetchWrapper } from '@/lib/utils';
+import { toast } from 'sonner';
+import { BookCardProps as Book } from '@/components/book-card';
+
+const BookGridWrapper = () => {
+    const {
+        data: books,
+        status,
+        error,
+    } = useQuery({
+        queryKey: ['news-book'],
+        queryFn: async () => {
+            const response = await fetchWrapper(
+                'book?page=0&size=10&sort=createdAt,desc',
+            );
+            const data = await response.json();
+
+            return data.content as Book[];
+        },
+    });
+
+    if (status === 'pending') {
+        return <span>Loading...</span>;
+    }
+
+    if (status === 'error') {
+        toast.error(error.toString());
+        return <div></div>;
+    }
+
+    return <BookGrid books={books} />;
+};
 
 export const Home = () => {
     const sampleBooks = Array.from({ length: 16 }).map((_, index) => {
         return {
-            id: "1",
+            id: '1',
             title: 'Introduction to Algorithms',
             authors: [
                 'Thomas H. Cormen',
@@ -59,7 +92,7 @@ export const Home = () => {
                         New Books
                     </h2>
                 </div>
-                <BookGrid books={sampleBooks} />
+                <BookGridWrapper />
             </section>
         </main>
     );
