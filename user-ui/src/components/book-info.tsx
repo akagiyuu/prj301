@@ -1,4 +1,4 @@
-import { BookOpen, Calendar, Download, Eye, Share } from 'lucide-react';
+import { BookOpen, Calendar, Download, Eye, Flag, Share } from 'lucide-react';
 import { Rate } from './rate';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -24,9 +24,16 @@ type Props = {
     onRead?: MouseEventHandler<HTMLButtonElement>;
     onShare?: MouseEventHandler<HTMLButtonElement>;
     onDownload?: MouseEventHandler<HTMLButtonElement>;
+    onReport?: MouseEventHandler<HTMLButtonElement>;
 };
 
-export const BookInfo = ({ book, onRead, onShare, onDownload }: Props) => {
+export const BookInfo = ({
+    book,
+    onRead,
+    onShare,
+    onDownload,
+    onReport
+}: Props) => {
     return (
         <div className="flex-1 space-y-6 text-center md:text-left">
             <div className="space-y-4">
@@ -115,6 +122,15 @@ export const BookInfo = ({ book, onRead, onShare, onDownload }: Props) => {
                 >
                     <Share className="h-5 w-5" />
                     Share
+                </Button>
+                <Button
+                    size="lg"
+                    variant="destructive"
+                    onClick={onReport}
+                    className="gap-2 rounded-full px-6 hover:bg-primary/5"
+                >
+                    <Flag className="h-5 w-5" />
+                    Report
                 </Button>
             </div>
         </div>
