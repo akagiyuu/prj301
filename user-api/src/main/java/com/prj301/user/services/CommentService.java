@@ -57,4 +57,8 @@ public class CommentService {
             comment.getCreatedAt()
         );
     }
+
+    public long countByUsername(String username) {
+        return commentRepository.countByUser_Username(username);
+    }
 }

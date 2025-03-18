@@ -156,4 +156,8 @@ public class BookService {
     public Optional<Book> findBookById(UUID id) {
         return bookRepository.findById(id);
     }
+
+    public Page<BookResponse> findByUsername(String username, Pageable pageable) {
+        return bookRepository.findByPostedUser_Username(username, pageable).map(this::toResponse);
+    }
 }
