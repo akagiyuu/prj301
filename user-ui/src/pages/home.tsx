@@ -6,7 +6,7 @@ import { fetchWrapper } from '@/lib/utils';
 import { toast } from 'sonner';
 import { BookCardProps as Book } from '@/components/book-card';
 
-const BookGridWrapper = () => {
+const NewBooks = () => {
     const {
         data: books,
         status,
@@ -15,8 +15,12 @@ const BookGridWrapper = () => {
         queryKey: ['news-book'],
         queryFn: async () => {
             const response = await fetchWrapper(
-                'book?page=0&size=10&sort=createdAt,desc',
+                'book?page=0&size=20&sort=createdAt,desc',
             );
+            if (!response.ok) {
+                throw new Error('Failed to fetch books');
+            }
+
             const data = await response.json();
 
             return data.content as Book[];
@@ -35,25 +39,73 @@ const BookGridWrapper = () => {
     return <BookGrid books={books} />;
 };
 
-export const Home = () => {
-    const sampleBooks = Array.from({ length: 16 }).map((_, index) => {
-        return {
-            id: '1',
-            title: 'Introduction to Algorithms',
-            authors: [
-                'Thomas H. Cormen',
-                'Charles E. Leiserson',
-                'Ronald L. Rivest',
-                'Clifford Stein',
-            ],
-            publicationDate: '2025-03-16',
-            rate: 4.8,
-            genres: ['Computer Science', 'Programming', 'Mathematics'],
-            view: 12453,
-            cover: 'https://m.media-amazon.com/images/I/61O6K0yPmzL._AC_UF1000,1000_QL80_.jpg',
-        };
+const MostRatedBooks = () => {
+    const {
+        data: books,
+        status,
+        error,
+    } = useQuery({
+        queryKey: ['most-rated-books'],
+        queryFn: async () => {
+            const response = await fetchWrapper(
+                'book?page=0&size=10&sort=totalRate,desc',
+            );
+            if (!response.ok) {
+                throw new Error('Failed to fetch books');
+            }
+
+            const data = await response.json();
+
+            return data.content as Book[];
+        },
     });
 
+    if (status === 'pending') {
+        return <span>Loading...</span>;
+    }
+
+    if (status === 'error') {
+        toast.error(error.toString());
+        return <div></div>;
+    }
+
+    return <BookCarousel books={books} />;
+};
+
+const MostViewedBooks = () => {
+    const {
+        data: books,
+        status,
+        error,
+    } = useQuery({
+        queryKey: ['most-viewed-books'],
+        queryFn: async () => {
+            const response = await fetchWrapper(
+                'book?page=0&size=10&sort=view,desc',
+            );
+            if (!response.ok) {
+                throw new Error('Failed to fetch books');
+            }
+
+            const data = await response.json();
+
+            return data.content as Book[];
+        },
+    });
+
+    if (status === 'pending') {
+        return <span>Loading...</span>;
+    }
+
+    if (status === 'error') {
+        toast.error(error.toString());
+        return <div></div>;
+    }
+
+    return <BookCarousel books={books} />;
+};
+
+export const Home = () => {
     return (
         <main className="container mx-auto px-4 py-8">
             <Tabs defaultValue="recommended" className="mb-16">
@@ -64,24 +116,17 @@ export const Home = () => {
                     >
                         Recommended
                     </TabsTrigger>
-                    <TabsTrigger className="p-4" value="top">
-                        Top Of The Month
-                    </TabsTrigger>
-                    <TabsTrigger className="p-4" value="best">
-                        Best Of All Time
+                    <TabsTrigger className="p-4" value="most-viewed">
+                        Most Viewed
                     </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="recommended">
-                    <BookCarousel books={sampleBooks} />
+                    <MostRatedBooks />
                 </TabsContent>
 
-                <TabsContent value="top">
-                    <BookCarousel books={sampleBooks} />
-                </TabsContent>
-
-                <TabsContent value="best">
-                    <BookCarousel books={sampleBooks} />
+                <TabsContent value="most-viewed">
+                    <MostViewedBooks />
                 </TabsContent>
             </Tabs>
 
@@ -92,7 +137,7 @@ export const Home = () => {
                         New Books
                     </h2>
                 </div>
-                <BookGridWrapper />
+                <NewBooks />
             </section>
         </main>
     );
