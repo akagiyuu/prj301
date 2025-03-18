@@ -28,8 +28,8 @@ public class RatingService {
                     .user(user)
                     .rating(ratingValue)
                     .build();
-            book.setTotalRate(book.getTotalRate() + ratingValue);
-            book.setRateCount(book.getRateCount() + 1);
+            book.setTotalRating(book.getTotalRating() + ratingValue);
+            book.setRatingCount(book.getRatingCount() + 1);
 
             ratingRepository.save(rating);
             bookRepository.save(book);

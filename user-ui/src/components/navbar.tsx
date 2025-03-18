@@ -32,19 +32,10 @@ type Props = {
 };
 
 export const Navbar = ({ logo, menu, auth }: Props) => {
-    const {
-        data: user,
-        status,
-        error,
-    } = useQuery({
+    const { data: user } = useQuery({
         queryKey: ['self'],
         queryFn: () => api.user.self(),
     });
-
-    if (status === 'error') {
-        toast.error(error.toString());
-        return <div></div>;
-    }
 
     return (
         <nav className="sticky top-0 z-50 grid grid-cols-3 items-center px-8 py-4 shadow-[0_2px_10px_-2px_rgba(0,0,0,0.05)] backdrop-blur-md bg-background/90 border-b border-border/10">

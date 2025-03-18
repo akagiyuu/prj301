@@ -90,10 +90,10 @@ public class Book {
     private int view;
 
     @ColumnDefault("0")
-    private int totalRate;
+    private int totalRating;
 
     @ColumnDefault("0")
-    private int rateCount;
+    private int ratingCount;
 
     @CreationTimestamp
     private LocalDate createdAt;

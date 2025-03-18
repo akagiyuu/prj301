@@ -22,5 +22,6 @@ public class BookResponse {
     private final String summary;
     private final String pdfPath;
     private final int view;
-    private final float rate;
+    private final int totalRating;
+    private final int ratingCount;
 }

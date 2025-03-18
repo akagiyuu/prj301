@@ -62,7 +62,8 @@ public class BookService {
             book.getSummary(),
             book.getPdfPath(),
             book.getView(),
-            (float) book.getTotalRate() / (float) book.getRateCount()
+            book.getTotalRating(),
+            book.getRatingCount()
         );
     }
 
