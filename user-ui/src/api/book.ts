@@ -12,7 +12,8 @@ export type Book = {
     summary: string;
     pdfPath: string;
     view: number;
-    rate: number;
+    totalRating: number;
+    ratingCount: number;
 };
 
 export type Comment = {
