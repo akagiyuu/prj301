@@ -15,4 +15,5 @@ public class UserResponse {
     private final String hobbies;
     private final LocalDate dob;
     private final String bio;
+    private final LocalDate createdAt;
 }

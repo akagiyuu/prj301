@@ -22,7 +22,8 @@ public class UserService {
             user.getFullName(),
             user.getHobbies(),
             user.getDob(),
-            user.getBio()
+            user.getBio(),
+            user.getCreatedAt()
         );
     }
 
