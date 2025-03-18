@@ -56,7 +56,7 @@ public class UserController {
     @JWTProtected
     @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/{id}/report")
-    public ResponseEntity<?> postReportUser(
+    public ResponseEntity<?> report(
             @PathVariable UUID id,
             @RequestBody UserReportRequest reason,
             @RequestAttribute("user-id") UUID reportingUserId
