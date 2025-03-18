@@ -1,4 +1,5 @@
-import { BookCardFull, BookCardProps as Book } from '@/components/book-card';
+import { Book } from '@/api/book';
+import { BookCardFull } from '@/components/book-card';
 import { UserInfo } from '@/components/user-info';
 import { UserProfileHeader } from '@/components/user-profile-header';
 import {

@@ -3,21 +3,7 @@ import { Rate } from './rate';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { MouseEventHandler } from 'react';
-
-type Book = {
-    isbn: string;
-    postedUser: string;
-    title: string;
-    coverPath: string;
-    authors: string[];
-    genres: string[];
-    publicationDate: string;
-    summary: string;
-    pdfPath: string;
-    view: number;
-    rate: number;
-    rateCount: number;
-};
+import { Book } from '@/api/book';
 
 type Props = {
     book: Book;
@@ -68,7 +54,7 @@ export const BookInfo = ({
                 </div>
 
                 <div className="flex items-center gap-4 justify-center md:justify-start">
-                    <Rate rate={book.rate} rateCount={book.rateCount} />
+                    <Rate rate={book.rate} rateCount={100} />
                     <div className="flex items-center text-sm text-muted-foreground">
                         <Eye className="h-4 w-4 mr-1" />
                         <span>{book.view.toLocaleString()} views</span>

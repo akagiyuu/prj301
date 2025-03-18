@@ -4,22 +4,7 @@ import { BookCover } from '@/components/book-cover';
 import { BookInfo } from '@/components/book-info';
 import { useNavigate, useParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { fetchWrapper } from '@/lib/utils';
-
-type BookData = {
-    isbn: string;
-    postedUser: string;
-    title: string;
-    coverPath: string;
-    authors: string[];
-    genres: string[];
-    publicationDate: string;
-    summary: string;
-    pdfPath: string;
-    view: number;
-    rate: number;
-    rateCount: number;
-};
+import * as api from '@/api';
 
 export const BookSummary = () => {
     const { id } = useParams();
@@ -31,16 +16,7 @@ export const BookSummary = () => {
         error,
     } = useQuery({
         queryKey: ['book', id],
-        queryFn: async () => {
-            const response = await fetchWrapper(`book/${id}`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch book');
-            }
-
-            const data = await response.json();
-
-            return data as BookData;
-        },
+        queryFn: () => api.book.get(id!),
     });
 
     if (status === 'pending') {
@@ -99,7 +75,7 @@ export const BookSummary = () => {
             </div>
 
             <div className="container max-w-5xl mx-auto px-4 py-12">
-                <CommentSection bookId={'1111111111'} />
+                <CommentSection bookId={id!} />
             </div>
         </main>
     );

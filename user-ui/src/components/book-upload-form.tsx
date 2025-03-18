@@ -1,4 +1,4 @@
-import { cn, fetchWrapper } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
@@ -17,6 +17,7 @@ import {
 import { useNavigate } from 'react-router';
 import { TagInput, Tag } from 'emblor';
 import { useState } from 'react';
+import * as api from '@/api';
 
 const schema = z.object({
     isbn: z
@@ -29,7 +30,7 @@ const schema = z.object({
     publicationDate: z
         .string()
         .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format'),
-    summary: z.string().nullable(),
+    summary: z.string(),
     pdf: z
         .instanceof(File)
         .refine((file) => file.size > 0, 'PDF file is required'),
@@ -61,26 +62,13 @@ export const BookUploadForm = ({
 
     const { setValue } = form;
 
-    const onSubmit = async (values: z.infer<typeof schema>) => {
+    const onSubmit = async ({
+        cover,
+        pdf,
+        ...values
+    }: z.infer<typeof schema>) => {
         try {
-            const response = await fetchWrapper('auth/login', {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(values),
-            });
-
-            if (!response.ok) {
-                throw new Error('Invalid username or password');
-            }
-
-            const token = await response.text();
-
-            localStorage.setItem('token', token);
-
-            navigate('/');
+            api.book.uploadBook(values, cover, pdf);
         } catch (error) {
             toast.error(error.toString());
         }
@@ -137,9 +125,11 @@ export const BookUploadForm = ({
                                                         (
                                                             newTags as [
                                                                 Tag,
-                                                                ...Tag[]
+                                                                ...Tag[],
                                                             ]
-                                                        ).map((tag) => tag.text)
+                                                        ).map(
+                                                            (tag) => tag.text,
+                                                        ),
                                                     );
                                                 }}
                                             />
@@ -169,9 +159,11 @@ export const BookUploadForm = ({
                                                         (
                                                             newTags as [
                                                                 Tag,
-                                                                ...Tag[]
+                                                                ...Tag[],
                                                             ]
-                                                        ).map((tag) => tag.text)
+                                                        ).map(
+                                                            (tag) => tag.text,
+                                                        ),
                                                     );
                                                 }}
                                             />
@@ -205,7 +197,7 @@ export const BookUploadForm = ({
                                                 accept="application/pdf"
                                                 onChange={(e) =>
                                                     field.onChange(
-                                                        e.target.files?.[0]
+                                                        e.target.files?.[0],
                                                     )
                                                 }
                                             />
@@ -226,7 +218,7 @@ export const BookUploadForm = ({
                                                 accept="image/*"
                                                 onChange={(e) =>
                                                     field.onChange(
-                                                        e.target.files?.[0]
+                                                        e.target.files?.[0],
                                                     )
                                                 }
                                             />

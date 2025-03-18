@@ -10,96 +10,110 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
-import { toast } from 'sonner';
 import { NavLink } from 'react-router';
+import { useQueries, useQuery } from '@tanstack/react-query';
+import * as api from '@/api';
+import { toast } from 'sonner';
+import { Comment as CommentEntity } from '@/api/book';
 
-const SAMPLE_COMMENTS = [
-    {
-        id: '1',
-        user: {
-            name: 'Alice Johnson',
-            avatar: '/placeholder.svg?height=40&width=40',
-        },
-        content:
-            'This book completely changed my perspective on AI. The authors present complex ideas in an accessible way without oversimplifying the technical aspects.',
-        createdAt: '2025-03-15T14:30:00Z',
-    },
-    {
-        id: '2',
-        user: {
-            name: 'Michael Chen',
-            avatar: '/placeholder.svg?height=40&width=40',
-        },
-        content:
-            'Chapter 4 on ethical considerations was particularly thought-provoking. I appreciate how the authors addressed both the technical and philosophical dimensions of AI development.',
-        createdAt: '2025-03-14T09:15:00Z',
-    },
-    {
-        id: '3',
-        user: {
-            name: 'Sarah Williams',
-            avatar: '/placeholder.svg?height=40&width=40',
-        },
-        content:
-            'The case studies they included really helped illustrate the ethical dilemmas. I found the examples from healthcare and autonomous vehicles especially relevant.',
-        createdAt: '2025-03-14T10:45:00Z',
-    },
-    {
-        id: '4',
-        user: {
-            name: 'David Lee',
-            avatarPath: '/placeholder.svg?height=40&width=40',
-        },
-        content:
-            'A must-read for anyone interested in the future of technology. The case studies were especially illuminating.',
-        createdAt: '2025-03-12T16:45:00Z',
-    },
-];
+const Comment = (comment: CommentEntity) => {
+    const {
+        data: user,
+        status,
+        error,
+    } = useQuery({
+        queryKey: ['user', comment.username],
+        queryFn: () => api.user.find(comment.username),
+    });
 
-type Comment = {
-    id: string;
-    user: {
-        name: string;
-        avatarPath?: string;
-    };
-    content: string;
-    createdAt: string;
-};
+    if (status === 'pending') {
+        return <span>Loading...</span>;
+    }
 
-export function CommentSection({ bookId }: { bookId: string }) {
-    const [comments, setComments] = useState<Comment[]>(SAMPLE_COMMENTS);
-    const [newComment, setNewComment] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    if (status === 'error') {
+        toast.error(error.toString());
+        return <div></div>;
+    }
 
     const report = () => {};
 
-    const handleSubmitComment = async () => {
-        if (!newComment.trim()) return;
+    return (
+        <div
+            key={comment.id}
+            className="bg-background rounded-2xl p-6 shadow-sm border border-muted/50 hover:border-primary/20 transition-colors"
+        >
+            <div className="flex gap-4">
+                <Avatar className="h-10 w-10 border">
+                    <AvatarImage src={user.avatarPath} alt={comment.username} />
+                    <AvatarFallback>
+                        {comment.username.charAt(0)}
+                    </AvatarFallback>
+                </Avatar>
+                <div className="space-y-3 flex-1">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <NavLink to={`/user/${comment.username}`}>
+                                <h4 className="font-medium text-foreground">
+                                    {comment.username}
+                                </h4>
+                            </NavLink>
+                            <span className="text-xs text-muted-foreground">
+                                {comment.createdAt}
+                            </span>
+                        </div>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 rounded-full hover:bg-muted/50"
+                                >
+                                    <MoreHorizontal className="h-4 w-4" />
+                                    <span className="sr-only">
+                                        More options
+                                    </span>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                                align="end"
+                                className="rounded-xl"
+                            >
+                                <DropdownMenuItem onClick={report}>
+                                    Report
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>Copy Link</DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                    <p className="text-sm leading-relaxed">{comment.content}</p>
+                </div>
+            </div>
+        </div>
+    );
+};
 
-        setIsSubmitting(true);
+export const CommentSection = ({ bookId }: { bookId: string }) => {
+    const {
+        data: comments,
+        status,
+        error,
+    } = useQuery({
+        queryKey: ['book', bookId, 'comment'],
+        queryFn: () => api.book.getComment(bookId),
+    });
 
-        try {
-            await new Promise((resolve) => setTimeout(resolve, 500));
+    const [newComment, setNewComment] = useState('');
 
-            const newCommentObj: Comment = {
-                id: `temp-${Date.now()}`,
-                user: {
-                    name: 'Current User',
-                    avatarPath: '/placeholder.svg?height=40&width=40',
-                },
-                content: newComment,
-                createdAt: new Date().toISOString(),
-            };
+    const handleSubmitComment = async () => {};
 
-            setComments([newCommentObj, ...comments]);
-            setNewComment('');
-            toast.info('Your comment has been successfully posted.');
-        } catch (error) {
-            toast.error('Failed to post your comment. Please try again.');
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+    if (status === 'pending') {
+        return <span>Loading...</span>;
+    }
+
+    if (status === 'error') {
+        toast.error(error.toString());
+        return <div></div>;
+    }
 
     return (
         <div className="space-y-8">
@@ -134,7 +148,6 @@ export function CommentSection({ bookId }: { bookId: string }) {
                         <div className="flex justify-end">
                             <Button
                                 onClick={handleSubmitComment}
-                                disabled={isSubmitting || !newComment.trim()}
                                 className="gap-2 rounded-full px-6 shadow-sm hover:shadow-md transition-all"
                             >
                                 <Send className="h-4 w-4" />
@@ -155,68 +168,7 @@ export function CommentSection({ bookId }: { bookId: string }) {
                         </p>
                     </div>
                 ) : (
-                    comments.map((comment) => (
-                        <div
-                            key={comment.id}
-                            className="bg-background rounded-2xl p-6 shadow-sm border border-muted/50 hover:border-primary/20 transition-colors"
-                        >
-                            <div className="flex gap-4">
-                                <Avatar className="h-10 w-10 border">
-                                    <AvatarImage
-                                        src={comment.user.avatarPath}
-                                        alt={comment.user.name}
-                                    />
-                                    <AvatarFallback>
-                                        {comment.user.name.charAt(0)}
-                                    </AvatarFallback>
-                                </Avatar>
-                                <div className="space-y-3 flex-1">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <NavLink to={`/user/${comment.user.name}`}>
-                                                <h4 className="font-medium text-foreground">
-                                                    {comment.user.name}
-                                                </h4>
-                                            </NavLink>
-                                            <span className="text-xs text-muted-foreground">
-                                                {comment.createdAt}
-                                            </span>
-                                        </div>
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-8 w-8 rounded-full hover:bg-muted/50"
-                                                >
-                                                    <MoreHorizontal className="h-4 w-4" />
-                                                    <span className="sr-only">
-                                                        More options
-                                                    </span>
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent
-                                                align="end"
-                                                className="rounded-xl"
-                                            >
-                                                <DropdownMenuItem
-                                                    onClick={report}
-                                                >
-                                                    Report
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem>
-                                                    Copy Link
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </div>
-                                    <p className="text-sm leading-relaxed">
-                                        {comment.content}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    ))
+                    comments.map((comment) => <Comment {...comment} />)
                 )}
             </div>
         </div>

@@ -2,9 +2,8 @@ import { BookCarousel } from '@/components/book-carousel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookGrid } from '@/components/book-grid';
 import { useQuery } from '@tanstack/react-query';
-import { fetchWrapper } from '@/lib/utils';
 import { toast } from 'sonner';
-import { BookCardProps as Book } from '@/components/book-card';
+import * as api from '@/api';
 
 const NewBooks = () => {
     const {
@@ -12,19 +11,17 @@ const NewBooks = () => {
         status,
         error,
     } = useQuery({
-        queryKey: ['news-book'],
-        queryFn: async () => {
-            const response = await fetchWrapper(
-                'book?page=0&size=20&sort=createdAt,desc',
-            );
-            if (!response.ok) {
-                throw new Error('Failed to fetch books');
-            }
-
-            const data = await response.json();
-
-            return data.content as Book[];
-        },
+        queryKey: ['book', 'new'],
+        queryFn: () =>
+            api.book
+                .search({
+                    pageable: {
+                        page: 0,
+                        size: 20,
+                        sort: ['createdAt,desc'],
+                    },
+                })
+                .then((response) => response.content),
     });
 
     if (status === 'pending') {
@@ -45,19 +42,17 @@ const MostRatedBooks = () => {
         status,
         error,
     } = useQuery({
-        queryKey: ['most-rated-books'],
-        queryFn: async () => {
-            const response = await fetchWrapper(
-                'book?page=0&size=10&sort=totalRate,desc',
-            );
-            if (!response.ok) {
-                throw new Error('Failed to fetch books');
-            }
-
-            const data = await response.json();
-
-            return data.content as Book[];
-        },
+        queryKey: ['book', 'most-rated'],
+        queryFn: () =>
+            api.book
+                .search({
+                    pageable: {
+                        page: 0,
+                        size: 10,
+                        sort: ['totalRate,desc'],
+                    },
+                })
+                .then((response) => response.content),
     });
 
     if (status === 'pending') {
@@ -78,19 +73,17 @@ const MostViewedBooks = () => {
         status,
         error,
     } = useQuery({
-        queryKey: ['most-viewed-books'],
-        queryFn: async () => {
-            const response = await fetchWrapper(
-                'book?page=0&size=10&sort=view,desc',
-            );
-            if (!response.ok) {
-                throw new Error('Failed to fetch books');
-            }
-
-            const data = await response.json();
-
-            return data.content as Book[];
-        },
+        queryKey: ['book', 'most-viewed'],
+        queryFn: () =>
+            api.book
+                .search({
+                    pageable: {
+                        page: 0,
+                        size: 10,
+                        sort: ['view,desc'],
+                    },
+                })
+                .then((response) => response.content),
     });
 
     if (status === 'pending') {

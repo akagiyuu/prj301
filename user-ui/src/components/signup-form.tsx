@@ -1,4 +1,4 @@
-import { cn, fetchWrapper } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
@@ -15,6 +15,7 @@ import {
     FormLabel,
     FormMessage,
 } from './ui/form';
+import * as api from '@/api';
 
 const schema = z
     .object({
@@ -58,20 +59,7 @@ export const SignupForm = ({
 
     const onSubmit = async (values: z.infer<typeof schema>) => {
         try {
-            const response = await fetchWrapper('auth/signup', {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(values),
-            });
-
-            if (!response.ok) {
-                throw new Error(await response.text());
-            }
-
-            const token = await response.text();
+            const token = await api.auth.signup(values);
 
             localStorage.setItem('token', token);
 

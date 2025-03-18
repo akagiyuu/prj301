@@ -1,4 +1,4 @@
-import { BookCard, BookCardFull, BookCardProps } from '@/components/book-card';
+import { BookCard, BookCardFull } from '@/components/book-card';
 import { Pagination } from '@/components/pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,11 +12,11 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { fetchWrapper } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { Eye, Search, Star, Users } from 'lucide-react';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { toast } from 'sonner';
+import * as api from '@/api';
 
 const GenreSelect = ({
     selectedGenres,
@@ -30,22 +30,16 @@ const GenreSelect = ({
         status,
         error,
     } = useQuery({
-        queryKey: ['genres'],
-        queryFn: async () => {
-            const response = await fetchWrapper('genre/all');
-            if (!response.ok) {
-                throw new Error('Failed to fetch all genres');
-            }
-
-            const data = (await response.json()) as string[];
-
-            return data.map((genre) => {
-                return {
-                    label: genre,
-                    value: genre,
-                };
-            });
-        },
+        queryKey: ['genre'],
+        queryFn: () =>
+            api.genre.get().then((data) =>
+                data.map((genre) => {
+                    return {
+                        label: genre,
+                        value: genre,
+                    };
+                }),
+            ),
     });
 
     if (status === 'error') {
@@ -63,11 +57,6 @@ const GenreSelect = ({
     );
 };
 
-type SearchResult = {
-    totalPages: number;
-    content: BookCardProps[];
-};
-
 export const BookSearch = () => {
     const [query, setQuery] = useState('');
     const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
@@ -80,6 +69,7 @@ export const BookSearch = () => {
 
     const { data, status, error } = useQuery({
         queryKey: [
+            'book',
             query,
             selectedGenres,
             orderBy,
@@ -87,25 +77,19 @@ export const BookSearch = () => {
             pageIndex,
             pageSize,
         ],
-        queryFn: async () => {
-            const queryTerm =
-                query !== undefined && query !== '' ? `&query=${query}` : '';
-            const genresQuery = selectedGenres
-                .map((genre) => `&genres=${genre}`)
-                .join('');
-            const sortQuery =
-                orderBy !== undefined
-                    ? `&sort=${encodeURIComponent(orderBy)},${orderDirection ?? 'asc'}`
-                    : '';
-            const response = await fetchWrapper(
-                `book?page=${pageIndex}&size=${pageSize}${genresQuery}${sortQuery}${queryTerm}`,
-            );
-            if (!response.ok) {
-                throw new Error('Failed to fetch books');
-            }
-
-            return (await response.json()) as SearchResult;
-        },
+        queryFn: () =>
+            api.book.search({
+                query,
+                genres: selectedGenres,
+                pageable: {
+                    page: pageIndex,
+                    size: pageSize,
+                    sort:
+                        orderBy !== undefined
+                            ? [`${orderBy}${orderDirection ?? ','}`]
+                            : [],
+                },
+            }),
     });
 
     if (status === 'error') {

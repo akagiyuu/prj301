@@ -5,9 +5,10 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from './ui/carousel';
-import { BookCard, type BookCardProps } from './book-card';
+import { BookCard } from './book-card';
+import { Book } from '@/api/book';
 
-export const BookCarousel = ({ books }: { books: BookCardProps[] }) => {
+export const BookCarousel = ({ books }: { books: Book[] }) => {
     return (
         <div className="relative">
             <Carousel

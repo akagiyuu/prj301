@@ -39,7 +39,7 @@ export const find = async (username: string) => {
         throw new Error('Request failed');
     }
 
-    return (await response.json()) as Self;
+    return (await response.json()) as User;
 };
 
 export const update = async (values: UserUpdateRequest) => {

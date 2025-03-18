@@ -1,8 +1,7 @@
 import { UserProfileUpdateForm } from '@/components/user-profile-update-form';
-import { fetchWrapper } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
-import { User } from './user-profile';
 import { toast } from 'sonner';
+import * as api from '@/api';
 
 export const UserProfileUpdate = () => {
     const {
@@ -10,15 +9,8 @@ export const UserProfileUpdate = () => {
         status,
         error,
     } = useQuery({
-        queryKey: ['user'],
-        queryFn: async () => {
-            const response = await fetchWrapper('user/self');
-            if (!response.ok) {
-                throw new Error('Failed to fetch books');
-            }
-
-            return await response.json() as User;
-        },
+        queryKey: ['self'],
+        queryFn: () => api.user.self(),
     });
 
     if (status === 'pending') {
