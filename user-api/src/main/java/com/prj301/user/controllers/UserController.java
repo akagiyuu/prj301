@@ -1,6 +1,7 @@
 package com.prj301.user.controllers;
 
 import com.prj301.user.interceptors.JWTProtected;
+import com.prj301.user.models.dto.report.UserReportRequest;
 import com.prj301.user.models.dto.user.UserResponse;
 import com.prj301.user.models.dto.user.UserUpdate;
 import com.prj301.user.models.entity.User;
@@ -50,5 +51,25 @@ public class UserController {
         return ResponseEntity
             .badRequest()
             .body("Failed to update");
+    }
+
+    @JWTProtected
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PostMapping("/{username}/report")
+    public ResponseEntity<?> report(
+            @PathVariable String username,
+            @RequestBody UserReportRequest reason,
+            @RequestAttribute("user-id") UUID reportingUserId
+    ){
+
+        if (service.report(reason, username, reportingUserId)) {
+            return ResponseEntity
+                    .ok()
+                    .build();
+        }
+
+        return ResponseEntity
+                .badRequest()
+                .body("Failed to report");
     }
 }
