@@ -1,13 +1,4 @@
-import {
-    BadgeCheck,
-    Bell,
-    ChevronDown,
-    ChevronsUpDown,
-    CreditCard,
-    LogOut,
-    Sparkles,
-    User,
-} from 'lucide-react';
+import { BadgeCheck, ChevronDown, LogOut, User } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -19,6 +10,7 @@ import {
 } from './ui/dropdown-menu';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Link, useNavigate } from 'react-router';
 
 type User = {
     fullName: string;
@@ -26,11 +18,15 @@ type User = {
     imagePath?: string;
 };
 
-const logout = () => {
-    localStorage.removeItem('token');
-};
-
 export const UserMenu = ({ user }: { user: User }) => {
+    const navigate = useNavigate();
+
+    const logout = () => {
+        localStorage.removeItem('token');
+
+        navigate('/auth/login');
+    };
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -80,7 +76,7 @@ export const UserMenu = ({ user }: { user: User }) => {
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={logout}>
                     <LogOut />
                     Log out
                 </DropdownMenuItem>

@@ -1,6 +1,7 @@
 import { Eye, Star, Users } from 'lucide-react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
+import { Link } from 'react-router';
 
 export type BookCardProps = {
     id: string;
@@ -43,7 +44,7 @@ export const BookCard = (book: BookCardProps) => {
                         size="sm"
                         className="w-full bg-white/90 hover:bg-white text-xs py-1 h-8 font-medium shadow-md transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 ease-out"
                     >
-                        View Details
+                        <Link to={`/book/${book.id}`}>View Details</Link>
                     </Button>
                 </div>
             </div>
@@ -174,7 +175,7 @@ export const BookCardFull = (book: BookCardProps) => {
                         size="sm"
                         className="text-xs h-7 opacity-0 group-hover:opacity-100 transition-all duration-300 text-primary hover:bg-primary/5 hover:text-primary transform translate-y-1 group-hover:translate-y-0"
                     >
-                        View Details
+                        <Link to={`/book/${book.id}`}>View Details</Link>
                     </Button>
                 </div>
             </div>

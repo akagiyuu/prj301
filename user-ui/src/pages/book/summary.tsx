@@ -1,23 +1,10 @@
-import { useState } from 'react';
-import { BookOpen, Calendar, Download, Eye, Share, Star } from 'lucide-react';
 import { CommentSection } from '@/components/comment-section';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import { BookCover } from '@/components/book-cover';
 import { BookInfo } from '@/components/book-info';
+import { useNavigate, useParams } from 'react-router';
+import { useQuery } from '@tanstack/react-query';
+import { fetchWrapper } from '@/lib/utils';
 
 type BookData = {
     isbn: string;
@@ -31,27 +18,43 @@ type BookData = {
     pdfPath: string;
     view: number;
     rate: number;
-    ratingCount: number;
-};
-
-const book = {
-    isbn: '9781234567890',
-    postedUser: 'john_doe',
-    title: 'The Future of AI: Promises and Perils',
-    coverPath: '/placeholder.svg?height=600&width=400',
-    authors: ['Dr. Jane Smith', 'Prof. Robert Johnson'],
-    genres: ['Technology', 'Science', 'Philosophy'],
-    publicationDate: '2025-03-16',
-    summary:
-        "An in-depth exploration of artificial intelligence's potential impact on society, examining both the tremendous opportunities and significant challenges that lie ahead. The book draws on research from leading experts in the field to present a balanced view of how AI might transform our world in the coming decades.",
-    pdfPath: '/sample.pdf',
-    view: 1243,
-    rate: 4.7,
-    rateCount: 128,
+    rateCount: number;
 };
 
 export const BookSummary = () => {
-    const onRead = () => {};
+    const { id } = useParams();
+    const navigate = useNavigate();
+
+    const {
+        data: book,
+        status,
+        error,
+    } = useQuery({
+        queryKey: ['book', id],
+        queryFn: async () => {
+            const response = await fetchWrapper(`book/${id}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch book');
+            }
+
+            const data = await response.json();
+
+            return data as BookData;
+        },
+    });
+
+    if (status === 'pending') {
+        return <span>Loading...</span>;
+    }
+
+    if (status === 'error') {
+        toast.error(error.toString());
+        return <div></div>;
+    }
+
+    const onRead = () => {
+        navigate('read');
+    };
 
     const onShare = () => {
         if (navigator.share) {
@@ -68,7 +71,9 @@ export const BookSummary = () => {
         }
     };
 
-    const onDownload = () => {};
+    const onDownload = () => {
+        window.location.replace(book.pdfPath);
+    };
 
     return (
         <main className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">

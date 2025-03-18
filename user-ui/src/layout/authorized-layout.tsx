@@ -16,16 +16,16 @@ export const AuthorizedLayout = () => {
                     },
                     {
                         title: 'Book',
-                        url: 'book',
+                        url: '/book',
                     },
                     {
                         title: 'Upload',
-                        url: 'book/upload',
+                        url: '/book/upload',
                     },
                 ]}
                 auth={{
-                    login: 'auth/login',
-                    signup: 'auth/signup',
+                    login: '/auth/login',
+                    signup: '/auth/signup',
                 }}
             />
             <Outlet />
