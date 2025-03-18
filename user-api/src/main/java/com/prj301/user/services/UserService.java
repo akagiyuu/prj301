@@ -64,9 +64,9 @@ public class UserService {
         }
     }
 
-    public boolean report(UserReportRequest reason, UUID userId, UUID reportingUserId) {
+    public boolean report(UserReportRequest reason, String username, UUID reportingUserId) {
         try {
-            createAndSaveReport(reason, userId, reportingUserId);
+            createAndSaveReport(reason, username, reportingUserId);
             return true;
         } catch (EntityNotFoundException e) {
             System.out.printf("Failed to report user: %s%n", e.getMessage());
@@ -78,23 +78,28 @@ public class UserService {
     }
 
     public void createAndSaveReport(
-            @Nullable UserReportRequest reason,
-            UUID userId,
-            @RequestAttribute("user-id") UUID reportingUserId
+        UserReportRequest reason,
+        String username,
+        UUID reportingUserId
     ) {
-        String reportReason = (reason != null && !reason.getReason().isEmpty()) ? reason.getReason() : "No reason provided";
+        String reportReason = (reason != null && !reason
+            .getReason()
+            .isEmpty()) ? reason.getReason() : "No reason provided";
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User user = userRepository
+            .findByUsernameContainsIgnoreCase(username)
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        User reportingUser = userRepository.findById(reportingUserId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User reportingUser = userRepository
+            .findById(reportingUserId)
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        UserReport userReport = UserReport.builder()
-                .user(user)
-                .reportingUser(reportingUser)
-                .reason(reportReason)
-                .build();
+        UserReport userReport = UserReport
+            .builder()
+            .user(user)
+            .reportingUser(reportingUser)
+            .reason(reportReason)
+            .build();
 
         userReportRepository.save(userReport);
     }

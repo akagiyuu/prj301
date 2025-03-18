@@ -55,14 +55,14 @@ public class UserController {
 
     @JWTProtected
     @SecurityRequirement(name = "Bearer Authentication")
-    @PostMapping("/{id}/report")
+    @PostMapping("/{username}/report")
     public ResponseEntity<?> report(
-            @PathVariable UUID id,
+            @PathVariable String username,
             @RequestBody UserReportRequest reason,
             @RequestAttribute("user-id") UUID reportingUserId
     ){
 
-        if (service.report(reason, id, reportingUserId)) {
+        if (service.report(reason, username, reportingUserId)) {
             return ResponseEntity
                     .ok()
                     .build();
