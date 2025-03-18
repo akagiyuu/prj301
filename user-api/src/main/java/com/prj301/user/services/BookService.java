@@ -75,6 +75,8 @@ public class BookService {
 
     public Specification<Book> findCriteria(String searchTerm, Collection<String> genreNames) {
         return (root, query, cb) -> {
+            query.distinct(true);
+
             List<Predicate> predicates = new ArrayList<>();
 
             if (searchTerm != null && !searchTerm.isEmpty()) {
