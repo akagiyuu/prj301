@@ -24,7 +24,9 @@ export const BookCard = (book: Book) => {
                 <div className="absolute top-0 right-0 m-2">
                     <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm text-gray-700 rounded-full px-2 py-0.5 text-xs font-medium shadow-sm">
                         <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-                        {(book.totalRating / book.ratingCount).toFixed(1)}
+                        {book.ratingCount === 0
+                            ? 'Not rated'
+                            : (book.totalRating / book.ratingCount).toFixed(1)}
                     </div>
                 </div>
 
@@ -122,9 +124,11 @@ export const BookCardFull = (book: Book) => {
                         <div className="flex items-center gap-1 text-gray-700">
                             <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
                             <span className="font-medium">
-                                {(book.totalRating / book.ratingCount).toFixed(
-                                    1,
-                                )}
+                                {book.ratingCount === 0
+                                    ? 'Not rated'
+                                    : (
+                                          book.totalRating / book.ratingCount
+                                      ).toFixed(1)}
                             </span>
                         </div>
                         <div className="flex items-center gap-1 text-gray-500">
