@@ -96,3 +96,18 @@ export const countComment = async (username: string) => {
 
     return Number(await response.text());
 };
+
+export const report = async (username: string, reason: string) => {
+    const response = await fetchWrapper(`user/${username}/report`, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ reason }),
+    });
+
+    if (!response.ok) {
+        throw new Error('Request failed');
+    }
+};
