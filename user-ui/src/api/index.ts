@@ -23,3 +23,4 @@ export * as auth from './auth';
 export * as book from './book';
 export * as genre from './genre';
 export * as user from './user';
+export * as comment from './comment';

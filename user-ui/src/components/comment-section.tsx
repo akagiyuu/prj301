@@ -2,7 +2,13 @@ import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Flag, MessageSquare, MoreHorizontal, Send } from 'lucide-react';
+import {
+    Flag,
+    MessageSquare,
+    MoreHorizontal,
+    Send,
+    ThumbsUp,
+} from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -15,6 +21,23 @@ import { useQueries, useQuery } from '@tanstack/react-query';
 import * as api from '@/api';
 import { toast } from 'sonner';
 import { Comment as CommentEntity } from '@/api/book';
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from './ui/dialog';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from './ui/select';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { ReportDialog } from './report-dialog';
 
 const Comment = (comment: CommentEntity) => {
     const {
@@ -25,6 +48,7 @@ const Comment = (comment: CommentEntity) => {
         queryKey: ['user', comment.username],
         queryFn: () => api.user.find(comment.username),
     });
+    const [reportOpen, setReportOpen] = useState(false);
 
     if (status === 'pending') {
         return <span>Loading...</span>;
@@ -35,60 +59,60 @@ const Comment = (comment: CommentEntity) => {
         return <div></div>;
     }
 
-    const report = () => {};
-
     return (
-        <div
-            key={comment.id}
-            className="bg-background rounded-2xl p-6 shadow-sm border border-muted/50 hover:border-primary/20 transition-colors"
-        >
-            <div className="flex gap-4">
-                <Avatar className="h-10 w-10 border">
-                    <AvatarImage src={user.avatarPath} alt={comment.username} />
-                    <AvatarFallback>
-                        {comment.username.charAt(0)}
-                    </AvatarFallback>
-                </Avatar>
-                <div className="space-y-3 flex-1">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <NavLink to={`/user/${comment.username}`}>
-                                <h4 className="font-medium text-foreground">
-                                    {comment.username}
-                                </h4>
-                            </NavLink>
-                            <span className="text-xs text-muted-foreground">
-                                {comment.createdAt}
-                            </span>
-                        </div>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-8 w-8 rounded-full hover:bg-muted/50"
+        <>
+            <div
+                key={comment.id}
+                className="group relative bg-background rounded-2xl p-5 shadow-sm border border-muted/50 hover:border-primary/20 transition-colors"
+            >
+                <Button
+                    variant="ghost"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 absolute top-2 right-2 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-destructive"
+                    onClick={() => setReportOpen(true)}
+                    title="Report comment"
+                >
+                    <Flag className="h-4 w-4" />
+                    <span>Report</span>
+                </Button>
+                <div className="flex gap-3">
+                    <Avatar className="h-10 w-10 border">
+                        <AvatarImage
+                            src={user.avatarPath}
+                            alt={comment.username}
+                        />
+                        <AvatarFallback>
+                            {comment.username.charAt(0)}
+                        </AvatarFallback>
+                    </Avatar>
+                    <div className="space-y-2 flex-1">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <NavLink
+                                    to={`/user/${comment.username}`}
+                                    className="hover:underline"
                                 >
-                                    <MoreHorizontal className="h-4 w-4" />
-                                    <span className="sr-only">
-                                        More options
-                                    </span>
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                                align="end"
-                                className="rounded-xl"
-                            >
-                                <DropdownMenuItem onClick={report}>
-                                    Report
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>Copy Link</DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                                    <h4 className="font-medium text-foreground">
+                                        {comment.username}
+                                    </h4>
+                                </NavLink>
+                                <span className="text-xs text-muted-foreground">
+                                    {comment.createdAt}
+                                </span>
+                            </div>
+                        </div>
+                        <p className="text-sm leading-relaxed">
+                            {comment.content}
+                        </p>
                     </div>
-                    <p className="text-sm leading-relaxed">{comment.content}</p>
                 </div>
             </div>
-        </div>
+            <ReportDialog
+                title='Report comment'
+                open={reportOpen}
+                setOpen={setReportOpen}
+                report={(reason) => api.comment.report(comment.id, reason)}
+            />
+        </>
     );
 };
 
