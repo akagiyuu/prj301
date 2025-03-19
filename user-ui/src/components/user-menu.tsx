@@ -10,7 +10,7 @@ import {
 } from './ui/dropdown-menu';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { User } from '@/api/user';
 
 export const UserMenu = ({ user }: { user: User }) => {
@@ -21,10 +21,6 @@ export const UserMenu = ({ user }: { user: User }) => {
 
         navigate('/auth/login');
     };
-
-    const gotoProfile = () => {
-        navigate(`/user/${user.username}`);
-    }
 
     return (
         <DropdownMenu>
@@ -75,10 +71,12 @@ export const UserMenu = ({ user }: { user: User }) => {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuItem onClick={gotoProfile}>
-                        <BadgeCheck />
-                        Profile
-                    </DropdownMenuItem>
+                    <Link to={`/user/${user.username}`}>
+                        <DropdownMenuItem>
+                            <BadgeCheck />
+                            Profile
+                        </DropdownMenuItem>
+                    </Link>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout}>
