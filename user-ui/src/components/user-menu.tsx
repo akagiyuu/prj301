@@ -22,12 +22,19 @@ export const UserMenu = ({ user }: { user: Self }) => {
         navigate('/auth/login');
     };
 
+    const gotoProfile = () => {
+        navigate(`/user/${user.username}`);
+    }
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-12 gap-2 px-2 font-normal">
                     <Avatar className="h-10 w-10 border border-border/20">
-                        <AvatarImage src={user.avatarPath} alt={user.username} />
+                        <AvatarImage
+                            src={user.avatarPath}
+                            alt={user.username}
+                        />
                         <AvatarFallback className="text-xs bg-primary/10 text-primary">
                             {user.username
                                 .split(' ')
@@ -48,7 +55,10 @@ export const UserMenu = ({ user }: { user: Self }) => {
                 <DropdownMenuLabel className="p-0 font-normal">
                     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                         <Avatar className="h-8 w-8 rounded-lg">
-                            <AvatarImage src={user.avatarPath} alt={user.username} />
+                            <AvatarImage
+                                src={user.avatarPath}
+                                alt={user.username}
+                            />
                             <AvatarFallback className="rounded-lg">
                                 {user.fullName}
                             </AvatarFallback>
@@ -65,7 +75,7 @@ export const UserMenu = ({ user }: { user: Self }) => {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={gotoProfile}>
                         <BadgeCheck />
                         Profile
                     </DropdownMenuItem>
