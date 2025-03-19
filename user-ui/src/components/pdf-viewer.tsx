@@ -9,7 +9,7 @@ export const PdfViewer = ({ url }: { url: string }) => {
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
     return (
-        <Worker workerUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js">
+        <Worker workerUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js">
             <Viewer fileUrl={url} plugins={[defaultLayoutPluginInstance]} />
         </Worker>
     );
