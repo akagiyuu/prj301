@@ -11,27 +11,27 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
 type Props = {
     title: string;
-    open: boolean;
-    setOpen: (open: boolean) => void;
     report: (reason: string) => Promise<void>;
 };
 
-export const ReportDialog = ({ title, open, setOpen, report }: Props) => {
+export const ReportDialog = ({ title, report }: Props) => {
     const [reason, setReason] = useState('');
+    const [open, setOpen] = useState(false);
 
-    const mutation = useMutation({
+    const { status, error, mutate } = useMutation({
         mutationFn: async (reason: string) => {
-            try {
-                await report(reason);
-                toast.info('Report submitted');
-            } catch (error) {
-                toast.error(error.toString());
-            }
+            await report(reason);
+            toast.info('Report submitted');
         },
     });
+
+    if (status === 'error') {
+        toast.error(error.toString());
+    }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -58,18 +58,24 @@ export const ReportDialog = ({ title, open, setOpen, report }: Props) => {
                         type="button"
                         variant="outline"
                         onClick={() => setOpen(false)}
-                        disabled={mutation.isPending}
+                        disabled={status === 'pending'}
                     >
                         Cancel
                     </Button>
-                    <Button
-                        type="button"
-                        onClick={() => mutation.mutate(reason)}
-                        disabled={mutation.isPending}
-                        className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-                    >
-                        {mutation.isPending ? 'Submitting...' : 'Report'}
-                    </Button>
+                    {status === 'pending' ? (
+                        <Button disabled>
+                            <Loader2 className="animate-spin" />
+                            Reporting
+                        </Button>
+                    ) : (
+                        <Button
+                            type="button"
+                            onClick={() => mutate(reason)}
+                            className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                        >
+                            Report
+                        </Button>
+                    )}
                 </DialogFooter>
             </DialogContent>
         </Dialog>
