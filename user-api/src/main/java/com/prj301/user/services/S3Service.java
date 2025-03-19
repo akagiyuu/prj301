@@ -28,15 +28,11 @@ public class S3Service {
     @Value("${s3.endpoint}")
     private String endpoint;
 
+    @Value("${s3.prefix}")
     private String prefix;
+
     @Autowired
     private S3Client s3Client;
-
-    @PostConstruct
-    private void init() {
-        this.prefix = String.format(
-            "%s/%s/%s/", this.endpoint, this.bucketName, this.bucketName);
-    }
 
     public String upload(String key, File file) {
         try {
