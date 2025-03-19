@@ -2,14 +2,17 @@ package com.prj301.user.services;
 
 import com.prj301.user.models.dto.comment.CommentRequest;
 import com.prj301.user.models.dto.comment.CommentResponse;
-import com.prj301.user.models.entity.Book;
-import com.prj301.user.models.entity.Comment;
-import com.prj301.user.models.entity.User;
+import com.prj301.user.models.dto.report.CommentReportRequest;
+import com.prj301.user.models.entity.*;
 import com.prj301.user.repositories.BookRepository;
+import com.prj301.user.repositories.CommentReportRepository;
 import com.prj301.user.repositories.CommentRepository;
+import com.prj301.user.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -21,6 +24,12 @@ public class CommentService {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CommentReportRepository commentReportRepository;
 
     public List<CommentResponse> getCommentsById(UUID bookId) {
         Book book = bookRepository
@@ -60,5 +69,40 @@ public class CommentService {
 
     public long countByUsername(String username) {
         return commentRepository.countByUser_Username(username);
+    }
+
+    public boolean report(CommentReportRequest reason, UUID commentId, UUID reportingUserId) {
+        try {
+            createAndSaveReport(reason, commentId, reportingUserId);
+            return true;
+        } catch (EntityNotFoundException e) {
+            System.out.printf("Failed to report comment: %s%n", e.getMessage());
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public void createAndSaveReport(
+            @Nullable CommentReportRequest reason,
+            UUID commentId,
+            UUID reportingUserId
+    ) {
+        String reportReason = (reason != null && !reason.getReason().isEmpty()) ? reason.getReason() : "No reason provided";
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
+
+        User user = userRepository.findById(reportingUserId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        CommentReport commentReport = CommentReport.builder()
+                .comment(comment)
+                .reportingUser(user)
+                .reason(reportReason)
+                .build();
+
+        commentReportRepository.save(commentReport);
     }
 }

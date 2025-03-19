@@ -2,19 +2,21 @@ package com.prj301.user.services;
 
 import com.prj301.user.models.dto.book.BookResponse;
 import com.prj301.user.models.dto.book.UploadBookRequest;
-import com.prj301.user.models.entity.Author;
-import com.prj301.user.models.entity.Book;
-import com.prj301.user.models.entity.Genre;
-import com.prj301.user.models.entity.User;
+import com.prj301.user.models.dto.report.BookReportRequest;
+import com.prj301.user.models.entity.*;
+import com.prj301.user.repositories.BookReportRepository;
 import com.prj301.user.repositories.BookRepository;
+import com.prj301.user.repositories.UserRepository;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
@@ -34,6 +36,12 @@ public class BookService {
 
     @Autowired
     private S3Service s3Service;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private BookReportRepository bookReportRepository;
 
     private BookResponse toResponse(Book book) {
         val postedUser = book.getPostedUser();
@@ -151,6 +159,41 @@ public class BookService {
         bookRepository.save(book);
 
         return true;
+    }
+
+    public boolean report(BookReportRequest reason, UUID bookId, UUID reportingUserId) {
+        try {
+            createAndSaveReport(reason, bookId, reportingUserId);
+            return true;
+        } catch (EntityNotFoundException e) {
+            System.out.printf("Failed to report book: %s%n", e.getMessage());
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public void createAndSaveReport(
+            @Nullable BookReportRequest reason,
+            UUID bookId,
+            UUID reportingUserId
+    ) {
+        String reportReason = (reason != null && !reason.getReason().isEmpty()) ? reason.getReason() : "No reason provided";
+
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("Book not found"));
+
+        User user = userRepository.findById(reportingUserId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        BookReport bookReport = BookReport.builder()
+                .book(book)
+                .reportingUser(user)
+                .reason(reportReason)
+                .build();
+
+        bookReportRepository.save(bookReport);
     }
 
     public Optional<Book> findBookById(UUID id) {
