@@ -46,7 +46,7 @@ export default function UserProfile() {
     });
 
     const bookQuery = useQuery({
-        queryKey: ['book', 'user', username, pageIndex, pageSize],
+        queryKey: ['user', username, 'postedBook', pageIndex, pageSize],
         queryFn: () =>
             api.user.postedBook(username!, {
                 page: pageIndex,
@@ -56,7 +56,7 @@ export default function UserProfile() {
     });
 
     const commentQuery = useQuery({
-        queryKey: ['comment', 'user', username],
+        queryKey: ['user', username, 'comment'],
         queryFn: () => api.user.countComment(username!),
     });
 
