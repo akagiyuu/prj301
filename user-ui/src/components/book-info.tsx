@@ -55,7 +55,7 @@ export const BookInfo = ({
 
                 <div className="flex items-center gap-4 justify-center md:justify-start">
                     <Rate
-                        rate={book.ratingCount === 0? 'Not Rated' : book.totalRating / book.ratingCount}
+                        rate={book.totalRating / book.ratingCount}
                         rateCount={book.ratingCount}
                     />
                     <div className="flex items-center text-sm text-muted-foreground">

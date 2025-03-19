@@ -43,8 +43,6 @@ export const BookUploadForm = ({
     className,
     ...props
 }: React.ComponentPropsWithoutRef<'div'>) => {
-    const navigate = useNavigate();
-
     const [genreTags, setGenreTags] = useState<Tag[]>([]);
     const [authorTags, setAuthorTags] = useState<Tag[]>([]);
 
