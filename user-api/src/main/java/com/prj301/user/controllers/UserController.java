@@ -1,11 +1,8 @@
 package com.prj301.user.controllers;
 
 import com.prj301.user.interceptors.JWTProtected;
-<<<<<<< HEAD
 import com.prj301.user.models.dto.book.BookResponse;
-=======
 import com.prj301.user.models.dto.report.UserReportRequest;
->>>>>>> main
 import com.prj301.user.models.dto.user.UserResponse;
 import com.prj301.user.models.dto.user.UserUpdate;
 import com.prj301.user.models.entity.Book;
