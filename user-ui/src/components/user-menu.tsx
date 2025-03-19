@@ -1,4 +1,4 @@
-import { BadgeCheck, ChevronDown, LogOut, User } from 'lucide-react';
+import { BadgeCheck, ChevronDown, LogOut } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -10,10 +10,10 @@ import {
 } from './ui/dropdown-menu';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Link, useNavigate } from 'react-router';
-import { Self } from '@/api/user';
+import { useNavigate } from 'react-router';
+import { User } from '@/api/user';
 
-export const UserMenu = ({ user }: { user: Self }) => {
+export const UserMenu = ({ user }: { user: User }) => {
     const navigate = useNavigate();
 
     const logout = () => {
