@@ -1,19 +1,10 @@
 import { Eye, Star, Users } from 'lucide-react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
+import { Link } from 'react-router';
+import { Book } from '@/api/book';
 
-export type BookCardProps = {
-    id: string;
-    title: string;
-    authors: string[];
-    genres: string[];
-    publicationDate: string;
-    view: number;
-    rate: number;
-    cover?: string;
-};
-
-export const BookCard = (book: BookCardProps) => {
+export const BookCard = (book: Book) => {
     return (
         <div
             key={book.id}
@@ -21,7 +12,7 @@ export const BookCard = (book: BookCardProps) => {
         >
             <div className="relative aspect-[2/3] overflow-hidden bg-gray-50">
                 <img
-                    src={book.cover || '/placeholder.svg'}
+                    src={book.coverPath || '/placeholder.svg'}
                     alt={book.title}
                     className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
                     onError={(e) => {
@@ -33,7 +24,9 @@ export const BookCard = (book: BookCardProps) => {
                 <div className="absolute top-0 right-0 m-2">
                     <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm text-gray-700 rounded-full px-2 py-0.5 text-xs font-medium shadow-sm">
                         <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-                        {book.rate.toFixed(1)}
+                        {book.ratingCount === 0
+                            ? 'Not rated'
+                            : (book.totalRating / book.ratingCount).toFixed(1)}
                     </div>
                 </div>
 
@@ -43,7 +36,7 @@ export const BookCard = (book: BookCardProps) => {
                         size="sm"
                         className="w-full bg-white/90 hover:bg-white text-xs py-1 h-8 font-medium shadow-md transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 ease-out"
                     >
-                        View Details
+                        <Link to={`/book/${book.id}`}>View Details</Link>
                     </Button>
                 </div>
             </div>
@@ -102,7 +95,7 @@ export const BookCard = (book: BookCardProps) => {
     );
 };
 
-export const BookCardFull = (book: BookCardProps) => {
+export const BookCardFull = (book: Book) => {
     return (
         <div
             key={book.id}
@@ -110,7 +103,7 @@ export const BookCardFull = (book: BookCardProps) => {
         >
             <div className="relative flex-shrink-0 w-16 h-24 sm:w-20 sm:h-30 bg-gray-50 rounded overflow-hidden">
                 <img
-                    src={book.cover || '/placeholder.svg'}
+                    src={book.coverPath || '/placeholder.svg'}
                     alt={book.title}
                     className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
                     onError={(e) => {
@@ -131,7 +124,11 @@ export const BookCardFull = (book: BookCardProps) => {
                         <div className="flex items-center gap-1 text-gray-700">
                             <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
                             <span className="font-medium">
-                                {book.rate.toFixed(1)}
+                                {book.ratingCount === 0
+                                    ? 'Not rated'
+                                    : (
+                                          book.totalRating / book.ratingCount
+                                      ).toFixed(1)}
                             </span>
                         </div>
                         <div className="flex items-center gap-1 text-gray-500">
@@ -174,7 +171,7 @@ export const BookCardFull = (book: BookCardProps) => {
                         size="sm"
                         className="text-xs h-7 opacity-0 group-hover:opacity-100 transition-all duration-300 text-primary hover:bg-primary/5 hover:text-primary transform translate-y-1 group-hover:translate-y-0"
                     >
-                        View Details
+                        <Link to={`/book/${book.id}`}>View Details</Link>
                     </Button>
                 </div>
             </div>

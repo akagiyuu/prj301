@@ -10,33 +10,44 @@ import { BookRead } from './pages/book/read';
 import { BookUpload } from './pages/book/upload';
 import UserProfile from './pages/user-profile';
 import { UserProfileUpdate } from './pages/user-profile-update';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient()
 
 const App = () => {
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route element={<AuthorizedLayout />}>
-                    <Route index element={<Home />} />
-                    <Route path="user">
-                        <Route path="update" element={<UserProfileUpdate />} />
-                        <Route path=":username" element={<UserProfile />} />
-                    </Route>
-                    <Route path="book">
-                        <Route index element={<BookSearch />} />
-                        <Route path="upload" element={<BookUpload />} />
-                        <Route path=":id">
-                            <Route index element={<BookSummary />} />
-                            <Route path="read" element={<BookRead />}></Route>
+        <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+                <Routes>
+                    <Route element={<AuthorizedLayout />}>
+                        <Route index element={<Home />} />
+                        <Route path="user">
+                            <Route
+                                path="update"
+                                element={<UserProfileUpdate />}
+                            />
+                            <Route path=":username" element={<UserProfile />} />
+                        </Route>
+                        <Route path="book">
+                            <Route index element={<BookSearch />} />
+                            <Route path="upload" element={<BookUpload />} />
+                            <Route path=":id">
+                                <Route index element={<BookSummary />} />
+                                <Route
+                                    path="read"
+                                    element={<BookRead />}
+                                ></Route>
+                            </Route>
                         </Route>
                     </Route>
-                </Route>
 
-                <Route element={<UnauthorizedLayout />}>
-                    <Route path="auth/login" element={<Login />} />
-                    <Route path="auth/signup" element={<Signup />} />
-                </Route>
-            </Routes>
-        </BrowserRouter>
+                    <Route element={<UnauthorizedLayout />}>
+                        <Route path="auth/login" element={<Login />} />
+                        <Route path="auth/signup" element={<Signup />} />
+                    </Route>
+                </Routes>
+            </BrowserRouter>
+        </QueryClientProvider>
     );
 };
 

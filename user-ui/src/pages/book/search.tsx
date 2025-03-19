@@ -1,4 +1,5 @@
 import { BookCard, BookCardFull } from '@/components/book-card';
+import { Pagination } from '@/components/pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,29 +12,90 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useQuery } from '@tanstack/react-query';
 import { Eye, Search, Star, Users } from 'lucide-react';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useMemo, useState } from 'react';
+import { toast } from 'sonner';
+import * as api from '@/api';
 
-const books = Array.from({ length: 16 }).map((_, index) => {
-    return {
-        id: '1',
-        title: 'Introduction to Algorithms',
-        authors: [
-            'Thomas H. Cormen',
-            'Charles E. Leiserson',
-            'Ronald L. Rivest',
-            'Clifford Stein',
-        ],
-        publicationDate: '2025-03-16',
-        rate: 4.8,
-        genres: ['Computer Science', 'Programming', 'Mathematics'],
-        view: 12453,
-        cover: 'https://m.media-amazon.com/images/I/61O6K0yPmzL._AC_UF1000,1000_QL80_.jpg',
-    };
-});
+const GenreSelect = ({
+    selectedGenres,
+    setSelectedGenres,
+}: {
+    selectedGenres: string[];
+    setSelectedGenres: Dispatch<SetStateAction<string[]>>;
+}) => {
+    const {
+        data: genres,
+        status,
+        error,
+    } = useQuery({
+        queryKey: ['genre'],
+        queryFn: () =>
+            api.genre.get().then((data) =>
+                data.map((genre) => {
+                    return {
+                        label: genre,
+                        value: genre,
+                    };
+                }),
+            ),
+    });
+
+    if (status === 'error') {
+        toast.error(error.toString());
+    }
+
+    return (
+        <MultiSelect
+            className="w-full my-auto md:w-[180px] h-10 border-gray-200"
+            placeholder="Genres"
+            options={genres ?? []}
+            selectedOptions={selectedGenres}
+            setSelectedOptions={setSelectedGenres}
+        />
+    );
+};
 
 export const BookSearch = () => {
-    const [selectedItems, setSelectedItems] = useState<string[]>([]);
+    const [query, setQuery] = useState('');
+    const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+    const [orderBy, setOrderBy] = useState<string | undefined>(undefined);
+    const [orderDirection, setOrderDirection] = useState<string | undefined>(
+        undefined,
+    );
+    const [pageSize, setPageSize] = useState(15);
+    const [pageIndex, setPageIndex] = useState(0);
+
+    const { data, status, error } = useQuery({
+        queryKey: [
+            'book',
+            query,
+            selectedGenres,
+            orderBy,
+            orderDirection,
+            pageIndex,
+            pageSize,
+        ],
+        queryFn: () =>
+            api.book.search({
+                query,
+                genres: selectedGenres,
+                pageable: {
+                    page: pageIndex,
+                    size: pageSize,
+                    sort:
+                        orderBy !== undefined
+                            ? [`${orderBy}${orderDirection ?? ','}`]
+                            : [],
+                },
+            }),
+    });
+
+    if (status === 'error') {
+        toast.error(error.toString());
+        return <div></div>;
+    }
 
     return (
         <main className="container mx-auto py-8 px-4">
@@ -54,53 +116,39 @@ export const BookSearch = () => {
                         <Input
                             className="pl-10 h-10 border-gray-200"
                             placeholder="Search by title or author"
+                            value={query}
+                            onChange={(value) => setQuery(value.target.value)}
                         />
                     </div>
 
                     <div className="flex flex-wrap gap-3 w-full md:w-auto">
-                        <MultiSelect
-                            className="w-full my-auto md:w-[180px] h-10 border-gray-200"
-                            placeholder="Genres"
-                            options={[
-                                {
-                                    label: 'Fiction',
-                                    value: 'fiction',
-                                },
-                                {
-                                    label: 'Science Fiction',
-                                    value: 'science-fiction',
-                                },
-                                {
-                                    label: 'Fantasy',
-                                    value: 'fantasy',
-                                },
-                                {
-                                    label: 'Computer Science',
-                                    value: 'computer-science',
-                                },
-                            ]}
-                            selectedOptions={selectedItems}
-                            setSelectedOptions={setSelectedItems}
+                        <GenreSelect
+                            selectedGenres={selectedGenres}
+                            setSelectedGenres={setSelectedGenres}
                         />
                         <div className="flex gap-2">
-                            <Select>
+                            <Select
+                                onValueChange={(value) => setOrderBy(value)}
+                            >
                                 <SelectTrigger className="w-[120px] my-auto h-10 border-gray-200">
                                     <SelectValue placeholder="Sort by..." />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="title">Title</SelectItem>
-                                    <SelectItem value="author">
-                                        Author
+                                    <SelectItem value="publicationDate">
+                                        Publication Date
                                     </SelectItem>
-                                    <SelectItem value="year">Year</SelectItem>
-                                    <SelectItem value="rating">
-                                        Rating
+                                    <SelectItem value="totalRating">
+                                        Rate
                                     </SelectItem>
-                                    <SelectItem value="views">Views</SelectItem>
+                                    <SelectItem value="view">View</SelectItem>
                                 </SelectContent>
                             </Select>
-
-                            <Select>
+                            <Select
+                                onValueChange={(value) =>
+                                    setOrderDirection(value)
+                                }
+                            >
                                 <SelectTrigger className="w-[120px] my-auto h-10 border-gray-200">
                                     <SelectValue placeholder="Ascending" />
                                 </SelectTrigger>
@@ -181,20 +229,26 @@ export const BookSearch = () => {
 
                 <TabsContent value="grid" className="mt-0">
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                        {books.map((book) => (
-                            <BookCard {...book} />
-                        ))}
+                        {data?.content.map((book) => <BookCard {...book} />)}
                     </div>
                 </TabsContent>
 
                 <TabsContent value="list" className="mt-0">
                     <div className="space-y-3">
-                        {books.map((book) => (
+                        {data?.content.map((book) => (
                             <BookCardFull {...book} />
                         ))}
                     </div>
                 </TabsContent>
             </Tabs>
+            <Pagination
+                pageSize={pageSize}
+                setPageSize={setPageSize}
+                pageIndex={pageIndex}
+                setPageIndex={setPageIndex}
+                pageCount={data?.totalPages ?? 0}
+                entryCount={data?.content?.length ?? 0}
+            />
         </main>
     );
 };

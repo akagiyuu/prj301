@@ -1,4 +1,4 @@
-import { cn, fetchWrapper } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
@@ -15,6 +15,7 @@ import {
     FormMessage,
 } from './ui/form';
 import { NavLink, useNavigate } from 'react-router';
+import * as api from '@/api';
 
 const schema = z.object({
     username: z
@@ -42,23 +43,7 @@ export const LoginForm = ({
 
     const onSubmit = async (values: z.infer<typeof schema>) => {
         try {
-            const response = await fetchWrapper('auth/login', {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    username: values.username,
-                    password: values.password,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Invalid username or password');
-            }
-
-            const token = await response.text();
+            const token = await api.auth.login(values);
 
             localStorage.setItem('token', token);
 

@@ -10,12 +10,22 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class GenreService {
     @Autowired
     private GenreRepository repository;
+
+    public List<String> findAll() {
+        return repository
+            .findAll()
+            .stream()
+            .map(genre -> genre.getName())
+            .collect(Collectors.toList());
+    }
 
     @Transactional
     public Genre findOrCreate(String name) {

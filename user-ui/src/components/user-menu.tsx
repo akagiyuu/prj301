@@ -1,13 +1,4 @@
-import {
-    BadgeCheck,
-    Bell,
-    ChevronDown,
-    ChevronsUpDown,
-    CreditCard,
-    LogOut,
-    Sparkles,
-    User,
-} from 'lucide-react';
+import { BadgeCheck, ChevronDown, LogOut, User } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -19,26 +10,33 @@ import {
 } from './ui/dropdown-menu';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Link, useNavigate } from 'react-router';
+import { Self } from '@/api/user';
 
-type User = {
-    fullName: string;
-    name: string;
-    imagePath?: string;
-};
+export const UserMenu = ({ user }: { user: Self }) => {
+    const navigate = useNavigate();
 
-const logout = () => {
-    localStorage.removeItem('token');
-};
+    const logout = () => {
+        localStorage.removeItem('token');
 
-export const UserMenu = ({ user }: { user: User }) => {
+        navigate('/auth/login');
+    };
+
+    const gotoProfile = () => {
+        navigate(`/user/${user.username}`);
+    }
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-12 gap-2 px-2 font-normal">
                     <Avatar className="h-10 w-10 border border-border/20">
-                        <AvatarImage src={user.imagePath} alt={user.name} />
+                        <AvatarImage
+                            src={user.avatarPath}
+                            alt={user.username}
+                        />
                         <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                            {user.name
+                            {user.username
                                 .split(' ')
                                 .map((n) => n[0])
                                 .join('')
@@ -57,7 +55,10 @@ export const UserMenu = ({ user }: { user: User }) => {
                 <DropdownMenuLabel className="p-0 font-normal">
                     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                         <Avatar className="h-8 w-8 rounded-lg">
-                            <AvatarImage src={user.imagePath} alt={user.name} />
+                            <AvatarImage
+                                src={user.avatarPath}
+                                alt={user.username}
+                            />
                             <AvatarFallback className="rounded-lg">
                                 {user.fullName}
                             </AvatarFallback>
@@ -67,20 +68,20 @@ export const UserMenu = ({ user }: { user: User }) => {
                                 {user.fullName}
                             </span>
                             <span className="truncate text-xs">
-                                {user.name}
+                                {user.username}
                             </span>
                         </div>
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={gotoProfile}>
                         <BadgeCheck />
                         Profile
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={logout}>
                     <LogOut />
                     Log out
                 </DropdownMenuItem>

@@ -14,8 +14,8 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useNavigate } from 'react-router';
 import { Camera } from 'lucide-react';
-import { fetchWrapper } from '@/lib/utils';
 import { toast } from 'sonner';
+import * as api from '@/api';
 
 const schema = z.object({
     avatar: z.any(),
@@ -38,22 +38,7 @@ export const UserProfileUpdateForm = ({
 
     const onSubmit = async (values: z.infer<typeof schema>) => {
         try {
-            const formData = new FormData();
-
-            formData.append('avatar', values.avatar);
-            formData.append('fullName', values.fullName);
-            formData.append('hobbies', values.hobbies);
-            formData.append('dob', values.dob);
-            formData.append('bio', values.bio);
-
-            const response = await fetchWrapper('profile/update', {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to update profile');
-            }
+            api.user.update(values);
 
             toast.success('Profile updated successfully');
             navigate('/profile');

@@ -61,8 +61,12 @@ export const Rate = (props: Props) => {
                     );
                 })}
             </div>
-            <span className="ml-2 font-medium">{rate.toFixed(1)}</span>
-            <span className="ml-1 text-xs text-muted-foreground">({rateCount})</span>
+            <span className="ml-2 font-medium">
+                {isNaN(rate) ? 'Not rated' : rate.toFixed(1)}
+            </span>
+            <span className="ml-1 text-xs text-muted-foreground">
+                ({rateCount})
+            </span>
         </div>
     );
 };

@@ -67,6 +67,10 @@ public class CommentService {
         );
     }
 
+    public long countByUsername(String username) {
+        return commentRepository.countByUser_Username(username);
+    }
+
     public boolean report(CommentReportRequest reason, UUID commentId, UUID reportingUserId) {
         try {
             createAndSaveReport(reason, commentId, reportingUserId);

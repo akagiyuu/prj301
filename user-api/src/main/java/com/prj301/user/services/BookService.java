@@ -70,7 +70,8 @@ public class BookService {
             book.getSummary(),
             book.getPdfPath(),
             book.getView(),
-            (float) book.getTotalRate() / (float) book.getRateCount()
+            book.getTotalRating(),
+            book.getRatingCount()
         );
     }
 
@@ -83,6 +84,8 @@ public class BookService {
 
     public Specification<Book> findCriteria(String searchTerm, Collection<String> genreNames) {
         return (root, query, cb) -> {
+            query.distinct(true);
+
             List<Predicate> predicates = new ArrayList<>();
 
             if (searchTerm != null && !searchTerm.isEmpty()) {
@@ -195,5 +198,9 @@ public class BookService {
 
     public Optional<Book> findBookById(UUID id) {
         return bookRepository.findById(id);
+    }
+
+    public Page<BookResponse> findByUsername(String username, Pageable pageable) {
+        return bookRepository.findByPostedUser_Username(username, pageable).map(this::toResponse);
     }
 }
