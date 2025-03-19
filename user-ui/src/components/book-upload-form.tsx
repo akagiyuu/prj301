@@ -18,6 +18,9 @@ import { useNavigate } from 'react-router';
 import { TagInput, Tag } from 'emblor';
 import { useState } from 'react';
 import * as api from '@/api';
+import { Textarea } from './ui/textarea';
+import { useMutation } from '@tanstack/react-query';
+import { Loader2 } from 'lucide-react';
 
 const schema = z.object({
     isbn: z
@@ -60,17 +63,14 @@ export const BookUploadForm = ({
 
     const { setValue } = form;
 
-    const onSubmit = async ({
-        cover,
-        pdf,
-        ...values
-    }: z.infer<typeof schema>) => {
-        try {
-            api.book.uploadBook(values, cover, pdf);
-        } catch (error) {
-            toast.error(error.toString());
-        }
-    };
+    const { status, error, mutate } = useMutation({
+        mutationFn: ({ cover, pdf, ...values }: z.infer<typeof schema>) =>
+            api.book.uploadBook(values, cover, pdf),
+    });
+
+    if (status === 'error') {
+        toast.error(error.toString());
+    }
 
     return (
         <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -83,9 +83,25 @@ export const BookUploadForm = ({
                 <CardContent>
                     <Form {...form}>
                         <form
-                            onSubmit={form.handleSubmit(onSubmit)}
+                            onSubmit={form.handleSubmit((data) => mutate(data))}
                             className="space-y-8"
                         >
+                            <FormField
+                                control={form.control}
+                                name="isbn"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>ISBN</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="ISBN"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name="title"
@@ -185,6 +201,23 @@ export const BookUploadForm = ({
                             />
                             <FormField
                                 control={form.control}
+                                name="summary"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Summary</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder="Summary of the book"
+                                                className="min-h-[120px]"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
                                 name="pdf"
                                 render={({ field }) => (
                                     <FormItem>
@@ -225,9 +258,14 @@ export const BookUploadForm = ({
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit" className="w-full">
-                                Upload
-                            </Button>
+                            {status === 'pending' ? (
+                                <Button disabled>
+                                    <Loader2 className="animate-spin" />
+                                    Uploading
+                                </Button>
+                            ) : (
+                                <Button type="submit">Upload</Button>
+                            )}
                         </form>
                     </Form>
                 </CardContent>
