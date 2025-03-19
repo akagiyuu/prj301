@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router';
 import { Camera } from 'lucide-react';
 import { toast } from 'sonner';
 import * as api from '@/api';
+import { User } from '@/api/user';
 
 const schema = z.object({
     avatar: z.any(),
@@ -28,7 +29,7 @@ const schema = z.object({
 export const UserProfileUpdateForm = ({
     defaultValues,
 }: {
-    defaultValues?: z.infer<typeof schema>;
+    defaultValues: User;
 }) => {
     const navigate = useNavigate();
     const form = useForm<z.infer<typeof schema>>({
@@ -41,7 +42,7 @@ export const UserProfileUpdateForm = ({
             api.user.update(values);
 
             toast.success('Profile updated successfully');
-            navigate('/profile');
+            navigate(`/user/${defaultValues.username}`);
         } catch (error) {
             toast.error(error.toString());
         }

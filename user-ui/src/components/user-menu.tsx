@@ -1,4 +1,4 @@
-import { BadgeCheck, ChevronDown, LogOut } from 'lucide-react';
+import { BadgeCheck, ChevronDown, LogOut, User, UserCogIcon, UserPenIcon, UserXIcon } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -11,9 +11,9 @@ import {
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Link, useNavigate } from 'react-router';
-import { User } from '@/api/user';
+import { User as UserEntity } from '@/api/user';
 
-export const UserMenu = ({ user }: { user: User }) => {
+export const UserMenu = ({ user }: { user: UserEntity }) => {
     const navigate = useNavigate();
 
     const logout = () => {
@@ -73,8 +73,14 @@ export const UserMenu = ({ user }: { user: User }) => {
                 <DropdownMenuGroup>
                     <Link to={`/user/${user.username}`}>
                         <DropdownMenuItem>
-                            <BadgeCheck />
+                            <User />
                             Profile
+                        </DropdownMenuItem>
+                    </Link>
+                    <Link to={`/user/update`}>
+                        <DropdownMenuItem>
+                            <UserPenIcon />
+                            Update Profile
                         </DropdownMenuItem>
                     </Link>
                 </DropdownMenuGroup>
