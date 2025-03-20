@@ -19,23 +19,7 @@ import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Pagination } from '@/components/pagination';
 
-export type User = {
-    username: string;
-    avatarPath: string;
-    fullName: string;
-    hobbies: string;
-    dob: string;
-    bio: string;
-    createdAt: string;
-};
-
-export type Stats = {
-    user: User;
-    books: Book[];
-    comment: number;
-};
-
-export default function UserProfile() {
+export const UserProfile = () => {
     const { username } = useParams();
     const [pageSize, setPageSize] = useState(15);
     const [pageIndex, setPageIndex] = useState(0);

@@ -20,7 +20,7 @@ export type Comment = {
     id: string;
     username: string;
     content: string;
-    createdAt: string;
+    createdAt: Date;
 };
 
 type SearchRequest = {

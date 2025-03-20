@@ -10,5 +10,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RatingRequest {
-    private int rating;  // Rating value from 1 to 5
+    private int rating;
 }

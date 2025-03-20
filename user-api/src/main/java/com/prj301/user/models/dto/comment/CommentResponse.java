@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -14,5 +15,5 @@ public class CommentResponse {
     private final UUID id;
     private final String username;
     private final String content;
-    private final LocalDate createdAt;
+    private final LocalDateTime createdAt;
 }

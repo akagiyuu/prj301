@@ -8,7 +8,7 @@ import { BookSearch } from './pages/book/search';
 import { BookSummary } from './pages/book/summary';
 import { BookRead } from './pages/book/read';
 import { BookUpload } from './pages/book/upload';
-import UserProfile from './pages/user-profile';
+import { UserProfile } from './pages/user-profile';
 import { UserProfileUpdate } from './pages/user-profile-update';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
