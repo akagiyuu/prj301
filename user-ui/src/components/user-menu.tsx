@@ -102,8 +102,7 @@ export const UserMenu = () => {
                         to={`/user/${user.username}`}
                         className="flex w-full items-center"
                     >
-                        <User />
-                        Profile
+                        <User /> &nbsp;Profile
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer transition-all duration-200 hover:bg-primary/5 hover:text-primary focus:bg-primary/5 focus:text-primary">
@@ -111,8 +110,7 @@ export const UserMenu = () => {
                         to="/user/update"
                         className="flex w-full items-center"
                     >
-                        <UserPenIcon />
-                        Update Profile
+                        <UserPenIcon /> &nbsp;Update Profile
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -121,8 +119,7 @@ export const UserMenu = () => {
                     onClick={logout}
                 >
                     <button className="flex w-full text-left items-center">
-                        <LogOut />
-                        Logout
+                        <LogOut /> &nbsp;Logout
                     </button>
                 </DropdownMenuItem>
             </DropdownMenuContent>
