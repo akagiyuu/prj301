@@ -12,11 +12,11 @@ export type User = {
 };
 
 export type UserUpdateRequest = {
-    avatarPath: string;
-    fullName: string;
-    hobbies: string;
-    dob: Date;
-    bio: string;
+    avatar?: File;
+    fullName?: string;
+    hobbies?: string;
+    dob?: Date;
+    bio?: string;
 };
 
 export const self = async () => {
@@ -43,14 +43,20 @@ export const find = async (username: string) => {
     return (await response.json()) as User;
 };
 
-export const update = async (values: UserUpdateRequest) => {
+export const update = async ({ avatar, ...values }: UserUpdateRequest) => {
+    const formData = new FormData();
+
+    if (avatar !== undefined) formData.append('avatarFile', avatar);
+    formData.append(
+        'updateUserRequest',
+        new Blob([JSON.stringify(values)], {
+            type: 'application/json',
+        }),
+    );
+
     const response = await fetchWrapper('user/update', {
         method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
+        body: formData,
     });
 
     if (!response.ok) {
