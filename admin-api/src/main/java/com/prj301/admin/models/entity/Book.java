@@ -3,6 +3,8 @@ package com.prj301.admin.models.entity;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.Constraint;
@@ -57,6 +59,7 @@ public class Book {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User postedUser;
 
     @Column(nullable = false)
@@ -65,19 +68,9 @@ public class Book {
     private String coverPath;
 
     @ManyToMany
-    @JoinTable(
-        name = "book_author",
-        joinColumns = @JoinColumn(name = "book_id"),
-        inverseJoinColumns = @JoinColumn(name = "author_id")
-    )
     private Set<Author> authors = new HashSet<>();
 
     @ManyToMany
-    @JoinTable(
-        name = "book_genre",
-        joinColumns = @JoinColumn(name = "book_id"),
-        inverseJoinColumns = @JoinColumn(name = "genre_id")
-    )
     private Set<Genre> genres = new HashSet<>();
 
     private LocalDate publicationDate;
