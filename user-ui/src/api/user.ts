@@ -6,9 +6,9 @@ export type User = {
     avatarPath: string;
     fullName: string;
     hobbies: string;
-    dob: Date;
+    dob: string;
     bio: string;
-    createdAt: Date;
+    createdAt: string;
 };
 
 export type UserUpdateRequest = {

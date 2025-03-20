@@ -1,4 +1,5 @@
 import { User } from '@/api/user';
+import { formatISO } from '@/lib/utils';
 import { Calendar, Heart, MessageSquare, Users } from 'lucide-react';
 
 export const UserInfo = ({
@@ -71,7 +72,7 @@ export const UserInfo = ({
                                 <span className="text-sm text-gray-500">
                                     Participated Since
                                 </span>
-                                <p className="font-medium">{user.createdAt.toLocaleString()}</p>
+                                <p className="font-medium">{formatISO(user.createdAt)}</p>
                             </div>
                         </div>
                     </div>
