@@ -11,6 +11,7 @@ import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -47,7 +48,6 @@ class ValidISBNValidator implements ConstraintValidator<ValidISBN, String> {
 @Table(name = "books")
 public class Book {
     @Id
-    @org.springframework.data.annotation.Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
@@ -91,11 +91,11 @@ public class Book {
     private int view;
 
     @ColumnDefault("0")
-    private int totalRate;
+    private int totalRating;
 
     @ColumnDefault("0")
-    private int rateCount;
+    private int ratingCount;
 
     @CreationTimestamp
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 }
