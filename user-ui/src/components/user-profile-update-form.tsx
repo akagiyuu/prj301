@@ -21,10 +21,20 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const schema = z.object({
     avatar: z.any(),
-    fullName: z.string().optional(),
-    hobbies: z.string().optional(),
-    dob: z.string().optional(),
-    bio: z.string().optional(),
+    fullName: z.string(),
+    hobbies: z.string(),
+    dob: z.preprocess(
+        (arg) => {
+            if (typeof arg === 'string' || arg instanceof Date) {
+                return new Date(arg);
+            }
+            return arg;
+        },
+        z.date().refine((date) => date.getTime() < Date.now(), {
+            message: 'Date must be in the past',
+        }),
+    ),
+    bio: z.string()
 });
 
 export const UserProfileUpdateForm = ({
