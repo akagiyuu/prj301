@@ -27,22 +27,18 @@ export const ReportDialog = ({
     const [reason, setReason] = useState('');
     const [open, setOpen] = useState(false);
 
-    const { status, error, mutate } = useMutation({
-        mutationFn: async (reason: string) => {
-            await report(reason);
+    const { mutate, status } = useMutation({
+        mutationFn: report,
+        onSuccess: () => {
             toast.info('Report submitted');
+            setOpen(false);
         },
+        onError: (error) => toast.error(error.toString()),
     });
-
-    if (status === 'error') {
-        toast.error(error.toString());
-    }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                {children}
-            </DialogTrigger>
+            <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[400px]">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>

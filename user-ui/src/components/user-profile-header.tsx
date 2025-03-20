@@ -41,7 +41,7 @@ export const UserProfileHeader = ({ user }: { user: User }) => {
                     <ReportDialog
                         title="Report User"
                         report={(reason) =>
-                            api.user.report(user.usrname, reason)
+                            api.user.report(user.username, reason)
                         }
                     >
                         <Button
