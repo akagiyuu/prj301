@@ -17,6 +17,7 @@ import {
 } from './ui/form';
 import * as api from '@/api';
 import { useMutation } from '@tanstack/react-query';
+import { Loader2 } from 'lucide-react';
 
 const schema = z
     .object({
@@ -59,7 +60,7 @@ export const SignupForm = ({
     });
 
     const {
-        mutate: singup,
+        mutate: signup,
         status,
         error,
     } = useMutation({
@@ -71,6 +72,10 @@ export const SignupForm = ({
             navigate('/');
         },
     });
+
+    if (status === 'error') {
+        toast.error(error.toString());
+    }
 
     return (
         <div className={cn('flex flex-col gap-6', className)} {...props}>

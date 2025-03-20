@@ -1,4 +1,12 @@
-import { BadgeCheck, ChevronDown, LogOut, User, UserCogIcon, UserPenIcon, UserXIcon } from 'lucide-react';
+import {
+    BadgeCheck,
+    ChevronDown,
+    LogOut,
+    User,
+    UserCogIcon,
+    UserPenIcon,
+    UserXIcon,
+} from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,9 +20,20 @@ import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Link, useNavigate } from 'react-router';
 import { User as UserEntity } from '@/api/user';
+import { useQuery } from '@tanstack/react-query';
+import * as api from '@/api';
+import { toast } from 'sonner';
 
-export const UserMenu = ({ user }: { user: UserEntity }) => {
+export const UserMenu = () => {
     const navigate = useNavigate();
+    const {
+        data: user,
+        status,
+        error,
+    } = useQuery({
+        queryKey: ['self'],
+        queryFn: () => api.user.self(),
+    });
 
     const logout = () => {
         localStorage.removeItem('token');
@@ -22,10 +41,23 @@ export const UserMenu = ({ user }: { user: UserEntity }) => {
         navigate('/auth/login');
     };
 
+    if (status === 'pending') {
+        return <span>Loading...</span>;
+    }
+
+    if (status === 'error') {
+        toast.error(error.toString());
+        return <div></div>;
+    }
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-12 gap-2 px-2 font-normal">
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full transition-all duration-300 hover:scale-110 hover:bg-primary/10 hover:text-primary hover:shadow-[0_0_15px_rgba(var(--primary),0.3)]"
+                >
                     <Avatar className="h-10 w-10 border border-border/20">
                         <AvatarImage
                             src={user.avatarPath}
@@ -39,55 +71,56 @@ export const UserMenu = ({ user }: { user: UserEntity }) => {
                                 .toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                side="bottom"
                 align="end"
-                sideOffset={4}
+                className="w-56 animate-in slide-in-from-top-5 duration-300 border border-primary/20"
             >
-                <DropdownMenuLabel className="p-0 font-normal">
-                    <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                        <Avatar className="h-8 w-8 rounded-lg">
-                            <AvatarImage
-                                src={user.avatarPath}
-                                alt={user.username}
-                            />
-                            <AvatarFallback className="rounded-lg">
-                                {user.fullName}
-                            </AvatarFallback>
-                        </Avatar>
-                        <div className="grid flex-1 text-left text-sm leading-tight">
-                            <span className="truncate font-semibold">
-                                {user.fullName}
-                            </span>
-                            <span className="truncate text-xs">
-                                {user.username}
-                            </span>
-                        </div>
+                <div className="flex items-center justify-start gap-2 p-2">
+                    <Avatar className="h-8 w-8 rounded-lg">
+                        <AvatarImage
+                            src={user.avatarPath}
+                            alt={user.username}
+                        />
+                        <AvatarFallback className="rounded-lg">
+                            {user.fullName}
+                        </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none">
+                            {user.fullName}
+                        </p>
+                        <p className="text-xs leading-none text-muted-foreground">
+                            {user.username}
+                        </p>
                     </div>
-                </DropdownMenuLabel>
+                </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                    <Link to={`/user/${user.username}`}>
-                        <DropdownMenuItem>
-                            <User />
-                            Profile
-                        </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer transition-all duration-200 hover:bg-primary/5 hover:text-primary focus:bg-primary/5 focus:text-primary">
+                    <Link
+                        to={`/user/${user.username}`}
+                        className="flex w-full items-center"
+                    >
+                        <User /> &nbsp;Profile
                     </Link>
-                    <Link to={`/user/update`}>
-                        <DropdownMenuItem>
-                            <UserPenIcon />
-                            Update Profile
-                        </DropdownMenuItem>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer transition-all duration-200 hover:bg-primary/5 hover:text-primary focus:bg-primary/5 focus:text-primary">
+                    <Link
+                        to="/user/update"
+                        className="flex w-full items-center"
+                    >
+                        <UserPenIcon /> &nbsp;Update Profile
                     </Link>
-                </DropdownMenuGroup>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout}>
-                    <LogOut />
-                    Log out
+                <DropdownMenuItem
+                    className="cursor-pointer transition-all duration-200 hover:bg-primary/5 hover:text-primary focus:bg-primary/5 focus:text-primary"
+                    onClick={logout}
+                >
+                    <button className="flex w-full text-left items-center">
+                        <LogOut /> &nbsp;Logout
+                    </button>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

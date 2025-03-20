@@ -73,10 +73,9 @@ export const BookSummary = () => {
 
                         <BookInfo
                             book={book}
+                            report={(reason) => api.book.report(id!, reason)}
                             onRead={onRead}
-                            onShare={onShare}
                             onDownload={onDownload}
-                            onReport={onReport}
                         />
                     </div>
                 </div>
@@ -84,12 +83,6 @@ export const BookSummary = () => {
             <div className="container max-w-5xl mx-auto px-4 py-12">
                 <CommentSection bookId={id!} />
             </div>
-            <ReportDialog
-                title='Report book'
-                open={reportOpen}
-                setOpen={setReportOpen}
-                report={(reason) => api.book.report(id!, reason)}
-            />
         </main>
     );
 };
