@@ -21,6 +21,7 @@ import {
     ChevronRight,
     ChevronsLeft,
     ChevronsRight,
+    LucideIcon,
     MoreHorizontal,
 } from 'lucide-react';
 
@@ -51,26 +52,27 @@ import {
     SelectValue,
 } from './ui/select';
 import { fetchWrapper } from '@/lib/utils';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
-type Action = {
-    [name: string]: (
-        id: string,
-        fetchData: () => Promise<void>,
-    ) => Promise<void>;
-};
-
-type DataTableProps<TData extends { id: string }, TValue> = {
+type DataTableProps<TData, TValue> = {
     dataApi: string;
     queryKey: string;
     columns: ColumnDef<TData, TValue>[];
-    action?: Action;
+    action?: Record<
+        string,
+        {
+            icon: LucideIcon;
+            fn: (data: TData) => Promise<void>;
+        }
+    >;
 };
 
-export function DataTable<TData extends { id: string }, TValue = unknown>({
+export function DataTable<TData, TValue = unknown>({
     dataApi,
     queryKey,
     columns: columnsRaw,
-    action,
+    action = {},
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -78,11 +80,10 @@ export function DataTable<TData extends { id: string }, TValue = unknown>({
         pageIndex: 0,
         pageSize: 15,
     });
-    const [pageCount, setPageCount] = useState(0);
-    const [data, setData] = useState<TData[]>([]);
     const [query, setQuery] = useState('');
-    const fetchData = useMemo(() => {
-        return async () => {
+    const { data } = useQuery({
+        queryKey: [query, dataApi, sorting, pagination],
+        queryFn: async () => {
             const sortQuery = sorting
                 .map(
                     (s) =>
@@ -92,42 +93,44 @@ export function DataTable<TData extends { id: string }, TValue = unknown>({
             const response = await fetchWrapper(
                 `${dataApi}?page=${pagination.pageIndex}&size=${pagination.pageSize}${sortQuery}&${queryKey}=${query}`,
             );
-            const json = await response.json();
-            setData(json.content);
-            setPageCount(json.totalPages);
-        };
-    }, [query, dataApi, sorting, pagination]);
-    const defaultAction: Action = useMemo(() => {
-        return {
-            delete: async (id, fetchData) => {
-                const response = await fetchWrapper(dataApi, {
-                    method: 'DELETE',
-                    body: JSON.stringify({ id }),
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                });
+            return (await response.json()) as {
+                totalPages: number;
+                content: TData[];
+            };
+        },
+    });
+    const pageCount = useMemo(() => data?.totalPages ?? 1, [data]);
+    const queryClient = useQueryClient();
 
-                if (!response.ok) {
-                    return;
-                }
+    const mutations = Object.fromEntries(
+        Object.entries(action).map(([name, data]) => [
+            name,
+            useMutation({
+                mutationFn: async (value: TData) => {
+                    await data.fn(value);
 
-                await fetchData();
-            },
-        };
-    }, [dataApi, fetchData]);
+                    toast.info(`Run ${name} success`);
+                },
+                onSettled: () => {
+                    queryClient.invalidateQueries({
+                        queryKey: [query, dataApi, sorting, pagination],
+                    });
+                },
+            }),
+        ]),
+    );
 
-    useEffect(() => {
-        fetchData();
-    }, [fetchData]);
+    Object.entries(mutations).forEach(([_, mutation]) => {
+        if (mutation.status === 'error') {
+            toast.error(mutation.error.toString());
+        }
+    });
 
     const columns = useMemo(() => {
         const actionColumn: ColumnDef<TData, TValue> = {
             id: 'actions',
             cell: ({ row, table }) => {
                 const record = row.original;
-                const action = table.options.meta as Action | undefined;
 
                 return (
                     <DropdownMenu>
@@ -140,14 +143,15 @@ export function DataTable<TData extends { id: string }, TValue = unknown>({
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-                            {Object.entries(
-                                Object.assign(defaultAction, action),
-                            ).map(([name, func]) => (
+                            {Object.entries(action).map(([name, data]) => (
                                 <DropdownMenuItem
                                     className="capitalize"
-                                    onClick={() => func(record.id, fetchData)}
+                                    onClick={() =>
+                                        mutations[name].mutate(record)
+                                    }
                                 >
-                                    {name}
+                                    <data.icon />
+                                    <span>{name}</span>
                                 </DropdownMenuItem>
                             ))}
                         </DropdownMenuContent>
@@ -160,7 +164,7 @@ export function DataTable<TData extends { id: string }, TValue = unknown>({
     }, [columnsRaw]);
 
     const table = useReactTable({
-        data,
+        data: data?.content ?? [],
         columns,
         pageCount,
         manualPagination: true,
@@ -233,7 +237,12 @@ export function DataTable<TData extends { id: string }, TValue = unknown>({
                                                 {header.column.getCanSort() && (
                                                     <Button
                                                         variant="ghost"
-                                                        onClick={() => header.column.toggleSorting(undefined, true)}
+                                                        onClick={() =>
+                                                            header.column.toggleSorting(
+                                                                undefined,
+                                                                true,
+                                                            )
+                                                        }
                                                     >
                                                         {header.column.getIsSorted() ? (
                                                             header.column.getIsSorted() ===
@@ -419,7 +428,9 @@ export function DataTable<TData extends { id: string }, TValue = unknown>({
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 rounded-full p-0 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                            onClick={() => table.setPageIndex(pageCount - 1)}
+                            onClick={() =>
+                                table.setPageIndex(pageCount ?? 1 - 1)
+                            }
                             disabled={!table.getCanNextPage()}
                         >
                             <span className="sr-only">Go to last page</span>
