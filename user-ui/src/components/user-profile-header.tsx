@@ -1,4 +1,14 @@
 import { User } from '@/pages/user-profile';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from './ui/dropdown-menu';
+import { Button } from './ui/button';
+import { Flag } from 'lucide-react';
+import { ReportDialog } from './report-dialog';
+import * as api from '@/api';
 
 export const UserProfileHeader = ({ user }: { user: User }) => {
     return (
@@ -28,6 +38,21 @@ export const UserProfileHeader = ({ user }: { user: User }) => {
                             </div>
                         </div>
                     </div>
+                    <ReportDialog
+                        title="Report User"
+                        report={(reason) =>
+                            api.user.report(user.usrname, reason)
+                        }
+                    >
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full"
+                        >
+                            <Flag className="h-4 w-4 mr-1" />
+                            <span className="text-sm">Report</span>
+                        </Button>
+                    </ReportDialog>
                 </div>
             </div>
         </div>
