@@ -13,6 +13,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BookReportResponse {
     private final UUID id;
+    private final UUID bookId;
     private final String title;
     private final List<String> authors;
     private final LocalDateTime createdAt;

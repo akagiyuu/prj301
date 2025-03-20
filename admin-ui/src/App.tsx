@@ -17,7 +17,7 @@ const App = () => {
         <QueryClientProvider client={queryClient}>
             <div>
                 {token === null ? <Login /> : <Main />}
-                <Toaster />
+                <Toaster richColors />
             </div>
         </QueryClientProvider>
     );

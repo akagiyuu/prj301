@@ -3,8 +3,6 @@ package com.prj301.admin.models.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -21,7 +19,4 @@ public class Genre {
 
     @Column(unique = true, nullable = false)
     private String name;
-
-    @ManyToMany(mappedBy = "genres")
-    private Set<Book> books = new HashSet<>();
 }

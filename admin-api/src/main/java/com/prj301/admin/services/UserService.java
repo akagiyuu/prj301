@@ -38,6 +38,7 @@ public class UserService {
 
         return new UserReportResponse(
             report.getId(),
+            user.getId(),
             user.getUsername(),
             user.getFullName(),
             user.getCreatedAt(),

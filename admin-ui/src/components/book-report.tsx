@@ -1,4 +1,6 @@
+import { DeleteIcon, Trash2Icon, TrashIcon } from 'lucide-react';
 import { DataTable } from './data-table';
+import { fetchWrapper } from '@/lib/utils';
 
 export const BookReport = () => {
     return (
@@ -36,7 +38,44 @@ export const BookReport = () => {
                     header: 'Reason',
                 },
             ]}
-            action={{}}
+            action={{
+                dismiss: {
+                    icon: Trash2Icon,
+                    fn: async (data) => {
+                        const response = await fetchWrapper('book/report', {
+                            method: 'DELETE',
+                            body: JSON.stringify({
+                                id: data.id,
+                            }),
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                            },
+                        });
+
+                        if (!response.ok)
+                            throw new Error('Failed to dismiss report');
+                    },
+                },
+                delete: {
+                    icon: TrashIcon,
+                    fn: async (data) => {
+                        const response = await fetchWrapper('book', {
+                            method: 'DELETE',
+                            body: JSON.stringify({
+                                id: data.bookId,
+                            }),
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                            },
+                        });
+
+                        if (!response.ok)
+                            throw new Error('Failed to delete book');
+                    },
+                },
+            }}
         />
     );
 };

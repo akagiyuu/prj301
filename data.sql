@@ -199,5 +199,5 @@ INSERT INTO user_reports (id, user_id, reporting_user_id, reason)
 VALUES
   ('d5e6f708-9123-4567-8a9b-0abcdef12346', 'd76b4f90-02aa-45d3-bfd9-96ce54f3d13a', 'c56a4180-65aa-42ec-a945-5fd21dec0538',
    'Inappropriate language in reviews'::text),
-  ('a5a6b7c8-9d0e-1f2a-3b4c-5d6e7f8091ac', '9a8b7c6d-5e4f-3a2b-1c0d-9e8f7d6c5b4a', '1b2c3d4e-5f6a-7a8b-9c0e-1f2a3b4c5d6e',
+  ('c56a4180-65aa-42ec-a945-5fd21dec0538', '9a8b7c6d-5e4f-3a2b-1c0d-9e8f7d6c5b4a', '1b2c3d4e-5f6a-7a8b-9c0e-1f2a3b4c5d6e',
    'Spamming reviews'::text);

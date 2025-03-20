@@ -12,6 +12,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserReportResponse {
     private final UUID id;
+    private final UUID userId;
     private final String username;
     private final String fullName;
     private final LocalDateTime createdAt;
