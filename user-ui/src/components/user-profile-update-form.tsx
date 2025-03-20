@@ -20,21 +20,23 @@ import { User } from '@/api/user';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const schema = z.object({
-    avatar: z.any(),
-    fullName: z.string(),
-    hobbies: z.string(),
-    dob: z.preprocess(
-        (arg) => {
-            if (typeof arg === 'string' || arg instanceof Date) {
-                return new Date(arg);
-            }
-            return arg;
-        },
-        z.date().refine((date) => date.getTime() < Date.now(), {
-            message: 'Date must be in the past',
-        }),
-    ),
-    bio: z.string()
+    avatar: z.instanceof(File).optional(),
+    fullName: z.string().optional(),
+    hobbies: z.string().optional(),
+    dob: z
+        .preprocess(
+            (arg) => {
+                if (typeof arg === 'string' || arg instanceof Date) {
+                    return new Date(arg);
+                }
+                return arg;
+            },
+            z.date().refine((date) => date.getTime() < Date.now(), {
+                message: 'Date must be in the past',
+            }),
+        )
+        .optional(),
+    bio: z.string().optional(),
 });
 
 export const UserProfileUpdateForm = ({
@@ -52,24 +54,20 @@ export const UserProfileUpdateForm = ({
     const {
         mutate: update,
         status,
-        error,
     } = useMutation({
-        mutationFn: async (values: z.infer<typeof schema>) => {
-            api.user.update(values);
-
+        mutationFn: api.user.update,
+        onSuccess: () => {
             toast.success('Profile updated successfully');
-            navigate(`/user/${defaultValues.username}`);
-        },
-        onSettled: () => {
             queryClient.invalidateQueries({
                 queryKey: ['self'],
             });
+            queryClient.invalidateQueries({
+                queryKey: ['user', defaultValues.username],
+            });
+            navigate(`/user/${defaultValues.username}`);
         },
+        onError: (error) => toast.error(error.toString()),
     });
-
-    if (status === 'error') {
-        toast.error(error.toString());
-    }
 
     return (
         <Form {...form}>
