@@ -37,7 +37,7 @@ public class UserService {
         val reportingUser = report.getReportingUser();
 
         return new UserReportResponse(
-            user.getId(),
+            report.getId(),
             user.getUsername(),
             user.getFullName(),
             user.getCreatedAt(),
