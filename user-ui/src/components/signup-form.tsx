@@ -16,7 +16,7 @@ import {
     FormMessage,
 } from './ui/form';
 import * as api from '@/api';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 
 const schema = z
@@ -59,6 +59,8 @@ export const SignupForm = ({
         },
     });
 
+    const queryClient = useQueryClient();
+
     const {
         mutate: signup,
         status,
@@ -68,6 +70,10 @@ export const SignupForm = ({
             const token = await api.auth.signup(values);
 
             localStorage.setItem('token', token);
+
+            queryClient.invalidateQueries({
+                queryKey: ['self'],
+            });
 
             navigate('/');
         },

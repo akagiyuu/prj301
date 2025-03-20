@@ -18,36 +18,50 @@ import {
 } from './ui/dropdown-menu';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Link, useNavigate } from 'react-router';
+import { Link, NavLink, useNavigate } from 'react-router';
 import { User as UserEntity } from '@/api/user';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import * as api from '@/api';
 import { toast } from 'sonner';
 
+const Auth = () => {
+    return (
+        <div className="grid grid-cols-2 gap-6 ">
+            <Button className="h-9 px-4 font-normal" asChild variant="ghost">
+                <NavLink to="/auth/login">Login</NavLink>
+            </Button>
+            <Button
+                className="h-9 px-5 font-normal rounded-full bg-primary/90 hover:bg-primary/95 transition-all duration-300"
+                asChild
+            >
+                <NavLink to="/auth/signup">Sign up</NavLink>
+            </Button>
+        </div>
+    );
+};
+
 export const UserMenu = () => {
     const navigate = useNavigate();
-    const {
-        data: user,
-        status,
-        error,
-    } = useQuery({
+    const { data: user, status } = useQuery({
         queryKey: ['self'],
         queryFn: () => api.user.self(),
+        retry: false,
     });
+
+    const queryClient = useQueryClient();
 
     const logout = () => {
         localStorage.removeItem('token');
 
+        queryClient.invalidateQueries({
+            queryKey: ['self'],
+        });
+
         navigate('/auth/login');
     };
 
-    if (status === 'pending') {
-        return <span>Loading...</span>;
-    }
-
-    if (status === 'error') {
-        toast.error(error.toString());
-        return <div></div>;
+    if (status === 'pending' || status === 'error') {
+        return <Auth />;
     }
 
     return (

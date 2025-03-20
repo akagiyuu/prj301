@@ -16,7 +16,7 @@ import {
 } from './ui/form';
 import { NavLink, useNavigate } from 'react-router';
 import * as api from '@/api';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 
 const schema = z.object({
@@ -43,6 +43,8 @@ export const LoginForm = ({
         },
     });
 
+    const queryClient = useQueryClient();
+
     const {
         mutate: login,
         status,
@@ -52,6 +54,10 @@ export const LoginForm = ({
             const token = await api.auth.login(values);
 
             localStorage.setItem('token', token);
+
+            queryClient.invalidateQueries({
+                queryKey: ['self'],
+            });
 
             navigate('/');
         },

@@ -1,7 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 import { Home } from './pages/home';
-import { AuthorizedLayout } from './layout/authorized-layout';
-import { UnauthorizedLayout } from './layout/unauthorized-layout';
 import { Login } from './pages/auth/login';
 import { Signup } from './pages/auth/signup';
 import { BookSearch } from './pages/book/search';
@@ -11,15 +9,16 @@ import { BookUpload } from './pages/book/upload';
 import { UserProfile } from './pages/user-profile';
 import { UserProfileUpdate } from './pages/user-profile-update';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { MainLayout } from './layout';
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 const App = () => {
     return (
         <QueryClientProvider client={queryClient}>
             <BrowserRouter>
                 <Routes>
-                    <Route element={<AuthorizedLayout />}>
+                    <Route element={<MainLayout />}>
                         <Route index element={<Home />} />
                         <Route path="user">
                             <Route
@@ -39,9 +38,7 @@ const App = () => {
                                 ></Route>
                             </Route>
                         </Route>
-                    </Route>
 
-                    <Route element={<UnauthorizedLayout />}>
                         <Route path="auth/login" element={<Login />} />
                         <Route path="auth/signup" element={<Signup />} />
                     </Route>
