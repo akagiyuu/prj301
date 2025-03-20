@@ -6,17 +6,17 @@ export type User = {
     avatarPath: string;
     fullName: string;
     hobbies: string;
-    dob: string;
+    dob: Date;
     bio: string;
     createdAt: Date;
 };
 
-type UserUpdateRequest = {
-    avatarPath?: string;
-    fullName?: string;
-    hobbies?: string;
-    dob?: string;
-    bio?: string;
+export type UserUpdateRequest = {
+    avatarPath: string;
+    fullName: string;
+    hobbies: string;
+    dob: Date;
+    bio: string;
 };
 
 export const self = async () => {
