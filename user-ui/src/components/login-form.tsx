@@ -16,6 +16,8 @@ import {
 } from './ui/form';
 import { NavLink, useNavigate } from 'react-router';
 import * as api from '@/api';
+import { useMutation } from '@tanstack/react-query';
+import { Loader2 } from 'lucide-react';
 
 const schema = z.object({
     username: z
@@ -41,17 +43,23 @@ export const LoginForm = ({
         },
     });
 
-    const onSubmit = async (values: z.infer<typeof schema>) => {
-        try {
+    const {
+        mutate: login,
+        status,
+        error,
+    } = useMutation({
+        mutationFn: async (values: z.infer<typeof schema>) => {
             const token = await api.auth.login(values);
 
             localStorage.setItem('token', token);
 
             navigate('/');
-        } catch (error) {
-            toast.error(error.toString());
-        }
-    };
+        },
+    });
+
+    if (status === 'error') {
+        toast.error(error.toString());
+    }
 
     return (
         <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -63,7 +71,11 @@ export const LoginForm = ({
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)}>
+                        <form
+                            onSubmit={form.handleSubmit((values) =>
+                                login(values),
+                            )}
+                        >
                             <div className="flex flex-col gap-6">
                                 <FormField
                                     control={form.control}
@@ -95,9 +107,17 @@ export const LoginForm = ({
                                         </FormItem>
                                     )}
                                 />
-                                <Button type="submit" className="w-full">
-                                    Login
-                                </Button>
+
+                                {status === 'pending' ? (
+                                    <Button disabled>
+                                        <Loader2 className="animate-spin" />
+                                        Loading
+                                    </Button>
+                                ) : (
+                                    <Button type="submit" className="w-full">
+                                        Login
+                                    </Button>
+                                )}
                             </div>
                             <div className="mt-4 text-center text-sm">
                                 Don&apos;t have an account?{' '}
