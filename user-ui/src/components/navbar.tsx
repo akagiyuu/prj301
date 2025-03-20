@@ -1,84 +1,97 @@
-import { Book } from 'lucide-react';
-import { Link, NavLink } from 'react-router';
-import { Button } from './ui/button';
+import { useState, useEffect } from 'react';
+import { BookOpen, Home, Library, Menu, Upload, User, X } from 'lucide-react';
+
 import {
-    NavigationMenu,
-    NavigationMenuList,
-} from '@/components/ui/navigation-menu';
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { Link, useLocation } from 'react-router';
 import { UserMenu } from './user-menu';
-import { useQuery } from '@tanstack/react-query';
-import * as api from '@/api';
 
-type Logo = {
-    title: string;
-};
+const routes = [
+    {
+        href: '/',
+        label: 'Home',
+        icon: Home,
+    },
+    {
+        href: '/book',
+        label: 'Book',
+        icon: BookOpen,
+    },
+    {
+        href: '/book/upload',
+        label: 'Upload',
+        icon: Upload,
+    },
+];
 
-type MenuItem = {
-    title: string;
-    url: string;
-    description?: string;
-};
-
-type Auth = {
-    login: string;
-    signup: string;
-};
-
-type Props = {
-    logo: Logo;
-    menu: MenuItem[];
-    auth: Auth;
-};
-
-export const Navbar = ({ logo, menu, auth }: Props) => {
-    const { data: user } = useQuery({
-        queryKey: ['self'],
-        queryFn: () => api.user.self(),
-    });
+export const Navbar = () => {
+    const { pathname } = useLocation();
+    const [hoveredRoute, setHoveredRoute] = useState<string | null>(null);
 
     return (
-        <nav className="sticky top-0 z-50 grid grid-cols-3 items-center px-8 py-4 shadow-[0_2px_10px_-2px_rgba(0,0,0,0.05)] backdrop-blur-md bg-background/90 border-b border-border/10">
-            <div className="flex items-center gap-2.5">
-                <Book className="h-5 w-5 text-primary/80" strokeWidth={1.5} />
-                <span className="font-medium text-base tracking-wide hidden sm:inline-block">
-                    {logo.title}
-                </span>
-            </div>
-            <div className="gap-6">
-                <NavigationMenu className="size-fit m-auto">
-                    <NavigationMenuList className="space-x-5">
-                        {menu.map((item) => (
-                            <Link
-                                key={item.title}
-                                className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-3 py-2 font-normal text-foreground/80 transition-colors hover:bg-accent/30 hover:text-foreground"
-                                to={item.url}
+        <nav className="sticky top-0 left-0 right-0 z-50 border-b bg-background/80 backdrop-blur-md transition-all duration-500 shadow-md">
+            <div className="container mx-auto flex h-16 items-center px-4 md:px-6">
+                <Link
+                    to="/"
+                    className="mr-6 flex items-center gap-2 font-serif font-semibold text-lg transition-all duration-300 hover:scale-105"
+                >
+                    <Library className="h-6 w-6 text-primary transition-all duration-500" />
+                    <span className="hidden sm:inline bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                        Virtual Book Archive
+                    </span>
+                    <span className="sm:hidden bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                        VBA
+                    </span>
+                </Link>
+
+                <nav className="flex items-center gap-8 text-sm font-medium">
+                    {routes.map((route) => (
+                        <Link
+                            key={route.href}
+                            to={route.href}
+                            className="group relative"
+                            onMouseEnter={() => setHoveredRoute(route.href)}
+                            onMouseLeave={() => setHoveredRoute(null)}
+                        >
+                            <div
+                                className={cn(
+                                    'flex items-center gap-2 transition-all duration-300 relative z-10',
+                                    route.href === pathname
+                                        ? 'text-primary'
+                                        : 'text-foreground group-hover:text-primary',
+                                )}
                             >
-                                <span>{item.title}</span>
-                            </Link>
-                        ))}
-                    </NavigationMenuList>
-                </NavigationMenu>
-            </div>
-            <div className="size-fit h-full mr-0 ml-auto">
-                {user ? (
-                    <UserMenu user={user} />
-                ) : (
-                    <div className="grid grid-cols-2 gap-6 ">
-                        <Button
-                            className="h-9 px-4 font-normal"
-                            asChild
-                            variant="ghost"
-                        >
-                            <NavLink to={auth.login}>Login</NavLink>
-                        </Button>
-                        <Button
-                            className="h-9 px-5 font-normal rounded-full bg-primary/90 hover:bg-primary/95 transition-all duration-300"
-                            asChild
-                        >
-                            <NavLink to={auth.signup}>Sign up</NavLink>
-                        </Button>
-                    </div>
-                )}
+                                <route.icon className="h-4 w-4 transition-all duration-300" />
+                                {route.label}
+                            </div>
+
+                            <span
+                                className={cn(
+                                    'absolute -bottom-1 left-0 h-0.5 bg-primary rounded-full transition-all duration-300',
+                                    route.href === pathname
+                                        ? 'w-full opacity-100'
+                                        : 'w-0 opacity-0 group-hover:w-full group-hover:opacity-100',
+                                )}
+                            />
+
+                            {(route.href === pathname ||
+                                hoveredRoute === route.href) && (
+                                <span className="absolute inset-0 rounded-md -z-10 bg-primary/5 blur-sm transition-all duration-300" />
+                            )}
+                        </Link>
+                    ))}
+                </nav>
+
+                <div className="ml-auto">
+                    <UserMenu />
+                </div>
             </div>
         </nav>
     );
