@@ -4,20 +4,22 @@ import com.prj301.user.interceptors.JWTProtected;
 import com.prj301.user.models.dto.book.BookResponse;
 import com.prj301.user.models.dto.report.UserReportRequest;
 import com.prj301.user.models.dto.user.UserResponse;
-import com.prj301.user.models.dto.user.UserUpdate;
-import com.prj301.user.models.entity.Book;
-import com.prj301.user.models.entity.User;
+import com.prj301.user.models.dto.user.UpdateUserRequest;
 import com.prj301.user.services.BookService;
 import com.prj301.user.services.CommentService;
 import com.prj301.user.services.UserService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -62,9 +64,15 @@ public class UserController {
 
     @SecurityRequirement(name = "Bearer Authentication")
     @JWTProtected
-    @PostMapping("/update")
-    public ResponseEntity<?> updateUser(@RequestAttribute("user-id") UUID id, @RequestBody UserUpdate data) {
-        if (service.update(id, data)) {
+    @PostMapping(path = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateUser(
+        @RequestAttribute("user-id") UUID id,
+        @RequestPart(value = "avatarFile", required = false) MultipartFile avatarFile,
+        @RequestPart("updateUserRequest")
+        @Parameter(content = @Content(mediaType = "application/json"))
+        UpdateUserRequest data
+    ) {
+        if (service.update(id, avatarFile, data)) {
             return ResponseEntity
                 .ok()
                 .build();
@@ -79,19 +87,19 @@ public class UserController {
     @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/{username}/report")
     public ResponseEntity<?> report(
-            @PathVariable String username,
-            @RequestBody UserReportRequest reason,
-            @RequestAttribute("user-id") UUID reportingUserId
-    ){
+        @PathVariable String username,
+        @RequestBody UserReportRequest reason,
+        @RequestAttribute("user-id") UUID reportingUserId
+    ) {
 
         if (service.report(reason, username, reportingUserId)) {
             return ResponseEntity
-                    .ok()
-                    .build();
+                .ok()
+                .build();
         }
 
         return ResponseEntity
-                .badRequest()
-                .body("Failed to report");
+            .badRequest()
+            .body("Failed to report");
     }
 }

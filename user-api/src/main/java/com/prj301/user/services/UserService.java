@@ -2,16 +2,16 @@ package com.prj301.user.services;
 
 import com.prj301.user.models.dto.report.UserReportRequest;
 import com.prj301.user.models.dto.user.UserResponse;
-import com.prj301.user.models.dto.user.UserUpdate;
+import com.prj301.user.models.dto.user.UpdateUserRequest;
 import com.prj301.user.models.entity.User;
 import com.prj301.user.models.entity.UserReport;
 import com.prj301.user.repositories.UserReportRepository;
 import com.prj301.user.repositories.UserRepository;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
@@ -20,10 +20,14 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    @Autowired
     private final UserRepository userRepository;
 
     @Autowired
     private final UserReportRepository userReportRepository;
+
+    @Autowired
+    private final S3Service s3Service;
 
     public UserResponse toUserResponse(User user) {
         return new UserResponse(
@@ -48,16 +52,28 @@ public class UserService {
             .orElse(null);
     }
 
-    public boolean update(UUID id, UserUpdate data) {
+    public boolean update(UUID id, MultipartFile avatarFile, UpdateUserRequest data) {
         try {
-            userRepository.updateAvatarPathAndFullNameAndHobbiesAndDobAndBioById(
-                data.getAvatarPath(),
-                data.getFullName(),
-                data.getHobbies(),
-                data.getDob(),
-                data.getBio(),
-                id
-            );
+            val user = userRepository
+                .findById(id)
+                .orElseThrow(() -> new RuntimeException("User not existed"));
+            if (data.getFullName() != null)
+                user.setFullName(data.getFullName());
+            if (data.getHobbies() != null)
+                user.setHobbies(data.getHobbies());
+            if (data.getBio() != null)
+                user.setBio(data.getBio());
+            if (data.getDob() != null)
+                user.setDob(data.getDob());
+
+            if(!avatarFile.isEmpty()) {
+                val avatarPath = s3Service.upload("avatar/", avatarFile);
+                if (avatarPath == null) return false;
+
+                user.setAvatarPath(avatarPath);
+            }
+
+            userRepository.save(user);
 
             return true;
         } catch (Exception e) {
