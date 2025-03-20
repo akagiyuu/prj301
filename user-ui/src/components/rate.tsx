@@ -3,24 +3,24 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 type Props = {
-    rate: number;
+    rating: number;
     rateCount: number;
 };
 
-export const Rate = (props: Props) => {
-    const [rate, setRate] = useState(props.rate);
-    const [rateCount, setRateCount] = useState(props.rateCount);
-    const [hoverRate, setHoverRate] = useState(0);
-    const [userRate, setUserRate] = useState<number | undefined>(undefined);
+export const Rating = (props: Props) => {
+    const [rating, setRating] = useState(props.rating);
+    const [ratingCount, setRatingCount] = useState(props.rateCount);
+    const [hoverRating, setHoverRating] = useState(0);
+    const [userRating, setUserRating] = useState<number | undefined>(undefined);
 
     const onRate = (rating: number) => {
-        const newTotalScore = rate * rateCount - (userRate || 0) + rating;
-        const newCount = userRate ? rateCount : rateCount + 1;
+        const newTotalScore = rating * ratingCount - (userRating || 0) + rating;
+        const newCount = userRating ? ratingCount : ratingCount + 1;
         const newRating = newTotalScore / newCount;
 
-        setUserRate(rating);
-        setRate(newRating);
-        setRateCount(newCount);
+        setUserRating(rating);
+        setRating(newRating);
+        setRatingCount(newCount);
 
         toast.info(`You rated this book ${rating} stars.`);
     };
@@ -36,23 +36,23 @@ export const Rate = (props: Props) => {
                             type="button"
                             className="p-0 bg-transparent border-none cursor-pointer transition-transform hover:scale-110"
                             onClick={() => onRate(starValue)}
-                            onMouseEnter={() => setHoverRate(starValue)}
-                            onMouseLeave={() => setHoverRate(0)}
+                            onMouseEnter={() => setHoverRating(starValue)}
+                            onMouseLeave={() => setHoverRating(0)}
                         >
                             <Star
                                 className={`h-5 w-5 transition-colors ${
-                                    hoverRate || userRate
-                                        ? hoverRate
-                                            ? starValue <= hoverRate
+                                    hoverRating || userRating
+                                        ? hoverRating
+                                            ? starValue <= hoverRating
                                                 ? 'text-amber-500 fill-amber-500'
                                                 : 'text-muted-foreground/30 stroke-muted-foreground/30'
-                                            : starValue <= (userRate || 0)
+                                            : starValue <= (userRating || 0)
                                               ? 'text-amber-500 fill-amber-500'
                                               : 'text-muted-foreground/30 stroke-muted-foreground/30'
-                                        : starValue <= Math.floor(rate)
+                                        : starValue <= Math.floor(rating)
                                           ? 'text-amber-500 fill-amber-500'
-                                          : starValue === Math.ceil(rate) &&
-                                              rate % 1 >= 0.5
+                                          : starValue === Math.ceil(rating) &&
+                                              rating % 1 >= 0.5
                                             ? 'text-amber-500 fill-amber-500/50'
                                             : 'text-muted-foreground/30 stroke-muted-foreground/30'
                                 }`}
@@ -62,10 +62,10 @@ export const Rate = (props: Props) => {
                 })}
             </div>
             <span className="ml-2 font-medium">
-                {isNaN(rate) ? 'Not rated' : rate.toFixed(1)}
+                {isNaN(rating) ? 'Not rated' : rating.toFixed(1)}
             </span>
             <span className="ml-1 text-xs text-muted-foreground">
-                ({rateCount})
+                ({ratingCount})
             </span>
         </div>
     );

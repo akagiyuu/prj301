@@ -1,25 +1,38 @@
-import { BookOpen, Calendar, Download, Eye, Flag, Share } from 'lucide-react';
-import { Rate } from './rate';
+import {
+    BookOpen,
+    Calendar,
+    Copy,
+    Download,
+    Eye,
+    Flag,
+    Share,
+} from 'lucide-react';
+import { Rating } from './rate';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { MouseEventHandler } from 'react';
 import { Book } from '@/api/book';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from './ui/dialog';
+import { Label } from './ui/label';
+import { Input } from './ui/input';
 
 type Props = {
     book: Book;
     onRead?: MouseEventHandler<HTMLButtonElement>;
-    onShare?: MouseEventHandler<HTMLButtonElement>;
     onDownload?: MouseEventHandler<HTMLButtonElement>;
     onReport?: MouseEventHandler<HTMLButtonElement>;
 };
 
-export const BookInfo = ({
-    book,
-    onRead,
-    onShare,
-    onDownload,
-    onReport,
-}: Props) => {
+export const BookInfo = ({ book, onRead, onDownload, onReport }: Props) => {
     return (
         <div className="flex-1 space-y-6 text-center md:text-left">
             <div className="space-y-4">
@@ -54,8 +67,8 @@ export const BookInfo = ({
                 </div>
 
                 <div className="flex items-center gap-4 justify-center md:justify-start">
-                    <Rate
-                        rate={book.ratingCount === 0? 'Not Rated' : book.totalRating / book.ratingCount}
+                    <Rating
+                        rating={book.totalRating / book.ratingCount}
                         rateCount={book.ratingCount}
                     />
                     <div className="flex items-center text-sm text-muted-foreground">
@@ -84,7 +97,6 @@ export const BookInfo = ({
                 {book.summary}
             </p>
 
-            {/* Action Buttons */}
             <div className="flex flex-wrap gap-3 justify-center md:justify-start pt-2">
                 <Button
                     size="lg"
@@ -103,15 +115,50 @@ export const BookInfo = ({
                     <Download className="h-5 w-5" />
                     Download
                 </Button>
-                <Button
-                    size="lg"
-                    variant="ghost"
-                    onClick={onShare}
-                    className="gap-2 rounded-full px-6 hover:bg-primary/5"
-                >
-                    <Share className="h-5 w-5" />
-                    Share
-                </Button>
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button
+                            size="lg"
+                            variant="ghost"
+                            className="gap-2 rounded-full px-6 hover:bg-primary/5"
+                        >
+                            <Share className="h-5 w-5" />
+                            Share
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                            <DialogTitle>Share link</DialogTitle>
+                            <DialogDescription>
+                                Anyone who has this link will be able to view
+                                this.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="flex items-center space-x-2">
+                            <div className="grid flex-1 gap-2">
+                                <Label htmlFor="link" className="sr-only">
+                                    Link
+                                </Label>
+                                <Input
+                                    id="link"
+                                    defaultValue={window.location.href}
+                                    readOnly
+                                />
+                            </div>
+                            <Button type="submit" size="sm" className="px-3">
+                                <span className="sr-only">Copy</span>
+                                <Copy />
+                            </Button>
+                        </div>
+                        <DialogFooter className="sm:justify-start">
+                            <DialogClose asChild>
+                                <Button type="button" variant="secondary">
+                                    Close
+                                </Button>
+                            </DialogClose>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
                 <Button
                     size="lg"
                     variant="destructive"

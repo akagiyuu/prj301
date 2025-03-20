@@ -86,7 +86,7 @@ export const BookSearch = () => {
                     size: pageSize,
                     sort:
                         orderBy !== undefined
-                            ? [`${orderBy}${orderDirection ?? ','}`]
+                            ? [`${orderBy},${orderDirection ?? ''}`]
                             : [],
                 },
             }),

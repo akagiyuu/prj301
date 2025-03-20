@@ -5,10 +5,13 @@ import { BookInfo } from '@/components/book-info';
 import { useNavigate, useParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import * as api from '@/api';
+import { ReportDialog } from '@/components/report-dialog';
+import { useState } from 'react';
 
 export const BookSummary = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const [reportOpen, setReportOpen] = useState(false);
 
     const {
         data: book,
@@ -51,6 +54,10 @@ export const BookSummary = () => {
         window.location.replace(book.pdfPath);
     };
 
+    const onReport = () => {
+        setReportOpen(true);
+    };
+
     return (
         <main className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
             <div className="bg-gradient-to-b from-primary/5 to-background pt-24 pb-16">
@@ -69,14 +76,20 @@ export const BookSummary = () => {
                             onRead={onRead}
                             onShare={onShare}
                             onDownload={onDownload}
+                            onReport={onReport}
                         />
                     </div>
                 </div>
             </div>
-
             <div className="container max-w-5xl mx-auto px-4 py-12">
                 <CommentSection bookId={id!} />
             </div>
+            <ReportDialog
+                title='Report book'
+                open={reportOpen}
+                setOpen={setReportOpen}
+                report={(reason) => api.book.report(id!, reason)}
+            />
         </main>
     );
 };

@@ -6,7 +6,6 @@ import {
     NavigationMenuList,
 } from '@/components/ui/navigation-menu';
 import { UserMenu } from './user-menu';
-import { toast } from 'sonner';
 import { useQuery } from '@tanstack/react-query';
 import * as api from '@/api';
 

@@ -13,9 +13,11 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useNavigate } from 'react-router';
-import { Camera } from 'lucide-react';
+import { Camera, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import * as api from '@/api';
+import { User } from '@/api/user';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const schema = z.object({
     avatar: z.any(),
@@ -28,7 +30,7 @@ const schema = z.object({
 export const UserProfileUpdateForm = ({
     defaultValues,
 }: {
-    defaultValues?: z.infer<typeof schema>;
+    defaultValues: User;
 }) => {
     const navigate = useNavigate();
     const form = useForm<z.infer<typeof schema>>({
@@ -36,20 +38,35 @@ export const UserProfileUpdateForm = ({
         defaultValues,
     });
 
-    const onSubmit = async (values: z.infer<typeof schema>) => {
-        try {
+    const queryClient = useQueryClient();
+    const {
+        mutate: update,
+        status,
+        error,
+    } = useMutation({
+        mutationFn: async (values: z.infer<typeof schema>) => {
             api.user.update(values);
 
             toast.success('Profile updated successfully');
-            navigate('/profile');
-        } catch (error) {
-            toast.error(error.toString());
-        }
-    };
+            navigate(`/user/${defaultValues.username}`);
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['self'],
+            });
+        },
+    });
+
+    if (status === 'error') {
+        toast.error(error.toString());
+    }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form
+                onSubmit={form.handleSubmit((values) => update(values))}
+                className="space-y-8"
+            >
                 <FormField
                     control={form.control}
                     name="avatar"
@@ -190,7 +207,14 @@ export const UserProfileUpdateForm = ({
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Update Profile</Button>
+                {status === 'pending' ? (
+                    <Button disabled>
+                        <Loader2 className="animate-spin" />
+                        Updating
+                    </Button>
+                ) : (
+                    <Button type="submit">Update</Button>
+                )}
             </form>
         </Form>
     );
