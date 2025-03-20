@@ -16,6 +16,7 @@ import {
     FormMessage,
 } from './ui/form';
 import * as api from '@/api';
+import { useMutation } from '@tanstack/react-query';
 
 const schema = z
     .object({
@@ -57,17 +58,19 @@ export const SignupForm = ({
         },
     });
 
-    const onSubmit = async (values: z.infer<typeof schema>) => {
-        try {
+    const {
+        mutate: singup,
+        status,
+        error,
+    } = useMutation({
+        mutationFn: async (values: z.infer<typeof schema>) => {
             const token = await api.auth.signup(values);
 
             localStorage.setItem('token', token);
 
             navigate('/');
-        } catch (error) {
-            toast.error(error.toString());
-        }
-    };
+        },
+    });
 
     return (
         <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -79,7 +82,11 @@ export const SignupForm = ({
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)}>
+                        <form
+                            onSubmit={form.handleSubmit((values) =>
+                                signup(values),
+                            )}
+                        >
                             <div className="flex flex-col gap-6">
                                 <FormField
                                     control={form.control}
@@ -143,9 +150,16 @@ export const SignupForm = ({
                                         </FormItem>
                                     )}
                                 />
-                                <Button type="submit" className="w-full">
-                                    Create account
-                                </Button>
+                                {status === 'pending' ? (
+                                    <Button disabled>
+                                        <Loader2 className="animate-spin" />
+                                        Loading
+                                    </Button>
+                                ) : (
+                                    <Button type="submit" className="w-full">
+                                        Create Account
+                                    </Button>
+                                )}
                             </div>
                             <div className="mt-4 text-center text-sm">
                                 Already have an account?{' '}

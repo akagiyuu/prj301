@@ -7,7 +7,7 @@ import {
     Flag,
     Share,
 } from 'lucide-react';
-import { Rate } from './rate';
+import { Rating } from './rate';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { MouseEventHandler } from 'react';
@@ -67,8 +67,8 @@ export const BookInfo = ({ book, onRead, onDownload, onReport }: Props) => {
                 </div>
 
                 <div className="flex items-center gap-4 justify-center md:justify-start">
-                    <Rate
-                        rate={book.totalRating / book.ratingCount}
+                    <Rating
+                        rating={book.totalRating / book.ratingCount}
                         rateCount={book.ratingCount}
                     />
                     <div className="flex items-center text-sm text-muted-foreground">
