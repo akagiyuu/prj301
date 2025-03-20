@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import { Button } from './ui/button';
 import {
     Dialog,
@@ -6,6 +6,7 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
+    DialogTrigger,
 } from './ui/dialog';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -18,7 +19,11 @@ type Props = {
     report: (reason: string) => Promise<void>;
 };
 
-export const ReportDialog = ({ title, report }: Props) => {
+export const ReportDialog = ({
+    title,
+    report,
+    children,
+}: PropsWithChildren<Props>) => {
     const [reason, setReason] = useState('');
     const [open, setOpen] = useState(false);
 
@@ -35,6 +40,9 @@ export const ReportDialog = ({ title, report }: Props) => {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                {children}
+            </DialogTrigger>
             <DialogContent className="sm:max-w-[400px]">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
