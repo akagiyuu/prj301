@@ -1,14 +1,9 @@
-import { User } from '@/pages/user-profile';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from './ui/dropdown-menu';
 import { Button } from './ui/button';
 import { Flag } from 'lucide-react';
 import { ReportDialog } from './report-dialog';
 import * as api from '@/api';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { User } from '@/api/user';
 
 export const UserProfileHeader = ({ user }: { user: User }) => {
     return (
@@ -18,13 +13,19 @@ export const UserProfileHeader = ({ user }: { user: User }) => {
                     <div className="relative group">
                         <div className="absolute -inset-0.5 bg-black rounded-full opacity-75 group-hover:opacity-100 blur transition duration-300"></div>
                         <div className="relative">
-                            <img
-                                src={user.avatarPath}
-                                alt="Profile picture"
-                                width={160}
-                                height={160}
-                                className="rounded-full border-4 border-white bg-white object-cover"
-                            />
+                            <Avatar className="h-25 w-25 border border-border/20">
+                                <AvatarImage
+                                    src={user.avatarPath}
+                                    alt={user.username}
+                                />
+                                <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                                    {user.username
+                                        .split(' ')
+                                        .map((n) => n[0])
+                                        .join('')
+                                        .toUpperCase()}
+                                </AvatarFallback>
+                            </Avatar>
                         </div>
                     </div>
 
