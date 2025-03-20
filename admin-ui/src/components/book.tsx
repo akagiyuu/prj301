@@ -1,4 +1,6 @@
 import { DataTable } from '@/components/data-table';
+import { fetchWrapper } from '@/lib/utils';
+import { TrashIcon } from 'lucide-react';
 
 export const Book = () => {
     return (
@@ -28,7 +30,26 @@ export const Book = () => {
                     header: 'Created At',
                 },
             ]}
-            action={{}}
+            action={{
+                delete: {
+                    icon: TrashIcon,
+                    fn: async (data) => {
+                        const response = await fetchWrapper('book/', {
+                            method: 'DELETE',
+                            body: JSON.stringify({
+                                id: data.id,
+                            }),
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                            },
+                        });
+
+                        if (!response.ok)
+                            throw new Error('Failed to delete book');
+                    },
+                },
+            }}
         />
     );
 };

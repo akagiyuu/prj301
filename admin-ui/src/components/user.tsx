@@ -1,4 +1,6 @@
+import { TrashIcon } from 'lucide-react';
 import { DataTable } from './data-table';
+import { fetchWrapper } from '@/lib/utils';
 
 export const User = () => {
     return (
@@ -23,7 +25,26 @@ export const User = () => {
                     header: 'Created At',
                 },
             ]}
-            action={{}}
+            action={{
+                delete: {
+                    icon: TrashIcon,
+                    fn: async (data) => {
+                        const response = await fetchWrapper('user/', {
+                            method: 'DELETE',
+                            body: JSON.stringify({
+                                id: data.id,
+                            }),
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                            },
+                        });
+
+                        if (!response.ok)
+                            throw new Error('Failed to delete user');
+                    },
+                },
+            }}
         />
     );
 };
