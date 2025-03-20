@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -15,7 +15,7 @@ public class CommentReportResponse {
     private final String content;
     private final String user;
     private final String book;
-    private final LocalDate createdAt;
+    private final LocalDateTime createdAt;
     private final String reportingUser;
     private final String reason;
 }
