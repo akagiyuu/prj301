@@ -28,6 +28,7 @@ public class CommentService {
 
         return new CommentReportResponse(
             report.getId(),
+            comment.getId(),
             comment.getContent(),
             user.getUsername(),
             book.getTitle(),

@@ -12,6 +12,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CommentReportResponse {
     private final UUID id;
+    private final UUID commentId;
     private final String content;
     private final String user;
     private final String book;

@@ -56,6 +56,7 @@ public class BookService {
 
         return new BookReportResponse(
             report.getId(),
+            book.getId(),
             book.getTitle(),
             authors,
             book.getCreatedAt(),
