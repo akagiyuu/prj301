@@ -3,6 +3,7 @@ package com.prj301.user.models.dto.user;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -15,5 +16,5 @@ public class UserResponse {
     private final String hobbies;
     private final LocalDate dob;
     private final String bio;
-    private final LocalDate createdAt;
+    private final LocalDateTime createdAt;
 }

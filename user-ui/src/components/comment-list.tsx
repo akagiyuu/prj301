@@ -67,7 +67,7 @@ const Comment = (comment: CommentEntity) => {
                                     </h4>
                                 </NavLink>
                                 <span className="text-xs text-muted-foreground">
-                                    {comment.createdAt}
+                                    {comment.createdAt.toLocaleString()}
                                 </span>
                             </div>
                         </div>

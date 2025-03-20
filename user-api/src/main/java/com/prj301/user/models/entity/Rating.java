@@ -1,7 +1,10 @@
 package com.prj301.user.models.entity;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -14,7 +17,7 @@ import java.util.UUID;
 public class Rating {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;  // A unique identifier for each rating
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
@@ -25,5 +28,8 @@ public class Rating {
     private Book book;
 
     @Column(nullable = false)
-    private int rating;  // Value from 1 to 5
+    private int rating;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 }

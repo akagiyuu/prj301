@@ -1,4 +1,4 @@
-import { User } from '@/pages/user-profile';
+import { User } from '@/api/user';
 import { Calendar, Heart, MessageSquare, Users } from 'lucide-react';
 
 export const UserInfo = ({
@@ -71,7 +71,7 @@ export const UserInfo = ({
                                 <span className="text-sm text-gray-500">
                                     Participated Since
                                 </span>
-                                <p className="font-medium">{user.createdAt}</p>
+                                <p className="font-medium">{user.createdAt.toLocaleString()}</p>
                             </div>
                         </div>
                     </div>

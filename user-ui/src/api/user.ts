@@ -8,7 +8,7 @@ export type User = {
     hobbies: string;
     dob: string;
     bio: string;
-    createdAt: string;
+    createdAt: Date;
 };
 
 type UserUpdateRequest = {

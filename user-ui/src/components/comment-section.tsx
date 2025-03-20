@@ -3,7 +3,7 @@ import { Separator } from '@/components/ui/separator';
 import { useQuery } from '@tanstack/react-query';
 import * as api from '@/api';
 import { CommentPost } from './comment-post';
-import { CommentList } from './commment-list';
+import { CommentList } from './comment-list';
 
 export const CommentSection = ({ bookId }: { bookId: string }) => {
     const { data: comments } = useQuery({
