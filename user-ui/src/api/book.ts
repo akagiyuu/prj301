@@ -39,7 +39,7 @@ type UploadBookRequest = {
     title: string;
     authors: string[];
     genres: string[];
-    publicationDate: string;
+    publicationDate: Date;
     summary: string;
 };
 

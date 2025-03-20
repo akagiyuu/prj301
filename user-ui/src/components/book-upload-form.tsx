@@ -25,14 +25,21 @@ import { Loader2 } from 'lucide-react';
 const schema = z.object({
     isbn: z
         .string()
-        .min(10, 'ISBN must be at least 10 character long')
-        .max(13, 'ISBN must be at most 13 character'),
+        .regex(/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/, 'Invalid isbn'),
     title: z.string().min(1, 'Title is required'),
     authors: z.array(z.string()).min(1, 'At least one author is required'),
     genres: z.array(z.string()).min(1, 'At least one genre is required'),
-    publicationDate: z
-        .string()
-        .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format'),
+    publicationDate: z.preprocess(
+        (arg) => {
+            if (typeof arg === 'string' || arg instanceof Date) {
+                return new Date(arg);
+            }
+            return arg;
+        },
+        z.date().refine((date) => date.getTime() < Date.now(), {
+            message: 'Date must be in the past',
+        }),
+    ),
     summary: z.string(),
     pdf: z
         .instanceof(File)
@@ -56,7 +63,7 @@ export const BookUploadForm = ({
             title: '',
             authors: [],
             genres: [],
-            publicationDate: '',
+            publicationDate: new Date(),
             summary: '',
         },
     });
@@ -64,8 +71,14 @@ export const BookUploadForm = ({
     const { setValue } = form;
 
     const { status, error, mutate } = useMutation({
-        mutationFn: ({ cover, pdf, ...values }: z.infer<typeof schema>) =>
-            api.book.uploadBook(values, cover, pdf),
+        mutationFn: async ({
+            cover,
+            pdf,
+            ...values
+        }: z.infer<typeof schema>) => {
+            await api.book.uploadBook(values, cover, pdf);
+            toast.info('Upload success');
+        },
     });
 
     if (status === 'error') {
