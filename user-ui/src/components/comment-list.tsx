@@ -7,6 +7,7 @@ import { ReportDialog } from './report-dialog';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { NavLink } from 'react-router';
+import { formatISO } from '@/lib/utils';
 
 const Comment = (comment: CommentEntity) => {
     const {
@@ -67,7 +68,7 @@ const Comment = (comment: CommentEntity) => {
                                     </h4>
                                 </NavLink>
                                 <span className="text-xs text-muted-foreground">
-                                    {comment.createdAt.toLocaleString()}
+                                    {formatISO(comment.createdAt)}
                                 </span>
                             </div>
                         </div>
