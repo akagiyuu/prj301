@@ -1,10 +1,13 @@
 spring:
+  output:
+    ansi:
+      enabled: ALWAYS
   main:
     allow-bean-definition-overriding: true
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 50MB
+      max-request-size: 50MB
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:prj301-assignment}
     username: ${DB_USERNAME:postgres}
@@ -20,6 +23,7 @@ server:
   compression:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/javascript,text/css
+    image-size: 300
   error:
     include-message: always
 

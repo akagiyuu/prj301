@@ -97,15 +97,22 @@
           <artifactId>springdoc-openapi-ui</artifactId>
           <version>1.6.15</version>
         </dependency>
-
-        <!-- Optional: If you're using Spring Web MVC -->
         <dependency>
           <groupId>org.springdoc</groupId>
           <artifactId>springdoc-openapi-webmvc-core</artifactId>
           <version>1.6.15</version>
         </dependency>
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.13.3</version>
+        </dependency>
     </dependencies>
-
 	<build>
 		<plugins>
             <plugin>
