@@ -45,14 +45,10 @@ export const LoginForm = ({
 
     const queryClient = useQueryClient();
 
-    const {
-        mutate: login,
-        status,
-        error,
-    } = useMutation({
-        mutationFn: async (values: z.infer<typeof schema>) => {
-            const token = await api.auth.login(values);
-
+    const { mutate: login, status } = useMutation({
+        mutationFn: async (values: z.infer<typeof schema>) =>
+            api.auth.login(values),
+        onSuccess: (token) => {
             localStorage.setItem('token', token);
 
             queryClient.invalidateQueries({
@@ -61,11 +57,8 @@ export const LoginForm = ({
 
             navigate('/');
         },
+        onError: (error) => toast.error(error.message),
     });
-
-    if (status === 'error') {
-        toast.error(error.toString());
-    }
 
     return (
         <div className={cn('flex flex-col gap-6', className)} {...props}>

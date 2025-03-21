@@ -26,27 +26,12 @@ export const BookSummary = () => {
     }
 
     if (status === 'error') {
-        toast.error(error.toString());
+        toast.error(error.message);
         return <div></div>;
     }
 
     const onRead = () => {
         navigate('read');
-    };
-
-    const onShare = () => {
-        if (navigator.share) {
-            navigator
-                .share({
-                    title: book.title,
-                    text: `Check out this book: ${book.title}`,
-                    url: window.location.href,
-                })
-                .catch((error) => console.log('Error sharing', error));
-        } else {
-            navigator.clipboard.writeText(window.location.href);
-            toast.info('Book link copied to clipboard');
-        }
     };
 
     const onDownload = () => {
@@ -62,7 +47,6 @@ export const BookSummary = () => {
                             coverPath={book.coverPath}
                             coverAlt={`Cover for ${book.title}`}
                             onRead={onRead}
-                            onShare={onShare}
                             onDownload={onDownload}
                         />
 

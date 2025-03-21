@@ -7,9 +7,10 @@ import { ReportDialog } from './report-dialog';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { NavLink } from 'react-router';
-import { formatISO } from '@/lib/utils';
+import { cn, formatISO } from '@/lib/utils';
+import { User } from '@/api/user';
 
-const Comment = (comment: CommentEntity) => {
+const Comment = (comment: CommentEntity & { self?: User }) => {
     const {
         data: user,
         status,
@@ -23,7 +24,7 @@ const Comment = (comment: CommentEntity) => {
     }
 
     if (status === 'error') {
-        toast.error(error.toString());
+        toast.error(error.message);
         return <div></div>;
     }
 
@@ -39,7 +40,10 @@ const Comment = (comment: CommentEntity) => {
                 >
                     <Button
                         variant="ghost"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 absolute top-2 right-2 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-destructive"
+                        className={cn(
+                            'opacity-0 group-hover:opacity-100 transition-opacity duration-500 absolute top-2 right-2 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-destructive',
+                            comment.self?.username !== user.username ? '' : 'hidden',
+                        )}
                         title="Report comment"
                     >
                         <Flag className="h-4 w-4" />
@@ -92,12 +96,17 @@ export const CommentList = ({ bookId }: { bookId: string }) => {
         queryFn: () => api.book.getComment(bookId),
     });
 
+    const { data: self } = useQuery({
+        queryKey: ['self'],
+        queryFn: () => api.user.self(),
+    });
+
     if (status === 'pending') {
         return <span>Loading...</span>;
     }
 
     if (status === 'error') {
-        toast.error(error.toString());
+        toast.error(error.message);
         return <div></div>;
     }
 
@@ -111,7 +120,7 @@ export const CommentList = ({ bookId }: { bookId: string }) => {
                     </p>
                 </div>
             ) : (
-                comments.map((comment) => <Comment {...comment} />)
+                comments.map((comment) => <Comment {...comment} self={self} />)
             )}
         </div>
     );

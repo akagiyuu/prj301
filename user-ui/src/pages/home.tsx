@@ -29,7 +29,7 @@ const NewBooks = () => {
     }
 
     if (status === 'error') {
-        toast.error(error.toString());
+        toast.error(error.message);
         return <div></div>;
     }
 
@@ -60,7 +60,7 @@ const MostRatedBooks = () => {
     }
 
     if (status === 'error') {
-        toast.error(error.toString());
+        toast.error(error.message);
         return <div></div>;
     }
 
@@ -91,7 +91,7 @@ const MostViewedBooks = () => {
     }
 
     if (status === 'error') {
-        toast.error(error.toString());
+        toast.error(error.message);
         return <div></div>;
     }
 

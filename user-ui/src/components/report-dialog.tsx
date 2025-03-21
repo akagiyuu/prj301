@@ -33,7 +33,7 @@ export const ReportDialog = ({
             toast.info('Report submitted');
             setOpen(false);
         },
-        onError: (error) => toast.error(error.toString()),
+        onError: (error) => toast.error(error.message),
     });
 
     return (

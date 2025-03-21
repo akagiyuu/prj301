@@ -62,7 +62,7 @@ export const search = async ({ query, genres, pageable }: SearchRequest) => {
     const response = await fetchWrapper(`book?${params}`);
 
     if (!response.ok) {
-        throw new Error('Request failed');
+        throw new Error('Failed to fetch books with given datas');
     }
 
     return (await response.json()) as SearchResponse;
@@ -72,7 +72,7 @@ export const get = async (id: string) => {
     const response = await fetchWrapper(`book/${id}`);
 
     if (!response.ok) {
-        throw new Error('Request failed');
+        throw new Error(`Book with id ${id} does not existed`);
     }
 
     return (await response.json()) as Book;
@@ -82,7 +82,7 @@ export const getComment = async (id: string) => {
     const response = await fetchWrapper(`book/${id}/comment`);
 
     if (!response.ok) {
-        throw new Error('Request failed');
+        throw new Error(`Failed to fetch comment for book with id ${id}`);
     }
 
     return (await response.json()) as Comment[];
@@ -104,63 +104,79 @@ export const uploadBook = async (
         }),
     );
 
-    const response = await fetchWrapper('book', {
-        method: 'POST',
-        body: formData,
-    });
+    const response = await fetchWrapper(
+        'book',
+        {
+            method: 'POST',
+            body: formData,
+        },
+        true,
+    );
 
     if (!response.ok) {
-        throw new Error('Request failed');
+        throw new Error('Failed to upload book');
     }
 };
 
 export const rate = async (id: string, rating: number) => {
-    const response = await fetchWrapper(`book/${id}/rating`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
+    const response = await fetchWrapper(
+        `book/${id}/rating`,
+        {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                rating,
+            }),
         },
-        body: JSON.stringify({
-            rating,
-        }),
-    });
+        true,
+    );
 
     if (!response.ok) {
-        throw new Error('Request failed');
+        throw new Error('Failed to rate book');
     }
 };
 
 export const comment = async (id: string, content: string) => {
-    const response = await fetchWrapper(`book/${id}/comment`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
+    const response = await fetchWrapper(
+        `book/${id}/comment`,
+        {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                content,
+            }),
         },
-        body: JSON.stringify({
-            content,
-        }),
-    });
+        true,
+    );
 
     if (!response.ok) {
-        throw new Error('Request failed');
+        throw new Error(`Failed to post comment for book with id ${id}`);
     }
 
     return (await response.json()) as Book;
 };
 
 export const report = async (id: string, reason: string) => {
-    const response = await fetchWrapper(`book/${id}/report`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
+    const response = await fetchWrapper(
+        `book/${id}/report`,
+        {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ reason }),
         },
-        body: JSON.stringify({ reason }),
-    });
+        true,
+    );
 
     if (!response.ok) {
-        throw new Error('Request failed');
+        throw new Error(`Failed to report book with id ${id}`);
     }
 };

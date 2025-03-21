@@ -61,14 +61,9 @@ export const SignupForm = ({
 
     const queryClient = useQueryClient();
 
-    const {
-        mutate: signup,
-        status,
-        error,
-    } = useMutation({
-        mutationFn: async (values: z.infer<typeof schema>) => {
-            const token = await api.auth.signup(values);
-
+    const { mutate: signup, status } = useMutation({
+        mutationFn: api.auth.signup,
+        onSuccess: (token) => {
             localStorage.setItem('token', token);
 
             queryClient.invalidateQueries({
@@ -77,11 +72,8 @@ export const SignupForm = ({
 
             navigate('/');
         },
+        onError: (error) => toast.error(error.message),
     });
-
-    if (status === 'error') {
-        toast.error(error.toString());
-    }
 
     return (
         <div className={cn('flex flex-col gap-6', className)} {...props}>

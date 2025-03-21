@@ -70,20 +70,12 @@ export const BookUploadForm = ({
 
     const { setValue } = form;
 
-    const { status, error, mutate } = useMutation({
-        mutationFn: async ({
-            cover,
-            pdf,
-            ...values
-        }: z.infer<typeof schema>) => {
-            await api.book.uploadBook(values, cover, pdf);
-            toast.info('Upload success');
-        },
+    const { status, mutate } = useMutation({
+        mutationFn: async ({ cover, pdf, ...values }: z.infer<typeof schema>) =>
+            api.book.uploadBook(values, cover, pdf),
+        onSuccess: () => toast.info('Upload success'),
+        onError: (error) => toast.error(error.message),
     });
-
-    if (status === 'error') {
-        toast.error(error.toString());
-    }
 
     return (
         <div className={cn('flex flex-col gap-6', className)} {...props}>

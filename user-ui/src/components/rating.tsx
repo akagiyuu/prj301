@@ -23,7 +23,7 @@ export const Rating = ({ id, rating, ratingCount }: Props) => {
             });
             toast.info(`You rated this book ${rating} stars.`);
         },
-        onError: (error) => toast.error(error.toString()),
+        onError: (error) => toast.error(error.message),
     });
 
     return (
