@@ -1,17 +1,6 @@
-import { Book } from '@/api/book';
 import { BookCardFull } from '@/components/book-card';
 import { UserInfo } from '@/components/user-info';
 import { UserProfileHeader } from '@/components/user-profile-header';
-import {
-    Play,
-    Heart,
-    Calendar,
-    Upload,
-    MessageSquare,
-    Users,
-    Tag,
-    ChevronRight,
-} from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 import * as api from '@/api';
@@ -69,12 +58,6 @@ export const UserProfile = () => {
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50">
-            <div className="relative h-64 md:h-80 bg-black overflow-hidden">
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute inset-0"></div>
-                </div>
-            </div>
-
             <UserProfileHeader user={userQuery.data} />
 
             <div className="container mx-auto px-4 pb-12">
