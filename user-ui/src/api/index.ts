@@ -1,13 +1,27 @@
+import { toast } from 'sonner';
+
 const USER_API_URL =
     import.meta.env.USER_API_URl ?? 'http://localhost:3000/api/v1';
 
-export const fetchWrapper = (url: RequestInfo | URL, init?: RequestInit) => {
-    const token = localStorage.getItem('token');
+export const fetchWrapper = (
+    url: RequestInfo | URL,
+    init?: RequestInit,
+    authRequired?: boolean,
+) => {
+    const apiUrl = `${USER_API_URL}/${url}`;
+    if (!authRequired) {
+        return fetch(apiUrl, init);
+    }
 
-    return fetch(`${USER_API_URL}/${url}`, {
+    const token = localStorage.getItem('token');
+    if (token === null) {
+        throw new Error('You must be logged in to do this action');
+    }
+
+    return fetch(apiUrl, {
         ...init,
         headers: {
-            Authorization: token === null ? '' : `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             ...init?.headers,
         },
     });
