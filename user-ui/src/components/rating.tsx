@@ -1,29 +1,30 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Star } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import * as api from '@/api';
 
 type Props = {
+    id: string;
     rating: number;
-    rateCount: number;
+    ratingCount: number;
 };
 
-export const Rating = (props: Props) => {
-    const [rating, setRating] = useState(props.rating);
-    const [ratingCount, setRatingCount] = useState(props.rateCount);
+export const Rating = ({ id, rating, ratingCount }: Props) => {
     const [hoverRating, setHoverRating] = useState(0);
-    const [userRating, setUserRating] = useState<number | undefined>(undefined);
 
-    const onRate = (rating: number) => {
-        const newTotalScore = rating * ratingCount - (userRating || 0) + rating;
-        const newCount = userRating ? ratingCount : ratingCount + 1;
-        const newRating = newTotalScore / newCount;
-
-        setUserRating(rating);
-        setRating(newRating);
-        setRatingCount(newCount);
-
-        toast.info(`You rated this book ${rating} stars.`);
-    };
+    const queryClient = useQueryClient();
+    const { mutate: rate } = useMutation({
+        mutationFn: ({ id, rating }: { id: string; rating: number }) =>
+            api.book.rate(id, rating),
+        onSuccess: (_, { id, rating }) => {
+            queryClient.invalidateQueries({
+                queryKey: ['book', id],
+            });
+            toast.info(`You rated this book ${rating} stars.`);
+        },
+        onError: (error) => toast.error(error.toString()),
+    });
 
     return (
         <div className="flex items-center">
@@ -35,20 +36,16 @@ export const Rating = (props: Props) => {
                             key={i}
                             type="button"
                             className="p-0 bg-transparent border-none cursor-pointer transition-transform hover:scale-110"
-                            onClick={() => onRate(starValue)}
+                            onClick={() => rate({ id, rating: starValue })}
                             onMouseEnter={() => setHoverRating(starValue)}
                             onMouseLeave={() => setHoverRating(0)}
                         >
                             <Star
                                 className={`h-5 w-5 transition-colors ${
-                                    hoverRating || userRating
-                                        ? hoverRating
-                                            ? starValue <= hoverRating
-                                                ? 'text-amber-500 fill-amber-500'
-                                                : 'text-muted-foreground/30 stroke-muted-foreground/30'
-                                            : starValue <= (userRating || 0)
-                                              ? 'text-amber-500 fill-amber-500'
-                                              : 'text-muted-foreground/30 stroke-muted-foreground/30'
+                                    hoverRating
+                                        ? starValue <= hoverRating
+                                            ? 'text-amber-500 fill-amber-500'
+                                            : 'text-muted-foreground/30 stroke-muted-foreground/30'
                                         : starValue <= Math.floor(rating)
                                           ? 'text-amber-500 fill-amber-500'
                                           : starValue === Math.ceil(rating) &&
