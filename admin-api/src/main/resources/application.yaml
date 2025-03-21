@@ -14,17 +14,13 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: false
-  data:
-    elasticsearch:
-      repositories:
-        enabled: false
 server:
   admin:
     username: ${ADMIN_USERNAME:admin}
     password: ${ADMIN_PASSWORD:admin}
   servlet:
     context-path: /api/v1
-  port: 3000
+  port: 8080
   compression:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/javascript,text/css
