@@ -18,7 +18,7 @@ export const UserProfileUpdate = () => {
     }
 
     if (status === 'error') {
-        toast.error(error.toString());
+        toast.error(error.message);
         return <div></div>;
     }
 

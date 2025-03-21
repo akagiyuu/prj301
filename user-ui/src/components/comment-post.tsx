@@ -8,38 +8,26 @@ import { Button } from './ui/button';
 import { Loader2, Send } from 'lucide-react';
 
 export const CommentPost = ({ bookId }: { bookId: string }) => {
-    const {
-        data: user,
-        status,
-        error,
-    } = useQuery({
+    const { data: user, status } = useQuery({
         queryKey: ['self'],
         queryFn: () => api.user.self(),
     });
     const [content, setContent] = useState('');
     const queryClient = useQueryClient();
     const mutation = useMutation({
-        mutationFn: async (content: string) => {
-            await api.book.comment(bookId, content);
+        mutationFn: async (content: string) =>
+            api.book.comment(bookId, content),
+        onSuccess: () => {
             toast.info('Your comment has been successfully posted.');
-        },
-        onSettled: () => {
             queryClient.invalidateQueries({
                 queryKey: ['book', bookId, 'comment'],
             });
         },
+        onError: (error) => toast.error(error.message),
     });
 
-    if (status === 'pending') {
+    if (status !== 'success') {
         return <div></div>;
-    }
-    if (status === 'error') {
-        toast.error(error.toString());
-        return <div></div>;
-    }
-
-    if (mutation.status === 'error') {
-        toast.error('Failed to post your comment. Please try again.');
     }
 
     return (

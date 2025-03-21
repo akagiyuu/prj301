@@ -24,7 +24,6 @@ type Props = {
     coverPath: string;
     coverAlt?: string;
     onRead?: MouseEventHandler<HTMLButtonElement>;
-    onShare?: MouseEventHandler<HTMLButtonElement>;
     onDownload?: MouseEventHandler<HTMLButtonElement>;
 };
 
@@ -32,7 +31,6 @@ export const BookCover = ({
     coverPath,
     coverAlt,
     onRead,
-    onShare,
     onDownload,
 }: Props) => {
     return (

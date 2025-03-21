@@ -42,17 +42,17 @@ export const UserProfile = () => {
     }
 
     if (userQuery.status === 'error') {
-        toast.error(userQuery.error.toString());
+        toast.error(userQuery.error.message);
         return <div></div>;
     }
 
     if (bookQuery.status === 'error') {
-        toast.error(bookQuery.error.toString());
+        toast.error(bookQuery.error.message);
         return <div></div>;
     }
 
     if (commentQuery.status === 'error') {
-        toast.error(commentQuery.error.toString());
+        toast.error(commentQuery.error.message);
         return <div></div>;
     }
 

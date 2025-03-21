@@ -23,7 +23,7 @@ const Comment = (comment: CommentEntity) => {
     }
 
     if (status === 'error') {
-        toast.error(error.toString());
+        toast.error(error.message);
         return <div></div>;
     }
 
@@ -97,7 +97,7 @@ export const CommentList = ({ bookId }: { bookId: string }) => {
     }
 
     if (status === 'error') {
-        toast.error(error.toString());
+        toast.error(error.message);
         return <div></div>;
     }
 

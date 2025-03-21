@@ -66,7 +66,7 @@ export const UserProfileUpdateForm = ({
             });
             navigate(`/user/${defaultValues.username}`);
         },
-        onError: (error) => toast.error(error.toString()),
+        onError: (error) => toast.error(error.message),
     });
 
     return (
