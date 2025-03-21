@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn, fetchWrapper } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,8 +15,8 @@ export const LoginForm = ({
 
     const onSubmit = async () => {
         try {
-            const response = await fetch(
-                'http://localhost:3000/api/v1/auth/login',
+            const response = await fetchWrapper(
+                'auth/login',
                 {
                     method: 'POST',
                     headers: {
