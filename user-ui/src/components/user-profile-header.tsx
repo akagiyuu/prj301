@@ -4,8 +4,18 @@ import { ReportDialog } from './report-dialog';
 import * as api from '@/api';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import type { User } from '@/api/user';
+import { cn } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
 
 export const UserProfileHeader = ({ user }: { user: User }) => {
+    const { data: enableReport } = useQuery({
+        queryKey: ['enableReport', user],
+        queryFn: async () => {
+            const self = await api.user.self();
+            return self.username !== user.username;
+        },
+    });
+
     return (
         <div className="relative container mx-auto px-4 mt-10 mb-10">
             <div className="bg-white rounded-2xl shadow-md overflow-hidden">
@@ -61,7 +71,10 @@ export const UserProfileHeader = ({ user }: { user: User }) => {
                             <Button
                                 variant="outline"
                                 size="sm"
-                                className="text-gray-500 hover:text-red-600 rounded-lg border-gray-200"
+                                className={cn(
+                                    'text-gray-500 hover:text-red-600 rounded-lg border-gray-200',
+                                    enableReport ? '' : 'hidden',
+                                )}
                             >
                                 <Flag className="h-4 w-4 mr-1" />
                                 <span className="text-sm">Report</span>

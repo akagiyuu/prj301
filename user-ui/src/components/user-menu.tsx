@@ -45,7 +45,6 @@ export const UserMenu = () => {
     const { data: user, status } = useQuery({
         queryKey: ['self'],
         queryFn: () => api.user.self(),
-        retry: false,
     });
 
     const queryClient = useQueryClient();
