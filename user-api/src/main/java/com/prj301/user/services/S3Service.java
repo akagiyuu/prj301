@@ -34,6 +34,9 @@ public class S3Service {
     @Autowired
     private S3Client s3Client;
 
+    @Autowired
+    private CompressionService compressionService;
+
     public String upload(String key, File file) {
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest
@@ -53,6 +56,7 @@ public class S3Service {
 
     public String upload(String keyPrefix, MultipartFile multipartFile) {
         try {
+            multipartFile = compressionService.compress(multipartFile);
             File file = File.createTempFile("temp", multipartFile.getOriginalFilename());
             multipartFile.transferTo(file);
 

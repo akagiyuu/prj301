@@ -101,11 +101,11 @@ export const BookCardFull = (book: Book) => {
             key={book.id}
             className="group relative flex gap-4 bg-white p-3 rounded-lg border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all duration-300"
         >
-            <div className="relative flex-shrink-0 w-16 h-24 sm:w-20 sm:h-30 bg-gray-50 rounded overflow-hidden">
+            <div className="flex items-center justify-center relative flex-shrink-0 w-16 h-24 sm:w-20 sm:h-30 bg-gray-50 rounded overflow-hidden">
                 <img
                     src={book.coverPath || '/placeholder.svg'}
                     alt={book.title}
-                    className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                    className="w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-110"
                     onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.src = '/placeholder.svg?height=150&width=100';
