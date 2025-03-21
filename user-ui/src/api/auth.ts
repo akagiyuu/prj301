@@ -17,7 +17,7 @@ export const signup = async (values: SignupRequest) => {
     });
 
     if (!response.ok) {
-        throw new Error('Request failed');
+        throw new Error('Username already existed');
     }
 
     return await response.text();
@@ -39,7 +39,7 @@ export const login = async (values: LoginRequest) => {
     });
 
     if (!response.ok) {
-        throw new Error('Request failed');
+        throw new Error('Username or password is not correct');
     }
 
     return await response.text();
