@@ -11,7 +11,6 @@ import { useState } from 'react';
 export const BookSummary = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [reportOpen, setReportOpen] = useState(false);
 
     const {
         data: book,
@@ -52,10 +51,6 @@ export const BookSummary = () => {
 
     const onDownload = () => {
         window.location.replace(book.pdfPath);
-    };
-
-    const onReport = () => {
-        setReportOpen(true);
     };
 
     return (

@@ -129,8 +129,6 @@ export const rate = async (id: string, rating: number) => {
     if (!response.ok) {
         throw new Error('Request failed');
     }
-
-    return (await response.json()) as Book;
 };
 
 export const comment = async (id: string, content: string) => {
