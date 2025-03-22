@@ -139,10 +139,10 @@ public class BookService {
             .map(genreService::findOrCreate)
             .collect(Collectors.toSet());
 
-        val coverPath = s3Service.upload("cover/", coverFile);
+        val coverPath = s3Service.upload("cover", uploadBookRequest.getIsbn(), coverFile);
         if (coverPath == null) return false;
 
-        val pdfPath = s3Service.upload("pdf/", pdfFile);
+        val pdfPath = s3Service.upload("pdf", uploadBookRequest.getIsbn(), pdfFile);
         if (pdfPath == null) return false;
 
         val book = new Book();
