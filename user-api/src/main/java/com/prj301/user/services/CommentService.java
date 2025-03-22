@@ -35,7 +35,7 @@ public class CommentService {
         Book book = bookRepository
             .findById(bookId)
             .orElseThrow(() -> new RuntimeException("Book Not Found!"));
-        List<Comment> comments = commentRepository.findByBook(book);
+        List<Comment> comments = commentRepository.findByBookOrderByCreatedAtDesc(book);
         return comments
             .stream()
             .map(this::toResponse)
