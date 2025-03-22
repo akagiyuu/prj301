@@ -153,7 +153,7 @@ public class BookService {
         book.setAuthors(authors);
         book.setGenres(genres);
         book.setPublicationDate(uploadBookRequest.getPublicationDate());
-        book.setSummary(book.getSummary());
+        book.setSummary(uploadBookRequest.getSummary());
         book.setPdfPath(pdfPath);
 
         bookRepository.save(book);
