@@ -157,18 +157,27 @@ export function DataTable<TData, TValue = unknown>({
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
                             {Object.entries(action).map(([name, data]) => (
-                                <ConfirmationDialog
-                                    itemName={record[data.itemNameColumn]}
-                                    itemType={data.itemType}
-                                    onConfirm={() =>
-                                        mutations[name].mutate(record)
-                                    }
-                                >
-                                    <Button className="w-full" variant="ghost">
-                                        <data.icon />
-                                        <span>{name}</span>
-                                    </Button>
-                                    </ConfirmationDialog>
+                                <DropdownMenuItem asChild className="p-0">
+                                    <div className="w-full">
+                                        <ConfirmationDialog
+                                            itemName={
+                                                record[data.itemNameColumn]
+                                            }
+                                            itemType={data.itemType}
+                                            onConfirm={() =>
+                                                mutations[name].mutate(record)
+                                            }
+                                        >
+                                            <Button
+                                                className="w-full justify-start h-8 px-2"
+                                                variant="ghost"
+                                            >
+                                                <data.icon className="mr-2" />
+                                                <span>{name}</span>
+                                            </Button>
+                                        </ConfirmationDialog>
+                                    </div>
+                                </DropdownMenuItem>
                             ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
