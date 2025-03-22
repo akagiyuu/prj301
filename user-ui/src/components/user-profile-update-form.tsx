@@ -18,6 +18,18 @@ import { toast } from 'sonner';
 import * as api from '@/api';
 import { User } from '@/api/user';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useState } from 'react';
+import { FileWithPath, useDropzone } from 'react-dropzone';
+import { ImageCropper } from './image-cropper';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+
+export type FileWithPreview = FileWithPath & {
+    preview: string;
+};
+
+const accept = {
+    'image/*': [],
+};
 
 const schema = z.object({
     avatar: z.instanceof(File).optional(),
@@ -51,10 +63,7 @@ export const UserProfileUpdateForm = ({
     });
 
     const queryClient = useQueryClient();
-    const {
-        mutate: update,
-        status,
-    } = useMutation({
+    const { mutate: update, status } = useMutation({
         mutationFn: api.user.update,
         onSuccess: () => {
             toast.success('Profile updated successfully');
@@ -69,96 +78,64 @@ export const UserProfileUpdateForm = ({
         onError: (error) => toast.error(error.message),
     });
 
+    const [selectedFile, setSelectedFile] = useState<FileWithPreview | null>(
+        null,
+    );
+    const [isDialogOpen, setDialogOpen] = useState(false);
+    const [cropped, setCropped] = useState<File | undefined>(undefined);
+    const onDrop = useCallback(
+        (acceptedFiles: FileWithPath[]) => {
+            const file = acceptedFiles[0];
+            if (!file) {
+                alert('Selected image is too large!');
+                return;
+            }
+
+            const fileWithPreview = Object.assign(file, {
+                preview: URL.createObjectURL(file),
+            });
+
+            setSelectedFile(fileWithPreview);
+            setDialogOpen(true);
+        },
+
+        [],
+    );
+    const { getRootProps, getInputProps } = useDropzone({
+        onDrop,
+        accept,
+    });
+
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit((values) => update(values))}
+                onSubmit={form.handleSubmit((values) =>
+                    update({ avatar: cropped, ...values }),
+                )}
                 className="space-y-8"
             >
-                <FormField
-                    control={form.control}
-                    name="avatar"
-                    render={({ field: { value, onChange } }) => (
-                        <FormItem>
-                            <FormControl>
-                                <div className="flex flex-col items-center justify-center">
-                                    <div className="relative group">
-                                        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-background shadow-lg">
-                                            {value ? (
-                                                <img
-                                                    src={
-                                                        value instanceof File
-                                                            ? URL.createObjectURL(
-                                                                  value,
-                                                              )
-                                                            : '/placeholder.svg'
-                                                    }
-                                                    alt="Profile avatar"
-                                                    width={128}
-                                                    height={128}
-                                                    className="object-cover w-full h-full"
-                                                    onLoad={(e) => {
-                                                        if (
-                                                            value instanceof
-                                                            File
-                                                        ) {
-                                                            const target =
-                                                                e.target as HTMLImageElement;
-                                                            return () =>
-                                                                URL.revokeObjectURL(
-                                                                    target.src,
-                                                                );
-                                                        }
-                                                    }}
-                                                />
-                                            ) : (
-                                                <img
-                                                    src="/placeholder.svg"
-                                                    alt="Profile avatar"
-                                                    width={128}
-                                                    height={128}
-                                                    className="object-cover w-full h-full"
-                                                />
-                                            )}
-                                        </div>
-                                        <input
-                                            type="file"
-                                            id="avatar-upload"
-                                            accept="image/*"
-                                            className="hidden"
-                                            onChange={(e) => {
-                                                const file =
-                                                    e.target.files?.[0];
-                                                if (file) {
-                                                    onChange(file);
-                                                }
-                                            }}
-                                        />
-                                        <Button
-                                            variant="secondary"
-                                            size="sm"
-                                            className="absolute bottom-0 right-0 rounded-full shadow-md"
-                                            type="button"
-                                            onClick={() =>
-                                                document
-                                                    .getElementById(
-                                                        'avatar-upload',
-                                                    )
-                                                    ?.click()
-                                            }
-                                        >
-                                            <Camera className="h-4 w-4 mr-1" />
-                                            <span className="text-xs">
-                                                Change
-                                            </span>
-                                        </Button>
-                                    </div>
-                                </div>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                {' '}
+                <div className="flex flex-col items-center justify-center">
+                    <div className="relative ">
+                        {selectedFile ? (
+                            <ImageCropper
+                                dialogOpen={isDialogOpen}
+                                setDialogOpen={setDialogOpen}
+                                selectedFile={selectedFile}
+                                setSelectedFile={setSelectedFile}
+                                setCropped={setCropped}
+                            />
+                        ) : (
+                            <Avatar
+                                {...getRootProps()}
+                                className="size-36 cursor-pointer ring-offset-2 ring-2 ring-slate-200"
+                            >
+                                <input {...getInputProps()} />
+                                <AvatarImage src={defaultValues.avatarPath} />
+                            </Avatar>
+                        )}
+                    </div>
+                </div>
                 <FormField
                     control={form.control}
                     name="fullName"
