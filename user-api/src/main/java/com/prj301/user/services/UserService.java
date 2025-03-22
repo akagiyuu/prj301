@@ -67,7 +67,7 @@ public class UserService {
                 user.setDob(data.getDob());
 
             if(!avatarFile.isEmpty()) {
-                val avatarPath = s3Service.upload("avatar/", avatarFile);
+                val avatarPath = s3Service.upload("avatar", user.getUsername(), avatarFile);
                 if (avatarPath == null) return false;
 
                 user.setAvatarPath(avatarPath);
