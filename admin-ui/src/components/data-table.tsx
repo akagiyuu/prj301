@@ -54,6 +54,17 @@ import {
 import { fetchWrapper } from '@/lib/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from './ui/dialog';
+import { Label } from './ui/label';
+import { ConfirmationDialog } from './confirmation-dialog';
 
 type DataTableProps<TData, TValue> = {
     dataApi: string;
@@ -62,6 +73,8 @@ type DataTableProps<TData, TValue> = {
     action?: Record<
         string,
         {
+            itemType?: string;
+            itemNameColumn?: string;
             icon: LucideIcon;
             fn: (data: TData) => Promise<void>;
         }
@@ -144,14 +157,26 @@ export function DataTable<TData, TValue = unknown>({
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
                             {Object.entries(action).map(([name, data]) => (
-                                <DropdownMenuItem
-                                    className="capitalize"
-                                    onClick={() =>
-                                        mutations[name].mutate(record)
-                                    }
-                                >
-                                    <data.icon />
-                                    <span>{name}</span>
+                                <DropdownMenuItem asChild className="p-0">
+                                    <div className="w-full">
+                                        <ConfirmationDialog
+                                            itemName={
+                                                record[data.itemNameColumn]
+                                            }
+                                            itemType={data.itemType}
+                                            onConfirm={() =>
+                                                mutations[name].mutate(record)
+                                            }
+                                        >
+                                            <Button
+                                                className="w-full justify-start h-8 px-2"
+                                                variant="ghost"
+                                            >
+                                                <data.icon className="mr-2" />
+                                                <span>{name}</span>
+                                            </Button>
+                                        </ConfirmationDialog>
+                                    </div>
                                 </DropdownMenuItem>
                             ))}
                         </DropdownMenuContent>

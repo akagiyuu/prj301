@@ -32,6 +32,8 @@ export const Book = () => {
             ]}
             action={{
                 delete: {
+                    itemType: 'book',
+                    itemNameColumn: 'title',
                     icon: TrashIcon,
                     fn: async (data) => {
                         const response = await fetchWrapper('book/', {
