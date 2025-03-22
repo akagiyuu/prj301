@@ -3,6 +3,7 @@ package com.prj301.user.services;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -54,16 +55,18 @@ public class S3Service {
         }
     }
 
-    public String upload(String keyPrefix, MultipartFile multipartFile) {
+    public String upload(String keyPrefix, String id, MultipartFile multipartFile) {
         try {
             multipartFile = compressionService.compress(multipartFile);
             File file = File.createTempFile("temp", multipartFile.getOriginalFilename());
             multipartFile.transferTo(file);
 
-            String key = upload(keyPrefix + multipartFile.getOriginalFilename(), file);
+            String key = String.format(
+                "%s/%s.%s", keyPrefix, id, FilenameUtils.getExtension(multipartFile.getOriginalFilename()));
+            String path = upload(key, file);
             file.delete();
 
-            return key;
+            return path;
         } catch (Exception e) {
             log.error(e.toString());
             return null;
