@@ -22,6 +22,7 @@ export const CommentPost = ({ bookId }: { bookId: string }) => {
             queryClient.invalidateQueries({
                 queryKey: ['book', bookId, 'comment'],
             });
+            setContent('');
         },
         onError: (error) => toast.error(error.message),
     });
