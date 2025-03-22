@@ -40,6 +40,8 @@ export const BookReport = () => {
             ]}
             action={{
                 dismiss: {
+                    itemNameColumn: 'title',
+                    itemType: 'report',
                     icon: Trash2Icon,
                     fn: async (data) => {
                         const response = await fetchWrapper('book/report', {
@@ -58,6 +60,8 @@ export const BookReport = () => {
                     },
                 },
                 delete: {
+                    itemNameColumn: 'title',
+                    itemType: 'book',
                     icon: TrashIcon,
                     fn: async (data) => {
                         const response = await fetchWrapper('book', {

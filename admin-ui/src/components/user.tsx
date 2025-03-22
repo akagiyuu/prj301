@@ -5,7 +5,7 @@ import { fetchWrapper } from '@/lib/utils';
 export const User = () => {
     return (
         <DataTable
-            dataApi="user/"
+            dataApi='user'
             queryKey="title"
             columns={[
                 {
@@ -27,6 +27,8 @@ export const User = () => {
             ]}
             action={{
                 delete: {
+                    itemType: 'user',
+                    itemNameColumn: 'username',
                     icon: TrashIcon,
                     fn: async (data) => {
                         const response = await fetchWrapper('user/', {

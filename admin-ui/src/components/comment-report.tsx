@@ -40,6 +40,7 @@ export const CommentReport = () => {
             action={{
                 dismiss: {
                     icon: Trash2Icon,
+                    itemType: 'report',
                     fn: async (data) => {
                         const response = await fetchWrapper('comment/report', {
                             method: 'DELETE',
@@ -58,6 +59,7 @@ export const CommentReport = () => {
                 },
                 delete: {
                     icon: TrashIcon,
+                    itemType: 'comment',
                     fn: async (data) => {
                         const response = await fetchWrapper('comment', {
                             method: 'DELETE',

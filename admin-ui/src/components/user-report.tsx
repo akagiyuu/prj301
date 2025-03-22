@@ -35,6 +35,8 @@ export const UserReport = () => {
             ]}
             action={{
                 dismiss: {
+                    itemType: 'report',
+                    itemNameColumn: 'username',
                     icon: Trash2Icon,
                     fn: async (data) => {
                         const response = await fetchWrapper('user/report', {
@@ -53,6 +55,8 @@ export const UserReport = () => {
                     },
                 },
                 delete: {
+                    itemType: 'user',
+                    itemNameColumn: 'username',
                     icon: TrashIcon,
                     fn: async (data) => {
                         const response = await fetchWrapper('user', {
