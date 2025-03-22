@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CommentRepository extends JpaRepository<Comment, UUID> {
-    List<Comment> findByBook(Book book);
+    List<Comment> findByBookOrderByCreatedAtDesc(Book book);
 
     long countByUser_Username(String username);
 }
